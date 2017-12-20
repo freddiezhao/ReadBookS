@@ -1,0 +1,148 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    style="@style/PublicBg"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:focusable="false">
+
+    <TextView
+        android:id="@+id/reading_complete_title"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentTop="true"
+        android:layout_marginLeft="@dimen/reading_content_margin_left_right"
+        android:layout_marginTop="@dimen/reading_title_margin_top"
+        android:gravity="left|center_vertical"
+        android:textColor="@color/reading_title"
+        android:textSize="@dimen/reading_title_size" />
+
+    <TextView
+        android:id="@+id/reading_complete_tip"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="90dp"
+        android:gravity="center"
+        android:text="@string/reading_complete_chapter"
+        android:textColor="@color/book_detail_title_font_color"
+        android:textSize="17.33sp" />
+
+    <RelativeLayout
+        android:id="@+id/reading_complete_btn_layout"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/reading_complete_tip"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="70dp">
+
+        <!--<ImageView-->
+            <!--android:id="@+id/book_detail_praise_right_divider"-->
+            <!--android:layout_width="0.5dp"-->
+            <!--android:layout_height="16dp"-->
+            <!--android:layout_centerInParent="true"-->
+            <!--android:background="#C2C2C2"-->
+            <!--android:contentDescription="@null" />-->
+
+        <TextView
+            android:id="@+id/reading_complete_praise_txt"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:drawableLeft="@drawable/selector_book_detail_praise"
+            android:layout_marginRight="16dp"
+            android:drawablePadding="8dp"
+            android:gravity="center_vertical"
+            android:layout_centerHorizontal="true"
+            android:text="@string/book_detail_praise_text"
+            android:textColor="@drawable/selector_book_detail_praise_comment_font"
+            android:textSize="16sp" />
+            <!--android:layout_toLeftOf="@id/book_detail_praise_right_divider"-->
+
+        <!--<TextView-->
+            <!--android:id="@+id/reading_complete_comment_txt"-->
+            <!--android:layout_width="wrap_content"-->
+            <!--android:layout_height="wrap_content"-->
+            <!--android:layout_marginLeft="16dp"-->
+            <!--android:layout_toRightOf="@id/book_detail_praise_right_divider"-->
+            <!--android:drawableLeft="@drawable/selector_book_detail_comment"-->
+            <!--android:drawablePadding="8dp"-->
+            <!--android:gravity="center_vertical"-->
+            <!--android:text="@string/book_detail_comment_text"-->
+            <!--android:textColor="@drawable/selector_book_detail_praise_comment_font"-->
+            <!--android:textSize="16sp" />-->
+    </RelativeLayout>
+
+<!--     <CheckBox -->
+<!--         android:id="@+id/reading_subscription_checkbox" -->
+<!--         android:layout_width="wrap_content" -->
+<!--         android:layout_height="wrap_content" -->
+<!--         android:layout_marginTop="45dp" -->
+<!--         android:layout_centerHorizontal="true" -->
+<!--         android:layout_below="@id/reading_complete_btn_layout" -->
+<!--         android:background="@null" -->
+<!--         android:button="@null" -->
+<!--         android:gravity="center" -->
+<!--         android:drawableLeft="@drawable/subscription_check_box" -->
+<!--         android:drawablePadding="5dp" -->
+<!--         android:paddingLeft="5dp" -->
+<!--         android:paddingTop="5dp" -->
+<!--         android:paddingBottom="5dp" -->
+<!--         android:paddingRight="5dp" -->
+<!--         android:text="@string/reading_subscription_checkbox" -->
+<!--         android:textColor="#b07b4b" -->
+<!--         android:textSize="13.33sp" /> -->
+
+    <Button
+        android:id="@+id/reading_continue_button"
+        android:layout_width="@dimen/common_btn_width1"
+        android:layout_height="@dimen/common_btn_height"
+        android:layout_below="@id/reading_complete_btn_layout"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="45dp"
+        android:background="@drawable/selector_btn_bg_red"
+        android:gravity="center"
+        android:text="@string/reading_pay_continue_text"
+        android:textColor="@color/white"
+        android:textSize="16sp" />
+
+    <LinearLayout
+        android:id="@+id/reading_complete_recommended"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/reading_continue_button"
+        android:layout_centerHorizontal="true"
+        android:orientation="vertical">
+
+        <ImageView
+            android:id="@+id/reading_complete_recommended_divider"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="13.33dp"
+            android:layout_marginRight="13.33dp"
+            android:layout_marginTop="56dp"
+            android:contentDescription="@null"
+            android:scaleType="fitXY" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="13.33dp"
+            android:layout_marginTop="6dp"
+            android:text="@string/book_detail_person_book"
+            android:textColor="@color/book_detail_title_font_color"
+            android:textSize="14.67sp" />
+
+        <com.sina.book.ui.widget.HorizontalListView
+            android:id="@+id/read_complete_related_book_listview"
+            android:layout_width="wrap_content"
+            android:layout_height="178.67dp"
+            android:layout_marginLeft="13.33dp"
+            android:layout_marginRight="13.33dp"
+            android:layout_marginTop="13.33dp"
+            android:cacheColorHint="#00000000"
+            android:focusable="false"
+            android:focusableInTouchMode="false"
+            android:listSelector="@null"
+            android:scrollbars="none" />
+    </LinearLayout>
+
+</RelativeLayout>

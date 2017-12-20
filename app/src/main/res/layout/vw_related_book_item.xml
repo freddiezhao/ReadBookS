@@ -1,0 +1,78 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:orientation="vertical">
+
+    <RelativeLayout
+        android:id="@+id/book_cover_layout"
+        android:layout_height="wrap_content"
+        android:layout_width="wrap_content">
+
+        <!-- 图书封面 -->
+        <ImageView
+            android:id="@+id/book_cover"
+            android:layout_width="@dimen/book_recommend_item_img_width"
+            android:layout_height="@dimen/book_recommend_item_img_height"
+            android:layout_alignParentLeft="true"
+            android:layout_centerVertical="true"
+            android:contentDescription="@null"
+            android:paddingBottom="@dimen/book_item_paddingBottom"
+            android:paddingLeft="@dimen/book_item_paddingLeft"
+            android:paddingRight="@dimen/book_item_paddingRight"
+            android:scaleType="fitXY"
+            android:background="@drawable/main_book_bg"
+            android:src="@drawable/sinabook" />
+
+        <!-- 用于实现图书封面的点击效果 -->
+        <ImageView
+            android:id="@+id/book_cover_click"
+            android:layout_width="@dimen/book_recommend_item_img_width"
+            android:layout_height="@dimen/book_recommend_item_img_height"
+            android:layout_alignParentLeft="true"
+            android:layout_centerVertical="true"
+            android:src="@drawable/main_book_click"
+            android:paddingBottom="@dimen/book_item_paddingBottom"
+            android:paddingLeft="@dimen/book_item_paddingLeft"
+            android:paddingRight="@dimen/book_item_paddingRight"
+            android:contentDescription="@null"
+            android:scaleType="fitXY" />
+
+    </RelativeLayout>
+
+    <com.sina.book.ui.widget.EllipsizeTextView
+        android:id="@+id/book_title"
+        android:layout_width="@dimen/book_recommend_item_img_width"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="5dp"
+        android:paddingLeft="@dimen/book_item_paddingLeft"
+        android:paddingRight="@dimen/book_item_paddingRight"
+        android:ellipsize="end"
+        android:maxLines="2"
+        android:textColor="#37312E"
+        android:textSize="13sp" />
+
+    <com.sina.book.ui.widget.EllipsizeTextView
+        android:id="@+id/book_author"
+        android:layout_width="@dimen/book_recommend_item_img_width"
+        android:layout_height="wrap_content"
+        android:gravity="center_vertical"
+        android:paddingLeft="@dimen/book_item_paddingLeft"
+        android:paddingRight="@dimen/book_item_paddingRight"
+        android:ellipsize="end"
+        android:maxLines="1"
+        android:textColor="#A1A1A1"
+        android:textSize="11sp" />
+
+    <com.sina.book.ui.widget.EllipsizeTextView
+        android:id="@+id/book_state"
+        android:layout_width="@dimen/book_recommend_item_img_width"
+        android:layout_height="wrap_content"
+        android:gravity="center_vertical"
+        android:paddingLeft="@dimen/book_item_paddingLeft"
+        android:paddingRight="@dimen/book_item_paddingRight"
+        android:ellipsize="end"
+        android:maxLines="1"
+        android:textSize="11sp" />
+
+</LinearLayout>

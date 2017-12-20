@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:background="@drawable/selector_card_button_bg" >
+
+    <ImageView
+        android:id="@+id/good_book_icon"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentTop="true"
+        android:contentDescription="@null"
+        android:src="@drawable/daily_book_icon" />
+
+    <ImageView
+        android:id="@+id/good_book_more"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentRight="true"
+        android:layout_centerVertical="true"
+        android:layout_marginRight="18dp"
+        android:contentDescription="@null"
+        android:src="@drawable/more_item_arrow" />
+
+    <TextView
+        android:id="@+id/good_book_title"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentLeft="true"
+        android:layout_centerVertical="true"
+        android:layout_marginLeft="14.67dp"
+        android:paddingBottom="8dp"
+        android:paddingTop="8dp"
+        android:text="@string/daily_book_recommend"
+        android:textColor="@color/recommend_title_color"
+        android:textSize="14.67sp" />
+
+    <TextView
+        android:id="@+id/good_book_content"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_centerVertical="true"
+        android:layout_marginLeft="12dp"
+        android:layout_marginRight="14.67dp"
+        android:layout_toLeftOf="@id/good_book_more"
+        android:layout_toRightOf="@id/good_book_title"
+        android:ellipsize="end"
+        android:singleLine="true"
+        android:textColor="@color/recommend_title_more"
+        android:textSize="13.33sp" />
+
+</RelativeLayout>

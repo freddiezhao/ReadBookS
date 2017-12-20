@@ -1,0 +1,4 @@
+1.首先将需要下载的书整理成excel（97-03格式）表格，格式参照：1128.xls（如出现异常检查excel的格式是否正确）
+2.将该文件放到../asset目录下,同时修改AutoDownBookManager.java中CONFIG_NAME的值为该文件名
+3.执行如下代码：AutoDownBookManager.getInstance(Context).start();
+5.下载完毕后，用sdcard/sina/reader_autodownload目录下book文件夹和db文件替换到asset目录下对应文件

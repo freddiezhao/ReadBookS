@@ -1,0 +1,133 @@
+<?xml version="1.0" encoding="utf-8"?>
+<com.sina.book.ui.widget.IgnorePressedRelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="fill_parent"
+    android:layout_height="wrap_content"
+    android:layout_marginLeft="8dp"
+    android:layout_marginRight="8dp"
+    android:background="@drawable/card_entire"
+    android:paddingBottom="5.33dp"
+    android:paddingTop="9.33dp" >
+
+    <ImageView
+        android:id="@+id/recommend_book_image"
+        android:layout_width="70.67dp"
+        android:layout_height="94.67dp"
+        android:layout_marginLeft="9.34dp"
+        android:background="@drawable/main_book_bg"
+        android:contentDescription="@null"
+        android:scaleType="fitXY"
+        android:src="@drawable/sinabook" />
+
+    <ImageView
+        android:id="@+id/recommend_book_image_click"
+        android:layout_width="70.67dp"
+        android:layout_height="94.67dp"
+        android:layout_marginLeft="9.34dp"
+        android:contentDescription="@null"
+        android:scaleType="fitXY"
+        android:src="@drawable/main_book_click" />
+
+    <LinearLayout
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="12dp"
+        android:layout_marginRight="14.67dp"
+        android:layout_toRightOf="@id/recommend_book_image"
+        android:orientation="vertical" >
+
+        <LinearLayout
+            android:id="@+id/recommend_user_layout"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:background="@drawable/selector_down_bg"
+            android:orientation="horizontal" >
+
+            <ImageView
+                android:id="@+id/recommend_user_image"
+                android:layout_width="32dp"
+                android:layout_height="32dp"
+                android:background="@drawable/main_avatar_defaut"
+                android:contentDescription="@null" />
+
+            <LinearLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="9.33dp"
+                android:orientation="vertical" >
+
+                <TextView
+                    android:id="@+id/recommend_user_name"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="top"
+                    android:textColor="@color/all_recommend_username_color"
+                    android:textSize="13.33sp" />
+
+                <TextView
+                    android:id="@+id/recommend_time"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:textSize="10.67sp" />
+            </LinearLayout>
+        </LinearLayout>
+
+        <ImageView
+            android:id="@+id/recommend_line"
+            android:layout_width="fill_parent"
+            android:layout_height="1px"
+            android:layout_marginTop="6dp"
+            android:background="@color/all_recommend_line_color"
+            android:contentDescription="@null" />
+
+        <LinearLayout
+            android:id="@+id/recommend_book_layout"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:background="@drawable/selector_down_bg"
+            android:orientation="vertical" >
+
+            <RelativeLayout
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="6dp" >
+
+                <TextView
+                    android:id="@+id/recommend_book_nums"
+                    android:layout_width="wrap_content"
+                    android:layout_height="17.33dp"
+                    android:layout_alignParentRight="true"
+                    android:layout_centerVertical="true"
+                    android:background="@drawable/number_bg"
+                    android:drawableLeft="@drawable/book_detail_praise_num_normal"
+                    android:drawablePadding="3dp"
+                    android:gravity="center_vertical"
+                    android:paddingLeft="5.33dp"
+                    android:paddingRight="5.33dp"
+                    android:textColor="@color/all_recommend_num_color"
+                    android:textSize="9.33sp" />
+
+                <TextView
+                    android:id="@+id/recommend_book_title"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_alignParentLeft="true"
+                    android:layout_toLeftOf="@id/recommend_book_nums"
+                    android:ellipsize="end"
+                    android:singleLine="true"
+                    android:textColor="@color/all_recommend_title_color"
+                    android:textSize="16sp" />
+            </RelativeLayout>
+
+            <TextView
+                android:id="@+id/recommend_book_info"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="6dp"
+                android:ellipsize="end"
+                android:singleLine="true"
+                android:textColor="@color/all_recommend_book_color"
+                android:textSize="12sp" />
+        </LinearLayout>
+    </LinearLayout>
+
+</com.sina.book.ui.widget.IgnorePressedRelativeLayout>

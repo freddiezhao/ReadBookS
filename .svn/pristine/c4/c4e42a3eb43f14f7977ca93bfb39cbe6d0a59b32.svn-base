@@ -1,0 +1,79 @@
+/*
+ * Copyright (C) 2007-2014 Geometer Plus <contact@geometerplus.com>
+ *
+ * This program is free software; you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation; either version 2 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program; if not, write to the Free Software
+ * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA
+ * 02110-1301, USA.
+ */
+
+package org.geometerplus.zlibrary.core.options;
+
+/**
+ * 配置类
+ * 
+ * @author chenjl
+ * 
+ */
+public abstract class ZLOption
+{
+	/**
+	 * 该配置属性的唯一ID，StringPair中用Group和Name来标识
+	 */
+	private final StringPair	myId;
+	/**
+	 * 默认的字符值
+	 */
+	protected String			myDefaultStringValue;
+	protected String			mySpecialName;
+
+	protected ZLOption(String group, String optionName, String defaultStringValue)
+	{
+		myId = new StringPair(group, optionName);
+		myDefaultStringValue = defaultStringValue != null ? defaultStringValue : "";
+	}
+
+	public final void setSpecialName(String specialName)
+	{
+		mySpecialName = specialName;
+	}
+
+	public void saveSpecialValue()
+	{
+	}
+
+	/**
+	 * 获取配置值
+	 * 
+	 * @return
+	 */
+	protected final String getConfigValue()
+	{
+		final Config config = Config.Instance();
+		return config != null ? config.getValue(myId, myDefaultStringValue) : myDefaultStringValue;
+	}
+
+	protected final void setConfigValue(String value)
+	{
+		final Config config = Config.Instance();
+		if (config != null) {
+			if (!myDefaultStringValue.equals(value)) {
+				// 插入
+				config.setValue(myId, value);
+			} else {
+				// 删除该myId对应的字段值
+				config.unsetValue(myId);
+			}
+		}
+	}
+}

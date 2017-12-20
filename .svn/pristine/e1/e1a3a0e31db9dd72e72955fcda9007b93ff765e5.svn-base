@@ -1,0 +1,125 @@
+apply plugin: 'com.android.application'
+
+android {
+    compileSdkVersion 23
+    buildToolsVersion "23.0.0"
+
+    defaultConfig {
+        applicationId "com.sina.book"
+        minSdkVersion 9
+        targetSdkVersion 21
+        versionCode 41188
+        versionName "2.1.3"
+//        multiDexEnabled true
+    }
+
+    signingConfigs {
+        release {
+            storeFile file("SinaAndroid.keystore")
+            storePassword "123456"
+            keyAlias "sina"
+            keyPassword "123456"
+        }
+    }
+
+    buildTypes {
+        release {
+            minifyEnabled true
+            proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
+            signingConfig signingConfigs.release
+            applicationVariants.all { variant ->
+                appendVersionName(variant, defaultConfig)
+            }
+        }
+        debug {
+            signingConfig signingConfigs.release
+        }
+    }
+
+//    sourceSets {
+//        main {
+//            jniLibs.srcDirs = ['libs']
+//        }
+//    }
+
+    useLibrary('org.apache.http.legacy')
+
+    compileOptions {
+        sourceCompatibility JavaVersion.VERSION_1_7
+        targetCompatibility JavaVersion.VERSION_1_7
+    }
+
+    lintOptions {
+        checkReleaseBuilds false
+        // Or, if you prefer, you can continue to check for errors in release builds,
+        // but continue the build even when errors are found:
+        abortOnError false
+    }
+    productFlavors {
+        anzhi {//安智
+            manifestPlaceholders = [CHANNEL: "1"]
+        }
+        anzhuo {//安卓
+            manifestPlaceholders = [CHANNEL: "2"]
+        }
+        a91 {//91
+            manifestPlaceholders = [CHANNEL: "3"]
+        }
+        a360 {//360
+            manifestPlaceholders = [CHANNEL: "4"]
+        }
+        baidu {//百度
+            manifestPlaceholders = [CHANNEL: "8"]
+        }
+        xiaomi {//小米
+            manifestPlaceholders = [CHANNEL: "10"]
+        }
+        wandoujia {//豌豆荚
+            manifestPlaceholders = [CHANNEL: "20"]
+        }
+//        weibomarket {//微博应用中心
+//            manifestPlaceholders = [CHANNEL: "38"]
+//        }
+        google {//google
+            manifestPlaceholders = [CHANNEL: "101"]
+        }
+        sinadown {//
+            manifestPlaceholders = [CHANNEL: "16"]
+        }
+//        oppo {//
+//            manifestPlaceholders = [CHANNEL: "25"]
+//        }
+//        samsung {//
+//            manifestPlaceholders = [CHANNEL: "19"]
+//        }
+        huawei {//
+            manifestPlaceholders = [CHANNEL: "23"]
+        }
+        yingyonghui {//
+            manifestPlaceholders = [CHANNEL: "5"]
+        }
+    }
+}
+
+dependencies {
+    compile fileTree(dir: 'libs', include: ['*.jar'])
+    testCompile 'junit:junit:4.12'
+    compile 'com.android.support:support-v4:23.1.1'
+    compile 'com.android.support:appcompat-v7:23.1.1'
+    compile files('libs/weiboSDKCore_3.1.4.jar')
+    compile 'com.google.code.gson:gson:2.6.1'
+}
+
+def appendVersionName(variant, defaultConfig) {
+    variant.outputs.each { output ->
+        if (output.zipAlign) {
+            def file = output.outputFile
+            def fileName = file.name.replace("-release.apk", "-" + defaultConfig.versionName + "-release.apk")
+            output.outputFile = new File(file.parent, fileName)
+        }
+
+        def file = output.packageApplication.outputFile
+        def fileName = file.name.replace("-release.apk", "-" + defaultConfig.versionName + "-release.apk")
+        output.packageApplication.outputFile = new File(file.parent, fileName)
+    }
+}

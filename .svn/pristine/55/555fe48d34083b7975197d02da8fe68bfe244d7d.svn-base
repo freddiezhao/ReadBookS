@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    style="@style/PublicBg"
+    android:layout_width="fill_parent"
+    android:layout_height="fill_parent"
+    android:gravity="center"
+    android:orientation="vertical" >
+
+    <ImageView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:contentDescription="@null"
+        android:src="@drawable/error_icon" />
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="16dp"
+        android:text="@string/network_pro"
+        android:textColor="#EBCCAA"
+        android:textSize="16sp" />
+    
+    <Button
+        android:id="@+id/net_set_btn"
+        android:layout_width="@dimen/common_btn_width1"
+        android:layout_height="@dimen/common_btn_height"
+        android:layout_marginTop="30dp"
+        android:background="@drawable/selector_btn_bg_red"
+        android:gravity="center"
+        android:text="@string/net_set"
+        android:textColor="@color/white"
+        android:textSize="16sp" />
+
+    <Button
+        android:id="@+id/retry_btn"
+        android:layout_width="@dimen/common_btn_width1"
+        android:layout_height="@dimen/common_btn_height"
+        android:layout_marginTop="10dp"
+        android:background="@drawable/selector_btn_bg_red"
+        android:gravity="center"
+        android:text="@string/retry"
+        android:textColor="@color/white"
+        android:textSize="16sp" />
+
+</LinearLayout>

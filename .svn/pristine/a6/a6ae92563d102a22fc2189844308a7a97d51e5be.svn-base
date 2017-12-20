@@ -1,0 +1,97 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="85.33dp">
+
+    <ImageView
+        android:id="@+id/partition_divider_v"
+        android:layout_width="wrap_content"
+        android:layout_height="85.33dp"
+        android:layout_alignParentRight="true"
+        android:contentDescription="@null"
+        android:scaleType="fitXY" />
+
+    <RelativeLayout
+        android:id="@+id/partition_item_layout"
+        android:layout_width="match_parent"
+        android:layout_height="85.33dp"
+        android:layout_toLeftOf="@id/partition_divider_v">
+
+        <ImageView
+            android:id="@+id/choosed_image"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentBottom="true"
+            android:layout_alignParentRight="true"
+            android:contentDescription="@null"
+            android:src="@drawable/icon_choosed"
+            android:layout_marginRight="-1dp"
+            android:layout_marginBottom="-1dp"
+            android:visibility="gone" />
+
+        <!-- 图书封面 -->
+
+        <ImageView
+            android:id="@+id/partition_img"
+            android:layout_width="52dp"
+            android:layout_height="70.67dp"
+            android:layout_centerVertical="true"
+            android:layout_marginLeft="4dp"
+            android:background="@drawable/main_book_bg"
+            android:contentDescription="@null"
+            android:paddingBottom="@dimen/book_item_paddingBottom"
+            android:paddingLeft="@dimen/book_item_paddingLeft"
+            android:paddingRight="@dimen/book_item_paddingRight"
+            android:scaleType="fitXY"
+            android:src="@drawable/sinabook" />
+
+        <LinearLayout
+            android:id="@+id/partition_layout"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_marginLeft="3dp"
+            android:layout_toRightOf="@id/partition_img"
+            android:layout_toLeftOf="@id/choosed_image"
+            android:gravity="left"
+            android:orientation="vertical">
+
+            <TextView
+                android:id="@+id/partition_type"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="8dp"
+                android:textColor="#000000"
+                android:textSize="17sp" />
+
+            <com.sina.book.ui.widget.EllipsizeTextView
+                android:id="@+id/partition_book_1"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="7dp"
+                android:ellipsize="end"
+                android:maxLines="1"
+                android:textColor="#888888"
+                android:textSize="12sp" />
+
+            <com.sina.book.ui.widget.EllipsizeTextView
+                android:id="@+id/partition_book_2"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="2dp"
+                android:ellipsize="end"
+                android:maxLines="1"
+                android:textColor="#888888"
+                android:textSize="12sp" />
+        </LinearLayout>
+    </RelativeLayout>
+
+    <ImageView
+        android:id="@+id/partition_divider_h"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:layout_below="@id/partition_item_layout"
+        android:contentDescription="@null"
+        android:scaleType="fitXY" />
+
+</RelativeLayout>

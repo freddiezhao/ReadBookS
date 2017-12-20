@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layer-list xmlns:android="http://schemas.android.com/apk/res/android" >
+
+    <item android:id="@android:id/background">
+        <nine-patch android:src="@drawable/item_progress_bg" />
+        <shape>
+            <size android:height="@dimen/bookhome_item_probar_height" />
+
+            <corners android:radius="2dp" />
+
+            <gradient
+                android:angle="270"
+                android:centerColor="#ff000000"
+                android:centerY="0.45"
+                android:endColor="#ff808A87"
+                android:startColor="#ffffffff" />
+        </shape>
+    </item>
+    <item android:id="@android:id/progress">
+        <clip>
+            <nine-patch android:src="@drawable/item_progress" />
+        </clip>
+
+        <shape>
+            <size android:height="@dimen/bookhome_item_probar_height" />
+        </shape>
+    </item>
+
+</layer-list>

@@ -1,0 +1,56 @@
+<?xml version="1.0" encoding="utf-8"?>
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    style="@style/PublicCardBg"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <ScrollView
+        android:id="@+id/partition_scroll_view"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical">
+
+            <ListView
+                android:id="@+id/partition_recommend_lv"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="8dp"
+                android:layout_marginLeft="8dp"
+                android:layout_marginRight="8dp"
+                android:padding="1.33dp"
+                android:background="@drawable/card_whole"
+                android:cacheColorHint="#00000000"
+                android:divider="@null"
+                android:fadingEdge="none"
+                android:listSelector="@android:color/transparent" />
+
+            <ListView
+                android:id="@+id/partition_lv"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_margin="8dp"
+                android:padding="1.33dp"
+                android:background="@drawable/card_whole"
+                android:cacheColorHint="#00000000"
+                android:divider="@null"
+                android:fadingEdge="none"
+                android:listSelector="@android:color/transparent" />
+        </LinearLayout>
+
+    </ScrollView>
+
+    <include
+        android:id="@+id/rl_progress"
+        layout="@layout/vw_generic_progress_view"
+        android:visibility="gone" />
+
+    <include
+        android:id="@+id/error_layout"
+        layout="@layout/vw_error"
+        android:visibility="gone" />
+
+</FrameLayout>

@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:viewFlow="http://schemas.android.com/apk/res-auto"
+    android:layout_width="fill_parent"
+    android:layout_height="112dp"
+    android:gravity="center_horizontal"
+    android:orientation="horizontal" >
+
+    <com.sina.book.ui.widget.ViewFlow
+        android:id="@+id/viewflow"
+        android:layout_width="fill_parent"
+        android:layout_height="@dimen/recommend_header_height"
+        android:focusable="true"
+        android:focusableInTouchMode="true"
+        >
+<!--         viewFlow:side_buffer="2"  -->
+    </com.sina.book.ui.widget.ViewFlow>
+
+    <com.sina.book.ui.widget.CircleFlowIndicator
+        android:id="@+id/viewflowindic"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignBottom="@id/viewflow"
+        android:layout_centerHorizontal="true"
+        android:background="@color/transparent"
+        android:padding="3dp" >
+    </com.sina.book.ui.widget.CircleFlowIndicator>
+
+</RelativeLayout>

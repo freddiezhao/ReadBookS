@@ -1,0 +1,129 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@drawable/read_bottom"
+    android:orientation="vertical"
+    android:paddingBottom="4dp"
+    android:paddingTop="4dp">
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/setting_item_height"
+        android:layout_marginLeft="@dimen/setting_bg_padding_horizontal"
+        android:layout_marginRight="@dimen/setting_bg_padding_horizontal">
+
+        <TextView
+            android:id="@+id/pre_chapter_btn"
+            android:layout_width="wrap_content"
+            android:layout_height="fill_parent"
+            android:layout_alignParentLeft="true"
+            android:gravity="center_vertical"
+            android:text="@string/pre_chapter"
+            android:textColor="@drawable/toolbar_text_color"
+            android:textSize="@dimen/read_toolbar_chapter_rela_text" />
+
+        <ImageView
+            android:id="@+id/pre_chapter_line"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerVertical="true"
+            android:layout_marginLeft="13dp"
+            android:layout_toRightOf="@id/pre_chapter_btn"
+            android:contentDescription="@null"
+            android:scaleType="fitXY"
+            android:src="@drawable/read_pre_page" />
+
+        <TextView
+            android:id="@+id/next_chapter_btn"
+            android:layout_width="wrap_content"
+            android:layout_height="fill_parent"
+            android:layout_alignParentRight="true"
+            android:gravity="center_vertical"
+            android:text="@string/next_chapter"
+            android:textColor="@drawable/toolbar_text_color"
+            android:textSize="@dimen/read_toolbar_chapter_rela_text" />
+
+        <ImageView
+            android:id="@+id/next_chapter_line"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerVertical="true"
+            android:layout_marginRight="13dp"
+            android:layout_toLeftOf="@id/next_chapter_btn"
+            android:contentDescription="@null"
+            android:scaleType="fitXY"
+            android:src="@drawable/read_next_page" />
+
+        <com.sina.book.ui.widget.EllipsizeTextView
+            android:id="@+id/read_progress_title"
+            android:layout_width="fill_parent"
+            android:layout_height="fill_parent"
+            android:layout_toLeftOf="@id/next_chapter_line"
+            android:layout_toRightOf="@id/pre_chapter_line"
+            android:ellipsize="marquee"
+            android:gravity="center"
+            android:singleLine="true"
+            android:text="第333章/第344章"
+            android:textColor="@color/white"
+            android:textSize="@dimen/read_toolbar_chapter_rela_text" />
+    </RelativeLayout>
+
+    <ImageView
+        android:id="@+id/read_progress_divider0"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="@dimen/setting_bg_padding_horizontal"
+        android:layout_marginRight="@dimen/setting_bg_padding_horizontal"
+        android:contentDescription="@null"
+        android:scaleType="fitXY" />
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/setting_item_height"
+        android:layout_marginLeft="@dimen/setting_seekbar_padding"
+        android:layout_marginRight="@dimen/setting_seekbar_padding">
+
+        <SeekBar
+            android:id="@+id/read_seekbar"
+            style="@style/SeekBar"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:layout_centerVertical="true" />
+    </RelativeLayout>
+
+    <ImageView
+        android:id="@+id/read_progress_divider1"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="@dimen/setting_bg_padding_horizontal"
+        android:layout_marginRight="@dimen/setting_bg_padding_horizontal"
+        android:contentDescription="@null"
+        android:scaleType="fitXY" />
+
+<!--     <RelativeLayout -->
+<!--         android:id="@+id/read_update_layout" -->
+<!--         android:layout_width="wrap_content" -->
+<!--         android:layout_height="@dimen/setting_item_height" -->
+<!--         android:layout_marginLeft="@dimen/setting_bg_padding_horizontal" -->
+<!--         android:layout_marginRight="@dimen/setting_bg_padding_horizontal"> -->
+
+<!--         <TextView -->
+<!--             android:layout_width="wrap_content" -->
+<!--             android:layout_height="wrap_content" -->
+<!--             android:layout_alignParentLeft="true" -->
+<!--             android:layout_centerVertical="true" -->
+<!--             android:gravity="center" -->
+<!--             android:text="@string/setting_update_note" -->
+<!--             android:textColor="#FFFFFF" -->
+<!--             android:textSize="@dimen/setting_font_size" /> -->
+
+<!--         <com.sina.book.ui.widget.SwitchButton -->
+<!--             android:id="@+id/read_update_remind" -->
+<!--             android:layout_width="wrap_content" -->
+<!--             android:layout_height="wrap_content" -->
+<!--             android:layout_alignParentRight="true" -->
+<!--             android:layout_centerVertical="true" /> -->
+<!--     </RelativeLayout> -->
+
+</LinearLayout>

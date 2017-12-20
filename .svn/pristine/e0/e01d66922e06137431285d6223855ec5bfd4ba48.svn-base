@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="fill_parent"
+    android:layout_height="wrap_content"
+    android:background="@color/white"
+    android:paddingBottom="21.33dp"
+    android:paddingTop="21.33dp" >
+
+    <TextView
+        android:id="@+id/begin_read_btn"
+        android:layout_width="fill_parent"
+        android:layout_height="@dimen/common_btn_height"
+        android:layout_centerHorizontal="true"
+        android:layout_marginLeft="13.3dp"
+        android:layout_marginRight="13.3dp"
+        android:background="@drawable/selector_btn_bg_red"
+        android:gravity="center"
+        android:text="@string/begin_read_text"
+        android:textColor="@color/white"
+        android:textSize="16sp" />
+
+</RelativeLayout>

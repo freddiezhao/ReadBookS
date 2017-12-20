@@ -1,0 +1,99 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:padding="1.5dip" >
+
+    <RelativeLayout
+        android:id="@+id/recommend_star_item_author_root"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentTop="true"
+        android:duplicateParentState="false"
+        android:background="@drawable/list_item_bg1" >
+
+        <ImageView
+            android:id="@+id/recommend_star_item_img"
+            android:layout_width="100dip"
+            android:layout_height="100dip"
+            android:layout_margin="14.67sp"
+            android:src="@drawable/main_avatar_defaut" />
+
+        <TextView
+            android:id="@+id/recommend_star_item_authorname"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignTop="@+id/recommend_star_item_img"
+            android:layout_toRightOf="@+id/recommend_star_item_img"
+            android:paddingRight="5dip"
+            android:singleLine="true"
+            android:textAppearance="?android:attr/textAppearanceLarge"
+            android:textColor="@color/star_author_name"
+            android:textSize="15.67sp" />
+
+        <TextView
+            android:id="@+id/recommend_star_item_desp"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/recommend_star_item_authorname"
+            android:layout_marginTop="14.67sp"
+            android:layout_toRightOf="@+id/recommend_star_item_img"
+            android:ellipsize="end"
+            android:maxLines="3"
+            android:paddingRight="5dip"
+            android:textColor="@color/star_author_desp"
+            android:textSize="13.67sp" />
+
+        <View
+            android:id="@+id/recommend_star_item_middle_divider"
+            android:layout_width="match_parent"
+            android:layout_height="1dip"
+            android:layout_alignBottom="@+id/recommend_star_item_img"
+            android:layout_marginRight="14.67sp"
+            android:layout_toRightOf="@+id/recommend_star_item_img"
+            android:background="#e1e1e1" />
+    </RelativeLayout>
+
+    <RelativeLayout
+        android:id="@+id/recommend_star_item_book_root"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/recommend_star_item_author_root"
+        android:background="@drawable/list_item_bg1"
+        android:padding="14.67sp" >
+
+        <!-- android:clickable="true" -->
+        <!-- android:focusable="true" -->
+        <!-- android:focusableInTouchMode="true" -->
+        <!-- android:longClickable="true" -->
+
+        <ImageView
+            android:id="@+id/recommend_star_item_arrow"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentRight="true"
+            android:layout_centerVertical="true"
+            android:layout_marginLeft="14.67sp"
+            android:src="@drawable/more_item_arrow" />
+
+        <TextView
+            android:id="@+id/recommend_star_item_bookname"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_toLeftOf="@+id/recommend_star_item_arrow"
+            android:paddingRight="5dip"
+            android:singleLine="true"
+            android:textAppearance="?android:attr/textAppearanceLarge"
+            android:textColor="@color/star_author_name"
+            android:textSize="15.67sp" />
+    </RelativeLayout>
+
+    <!-- <View -->
+    <!-- android:id="@+id/recommend_star_item_bottom_divider" -->
+    <!-- android:layout_width="match_parent" -->
+    <!-- android:layout_height="0dip" -->
+    <!-- android:layout_below="@+id/recommend_star_item_book_root" -->
+    <!-- android:background="#e1e1e1" /> -->
+
+</RelativeLayout>

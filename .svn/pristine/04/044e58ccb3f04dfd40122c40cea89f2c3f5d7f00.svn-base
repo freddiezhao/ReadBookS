@@ -1,0 +1,932 @@
+package com.sina.book.ui.view;
+
+import android.app.Activity;
+import android.content.Context;
+import android.content.DialogInterface;
+import android.content.Intent;
+import android.os.Bundle;
+import android.text.TextUtils;
+import android.view.LayoutInflater;
+import android.view.View;
+import android.view.View.OnClickListener;
+import android.widget.Toast;
+
+import com.sina.book.R;
+import com.sina.book.SinaBookApplication;
+import com.sina.book.control.GenericTask;
+import com.sina.book.control.ITaskFinishListener;
+import com.sina.book.control.RequestTask;
+import com.sina.book.control.TaskParams;
+import com.sina.book.control.TaskResult;
+import com.sina.book.data.ConstantData;
+import com.sina.book.data.LoginInfo;
+import com.sina.book.data.UserInfo;
+import com.sina.book.data.UserInfoUb;
+import com.sina.book.data.util.ChannelActivityUtil;
+import com.sina.book.data.util.CloudSyncUtil;
+import com.sina.book.data.util.PaymentMonthMineUtil;
+import com.sina.book.parser.AutoDownBidParser;
+import com.sina.book.parser.AutoLoginParser;
+import com.sina.book.parser.BalanceParser;
+import com.sina.book.parser.UserIdParser;
+import com.sina.book.parser.UserInfoParser;
+import com.sina.book.ui.BaseActivity;
+import com.sina.book.ui.BaseFragmentActivity;
+import com.sina.book.ui.ILifecycleListener;
+import com.sina.book.ui.SinaAppLoginActivity;
+import com.sina.book.ui.widget.BaseDialog;
+import com.sina.book.useraction.Constants;
+import com.sina.book.useraction.UserActionManager;
+import com.sina.book.util.DialogUtils;
+import com.sina.book.util.HttpUtil;
+import com.sina.book.util.LogUtil;
+import com.sina.book.util.LoginUtil;
+import com.sina.book.util.StorageUtil;
+import com.sina.book.util.Util;
+import com.sina.weibo.sdk.auth.AuthInfo;
+import com.sina.weibo.sdk.auth.Oauth2AccessToken;
+import com.sina.weibo.sdk.auth.WeiboAuthListener;
+import com.sina.weibo.sdk.auth.sso.SsoHandler;
+import com.sina.weibo.sdk.exception.WeiboException;
+
+import org.apache.http.HttpStatus;
+
+import java.net.URLEncoder;
+import java.text.SimpleDateFormat;
+
+/**
+ * 登录对话框
+ *
+ * @author Tsimle
+ */
+public class LoginDialog extends BaseDialog implements OnClickListener, ITaskFinishListener {
+
+    private static final String KEY_TAG = "LoginDialog";
+    /**
+     * 表示该请求为了请求UID.
+     */
+    private static final String KEY_QEQUSET_UID = "request_uid";
+
+    /**
+     * 表示该请求为了请求userInfo.
+     */
+    private static final String KEY_QEQUSET_USERINFO = "request_userInfo";
+
+    /**
+     * 传入的Activity必须是BaseActivity或BaseFragmentActivity的子类
+     */
+    private Activity mActivity;
+    private LoginStatusListener mLoginStatusListener;
+
+    /**
+     * SsoHandler （sso处理对象） 仅当sdk支持sso时有效.
+     */
+    private SsoHandler mSsoHandler;
+
+    /**
+     * 用户登录相关信息.
+     */
+    private LoginInfo mLoginInfo;
+
+    private GenericTask mReqLoginInfoTask;
+
+    private static LoginDialog mLoginDialog;
+    private static GenericTask mAutoLoginTask;
+
+    /**
+     * 需要登录，呼起 必须为BaseActivity 或 BaseFragmentActivity
+     */
+    public static void launch(Activity activity, LoginStatusListener loginStatusListener) {
+        if (!(activity instanceof BaseActivity) && !(activity instanceof BaseFragmentActivity)) {
+            throw new IllegalArgumentException("must be BaseActivity or BaseFragment Activity");
+        }
+        release(activity);
+        if (LoginUtil.isValidAccessToken(activity) == LoginUtil.TOKEN_TYPE_LOGIN_SUCCESS) {
+            if (loginStatusListener != null) {
+                loginStatusListener.onSuccess();
+                return;
+            }
+        }
+
+        if (mLoginDialog != null) {
+            try {
+                mLoginDialog.dismiss();
+            } catch (Exception e) {
+
+            }
+            mLoginDialog = null;
+        }
+        mLoginDialog = new LoginDialog(activity);
+        mLoginDialog.setLoginStatusListener(loginStatusListener);
+        mLoginDialog.show();
+    }
+
+    public static void autoLoginLaunch(final Context context, final String uid,
+                                       final LoginStatusListener loginStatusListener) {
+        if (mAutoLoginTask != null) {
+            mAutoLoginTask.cancel(true);
+            mAutoLoginTask = null;
+        }
+        mAutoLoginTask = new GenericTask() {
+            @Override
+            protected TaskResult doInBackground(TaskParams... params) {
+                TaskResult taskResult = new TaskResult(-1, this, null);
+
+                // 取用户信息
+                RequestTask task1 = new RequestTask(new AutoLoginParser());
+                TaskParams task1Params = new TaskParams();
+                String key = "1aeef8acf149e0ba78c19eb225e1e533";
+                String content = uid + "|" + key;
+                String task1url = String.format(ConstantData.URL_GET_ACCESSTOKEN, uid, Util.genMD5Code(content));
+                task1Params.put(RequestTask.PARAM_URL, task1url);
+                task1Params.put(RequestTask.PARAM_HTTP_METHOD, RequestTask.HTTP_GET);
+                TaskResult task1Result = task1.syncExecute(task1Params);
+                taskResult.stateCode = task1Result.stateCode;
+                taskResult.retObj = task1Result.retObj;
+
+                return taskResult;
+            }
+        };
+        mAutoLoginTask.setTaskFinishListener(new ITaskFinishListener() {
+
+            @Override
+            public void onTaskFinished(TaskResult taskResult) {
+                if (taskResult.retObj instanceof LoginInfo) {
+                    LoginInfo ret = (LoginInfo) taskResult.retObj;
+                    // 本地保存LoginInfo
+                    LoginUtil.saveLoginInfo(ret, true);
+
+                    UserActionManager.getInstance().recordEventValue(Constants.IS_LOGIN + "true");
+
+                    // 云端同步登入处理
+                    CloudSyncUtil.getInstance().login();
+
+                    // 开启自动转发微博
+                    StorageUtil.saveBoolean(StorageUtil.KEY_AUTO_WEIBO, true);
+
+                    // 请求包月信息
+                    PaymentMonthMineUtil.getInstance().reqPaymentMonth();
+
+                    LoginUtil.reqBalance(context);
+
+                    if (loginStatusListener != null) {
+                        loginStatusListener.onSuccess();
+                    }
+                } else {
+                    if (loginStatusListener != null) {
+                        loginStatusListener.onFail();
+                    }
+                }
+            }
+        });
+        mAutoLoginTask.execute();
+    }
+
+    public static void weiboLoginLaunch(Activity activity, final LoginStatusListener loginStatusListener) {
+        mLoginDialog = new LoginDialog(activity);
+        mLoginDialog.setLoginStatusListener(loginStatusListener);
+
+        mLoginDialog.toLogin();
+    }
+
+    /**
+     * 释放
+     */
+    public static void release(Activity activity) {
+        if (mLoginDialog != null) {
+            mLoginDialog.dismiss();
+            mLoginDialog = null;
+        }
+    }
+
+    public LoginDialog(Activity activity) {
+        super(activity);
+        mActivity = activity;
+    }
+
+    public void setLoginStatusListener(LoginStatusListener loginStatusListener) {
+        this.mLoginStatusListener = loginStatusListener;
+    }
+
+    @Override
+    protected void init(Bundle savedInstanceState) {
+        setTitle(R.string.login_txt);
+
+        View content = LayoutInflater.from(mActivity).inflate(R.layout.vw_login_dialog, mContentLayout);
+        if (null != content) {
+            View loginWeibo = findViewById(R.id.login_tv_1);
+            View loginSina = findViewById(R.id.login_tv_2);
+            View loginRegist = findViewById(R.id.login_tv_3);
+
+            loginSina.setOnClickListener(this);
+            loginWeibo.setOnClickListener(this);
+            loginRegist.setOnClickListener(this);
+        }
+    }
+
+    // 记录登录账号的途径
+    private String mLoginAccountWay;
+    private String mLoginResult;
+
+    public void onClick(View v) {
+        release(null);
+        int id = v.getId();
+        switch (id) {
+            /**
+             * 微博登陆
+             */
+            case R.id.login_tv_1: {
+                mLoginAccountWay = Constants.KEY_LOGIN_TYPE + 0;
+                // 微博登陆
+                if (Util.isFastDoubleClick()) {
+                    break;
+                }
+                toLogin();
+                // UserActionManager.getInstance().recordEvent(Constants.KEY_LOGIN_TYPE
+                // + 0);
+                break;
+            }
+
+            /**
+             * 读书账号登陆
+             */
+            case R.id.login_tv_2: {
+                mLoginAccountWay = Constants.KEY_LOGIN_TYPE + 1;
+                if (Util.isFastDoubleClick()) {
+                    break;
+                }
+                String sinbookLoginUrl = String.format(ConstantData.URL_SINABOOK_LOGIN, "androidclient");
+                WebviewLoginDialog
+                        .show(mActivity, sinbookLoginUrl, new AuthDialogListener(), WebviewLoginDialog.TYPE_LOGIN);
+                // UserActionManager.getInstance().recordEvent(Constants.KEY_LOGIN_TYPE
+                // + 1);
+                break;
+            }
+
+            /**
+             * 注册微博账号
+             */
+            case R.id.login_tv_3: {
+                if (Util.isFastDoubleClick()) {
+                    break;
+                }
+                toRegist();
+                break;
+            }
+
+//            /**
+//             * 注册新浪账号
+//             */
+//            case R.id.login_tv_3: {
+//                mLoginAccountWay = Constants.KEY_LOGIN_TYPE + 2;
+//                if (Util.isFastDoubleClick()) {
+//                    break;
+//                }
+//
+//                // TODO:
+//                String register = String.format(ConstantData.URL_SINABOOK_LOGIN, "androidclient");
+//                register += "&act=1";
+//                WebviewLoginDialog.show(mActivity, register, new AuthDialogListener(), WebviewLoginDialog.TYPE_REGISTER);
+//                // toLogin1();
+//                // UserActionManager.getInstance().recordEvent(Constants.KEY_LOGIN_TYPE
+//                // + 2);
+//                break;
+//            }
+        }
+    }
+
+    /**
+     * 使用手机新浪读书账号登陆
+     */
+    // private void toLoginForWapSina(String url) {
+    // // 设置新浪读书地址，传递客户端登陆参数 ftype=androidclient
+    // // String sinbookLoginUrl =
+    // // String.format(ConstantData.URL_SINABOOK_LOGIN, "androidclient");
+    // WebviewLoginDialog.show(mActivity, sinbookLoginUrl, new
+    // AuthDialogListener());
+    // }
+
+    /**
+     * 使用微博账号登陆
+     */
+    private void toLogin() {
+        mLoginAccountWay = Constants.KEY_LOGIN_TYPE + 0;
+        if (!HttpUtil.isConnected(mActivity)) {
+            Toast.makeText(mActivity, R.string.network_error, Toast.LENGTH_LONG).show();
+            return;
+        }
+
+//		WeiboAuth weibo = new WeiboAuth(mActivity, ConstantData.AppKey, ConstantData.URL_REDIRECT, ConstantData.SCOPE);
+        // 微博sdk升级到3.1.4
+        AuthInfo weibo = new AuthInfo(mActivity, ConstantData.AppKey, ConstantData.URL_REDIRECT, ConstantData.SCOPE);
+
+        mSsoHandler = new SsoHandler(mActivity, weibo);
+        mSsoHandler.authorize(new AuthDialogListener());// SSO登录
+        // mSsoHandler.quickAuthorize(new AuthDialogListener());// 快速登录
+        if (mActivity instanceof BaseActivity) {
+            ((BaseActivity) mActivity).setLifecycleListener(new ILifecycleListener() {
+                public void onActivityResult(int requestCode, int resultCode, Intent data) {
+                    if (mActivity instanceof SinaAppLoginActivity) {
+                        ((SinaAppLoginActivity) mActivity).isAuthComplete = false;
+                    }
+                    if (data == null) {
+                        data = new Intent();
+                    }
+                    mSsoHandler.authorizeCallBack(requestCode, resultCode, data);
+                }
+            });
+        } else if (mActivity instanceof BaseFragmentActivity) {
+            ((BaseFragmentActivity) mActivity).setLifecycleListener(new ILifecycleListener() {
+                public void onActivityResult(int requestCode, int resultCode, Intent data) {
+                    // TODO: 三星手机在authorizeCallBack报空指针
+                    if (data == null) {
+                        data = new Intent();
+                    }
+                    mSsoHandler.authorizeCallBack(requestCode, resultCode, data);
+                }
+            });
+        }
+
+    }
+
+    /**
+     * 使用微博账号注册
+     */
+    private void toRegist() {
+        mLoginAccountWay = Constants.KEY_LOGIN_TYPE + 0;
+        if (!HttpUtil.isConnected(mActivity)) {
+            Toast.makeText(mActivity, R.string.network_error, Toast.LENGTH_SHORT).show();
+            return;
+        }
+
+        AuthInfo weibo = new AuthInfo(mActivity, ConstantData.AppKey, ConstantData.URL_REDIRECT, ConstantData.SCOPE);
+
+        mSsoHandler = new SsoHandler(mActivity, weibo);
+        // 手机号注册
+        mSsoHandler.registerOrLoginByMobile("", new AuthDialogListener());
+        if (mActivity instanceof BaseActivity) {
+            ((BaseActivity) mActivity).setLifecycleListener(new ILifecycleListener() {
+                public void onActivityResult(int requestCode, int resultCode, Intent data) {
+                    if (mActivity instanceof SinaAppLoginActivity) {
+                        ((SinaAppLoginActivity) mActivity).isAuthComplete = false;
+                    }
+                    if (data == null) {
+                        data = new Intent();
+                    }
+                    mSsoHandler.authorizeCallBack(requestCode, resultCode, data);
+                }
+            });
+        } else if (mActivity instanceof BaseFragmentActivity) {
+            ((BaseFragmentActivity) mActivity).setLifecycleListener(new ILifecycleListener() {
+                public void onActivityResult(int requestCode, int resultCode, Intent data) {
+                    // TODO: 三星手机在authorizeCallBack报空指针
+                    if (data == null) {
+                        data = new Intent();
+                    }
+                    mSsoHandler.authorizeCallBack(requestCode, resultCode, data);
+                }
+            });
+        }
+    }
+
+    /**
+     * 微博弹框登陆
+     */
+    // private void toLogin1() {
+    // WeiboAuth weibo = new WeiboAuth(mActivity, ConstantData.AppKey,
+    // ConstantData.URL_REDIRECT, ConstantData.SCOPE);
+    // weibo.anthorize(new AuthDialogListener());
+    // }
+    private void sendRecordEvent() {
+        UserActionManager.getInstance().recordEvent(mLoginAccountWay, mLoginResult);
+    }
+
+    /**
+     * 授权Listener.
+     *
+     * @see WeiboAuthListener
+     */
+    public class AuthDialogListener implements WeiboAuthListener {
+
+        public void onComplete(Bundle values) {
+            mLoginInfo = new LoginInfo();
+            String gsid = values.getString("gsid");
+            // 登录选择"用新浪读书账号登录"返回
+            if (gsid != null && gsid.length() > 0) {
+                // 读书账号登陆
+                mLoginInfo.getUserInfo().setGsid(gsid);
+                // LoginUtil.saveLoginGsid(gsid);
+
+                // 显示dialog
+                Activity activity = SinaBookApplication.getTopActivity();
+                DialogUtils.showProgressDialog(activity, "登录中，请稍候...", true, false, new OnCancelListener() {
+
+                    public void onCancel(DialogInterface dialog) {
+                        // LoginUtil.clearLoginInfo(SinaBookApplication.gContext);
+                        mLoginResult = "CANCEL";
+                        sendRecordEvent();
+                    }
+                }, new OnDismissListener() {
+                    public void onDismiss(DialogInterface dialog) {
+                    }
+                });
+
+                reqUserInfo(gsid);
+            } else {
+                // 登录选择"用新浪微博账号登录"返回
+                /**
+                 * 得到accessToken认证的相关 参数
+                 */
+                String token = values.getString("access_token");
+                String expires_in = values.getString("expires_in");
+                String uId = values.getString("uid");
+
+                Oauth2AccessToken accessToken = Oauth2AccessToken.parseAccessToken(values);
+                // Oauth2AccessToken accessToken = new Oauth2AccessToken(token,
+                // expires_in);
+
+                /**
+                 * accessToken认证
+                 */
+                if (accessToken.isSessionValid()) {
+                    String date = new SimpleDateFormat("yyyy/MM/dd HH:mm:ss").format(new java.util.Date(accessToken
+                            .getExpiresTime()));
+
+                    LogUtil.d(KEY_TAG, "认证成功: \r\n access_token: " + token + "\r\n" + "expires_in: " + expires_in
+                            + "\r\n有效期：" + date + "\r\n uId：" + uId);
+
+                    mLoginInfo.setAccessToken(token);
+                    mLoginInfo.setExpires(expires_in);
+
+                    mLoginInfo.setExpires_time(accessToken.getExpiresTime());
+                    mLoginInfo.setUID(uId);
+
+                    DialogUtils.showProgressDialog(mActivity, "登录中，请稍候...", true, false, new OnCancelListener() {
+                        public void onCancel(DialogInterface dialog) {
+                            // LoginUtil.clearLoginInfo(SinaBookApplication.gContext);
+                            mLoginResult = "CANCEL";
+                            sendRecordEvent();
+                        }
+                    }, new OnDismissListener() {
+
+                        public void onDismiss(DialogInterface dialog) {
+                            if (mReqLoginInfoTask != null) {
+                                mReqLoginInfoTask.cancel(true);
+                                mReqLoginInfoTask = null;
+                            }
+                        }
+                    });
+
+                    /**
+                     * 请求user相关信息
+                     */
+                    reqUserData();
+                } else {
+                    if (mLoginStatusListener != null) {
+                        mLoginStatusListener.onFail();
+                    }
+                    Toast.makeText(mActivity, R.string.login_failed, Toast.LENGTH_SHORT).show();
+                    mLoginResult = "FAIL";
+                    sendRecordEvent();
+                }
+            }
+        }
+
+        public void onCancel() {
+            Toast.makeText(mActivity, R.string.auth_cancel, Toast.LENGTH_SHORT).show();
+            if (mLoginStatusListener != null) {
+                mLoginStatusListener.onFail();
+            }
+
+            mLoginResult = "CANCEL";
+            sendRecordEvent();
+        }
+
+        @Override
+        public void onWeiboException(WeiboException e) {
+            String error = e.getMessage();
+            if (error != null) {
+                Toast.makeText(mActivity, mActivity.getString(R.string.auth_exception) + e.getMessage(),
+                        Toast.LENGTH_SHORT).show();
+            }
+
+            if (mLoginStatusListener != null) {
+                mLoginStatusListener.onFail();
+            }
+            mLoginResult = "FAIL";
+            sendRecordEvent();
+        }
+
+    }
+
+    private GenericTask mReqUserInfo = null;
+    private GenericTask mReqUserToken = null;
+
+    private boolean reqUserInfoWithToken(String tokenid) {
+        String url = String.format(ConstantData.URL_ACCOUNT, tokenid);
+        RequestTask mBalanceTask = new RequestTask(new BalanceParser());
+        TaskParams params = new TaskParams();
+        params.put(RequestTask.PARAM_URL, url);
+        params.put(RequestTask.PARAM_HTTP_METHOD, RequestTask.HTTP_GET);
+
+        TaskResult result = mBalanceTask.syncExecute(params);
+        if (result != null && result.stateCode == HttpStatus.SC_OK) {
+            if (result.retObj instanceof UserInfoUb) {
+                UserInfoUb ub = (UserInfoUb) result.retObj;
+                if (mLoginInfo != null) {
+                    mLoginInfo.setBalance(ub.getBalance());
+                    mLoginInfo.getUserInfoRole().setRoleName(ub.getRoleName());
+                    mLoginInfo.getUserInfoRole().setRole(ub.getRole());
+                    mLoginInfo.setUID(ub.getUid());
+                    mLoginInfo.getUserInfo().setuName(ub.getName());
+
+                    // 活动信息即时生效，不存到本地
+                    // mLoginInfo.setActivity(ub.getActivityTip(),
+                    // ub.getActivityName(), ub.getActivityUrl(),
+                    // ub.getActivityEndTime());
+                    mLoginInfo.setActivitys(ub.getActivitys());
+
+                    // // 本地保存balance
+                    // LoginUtil.saveBalance(ub.getBalance());
+                    // // 本地保存role
+                    // LoginUtil.saveRole(ub.getRoleName(), ub.getRole());
+                }
+                return true;
+            } else {
+                return false;
+            }
+        } else {
+            return false;
+        }
+    }
+
+    // 获取用户信息
+    public void reqUserInfo(String gsid) {
+        if (mReqUserInfo != null) {
+            mReqUserInfo.cancel(true);
+            mReqUserInfo = null;
+        }
+
+//        String url = String.format(ConstantData.URL_GSID, URLEncoder.encode(gsid));
+        String url = String.format(ConstantData.URL_GSID, gsid);
+        mReqUserInfo = new RequestTask(new BalanceParser());
+        TaskParams params = new TaskParams();
+        params.put(RequestTask.PARAM_URL, url);
+        params.put(RequestTask.PARAM_HTTP_METHOD, RequestTask.HTTP_GET);
+        mReqUserInfo.setTaskFinishListener(new ITaskFinishListener() {
+            public void onTaskFinished(TaskResult taskResult) {
+                if (taskResult.retObj instanceof UserInfoUb) {
+                    UserInfoUb ub = (UserInfoUb) taskResult.retObj;
+                    if (mLoginInfo != null) {
+                        mLoginInfo.setBalance(ub.getBalance());
+                        mLoginInfo.getUserInfoRole().setRoleName(ub.getRoleName());
+                        mLoginInfo.getUserInfoRole().setRole(ub.getRole());
+                        mLoginInfo.setUID(ub.getUid());
+                        mLoginInfo.getUserInfo().setuName(ub.getName());
+
+                        // 活动信息即时生效，不存到本地
+                        // mLoginInfo.setActivity(ub.getActivityTip(),
+                        // ub.getActivityName(), ub.getActivityUrl(),
+                        // ub.getActivityEndTime());
+
+                        mLoginInfo.setActivitys(ub.getActivitys());
+
+                        // 根据uid获取tokenid
+                        reqUserToken(ub.getUid());
+                    }
+                } else {
+                    onFail();
+                }
+                mReqUserInfo = null;
+            }
+        });
+        mReqUserInfo.execute(params);
+    }
+
+    // 根据uid获取tokenid
+    private void reqUserToken(String uid) {
+        if (mReqUserToken != null) {
+            return;
+        }
+
+        mReqUserToken = new RequestTask(new AutoLoginParser());
+        TaskParams task1Params = new TaskParams();
+        String key = "1aeef8acf149e0ba78c19eb225e1e533";
+        String content = uid + "|" + key;
+        String task1url = String.format(ConstantData.URL_GET_ACCESSTOKEN, uid, Util.genMD5Code(content));
+        task1Params.put(RequestTask.PARAM_URL, task1url);
+        task1Params.put(RequestTask.PARAM_HTTP_METHOD, RequestTask.HTTP_GET);
+        mReqUserToken.setTaskFinishListener(new ITaskFinishListener() {
+            public void onTaskFinished(TaskResult taskResult) {
+                if (taskResult.retObj instanceof LoginInfo) {
+                    LoginInfo retLoginInfo = (LoginInfo) taskResult.retObj;
+                    if (retLoginInfo.getAccessToken() != null
+                            && (retLoginInfo.getExpires_time() == 0 || System.currentTimeMillis() < retLoginInfo
+                            .getExpires_time())) {
+                        // 1 更新内存中的登录信息
+                        if (null != mLoginInfo) {
+                            mLoginInfo.setAccessToken(retLoginInfo.getAccessToken());
+                            mLoginInfo.setExpires_time(retLoginInfo.getExpires_time());
+                            mLoginInfo.setExpires(retLoginInfo.getExpires());
+                            mLoginInfo.getUserInfo().setUserProfileUrl(retLoginInfo.getUserInfo().getUserProfileUrl());
+                            String name = retLoginInfo.getUserInfo().getuName();
+                            if (name != null && name.length() > 0) {
+                                mLoginInfo.getUserInfo().setuName(name);
+                            }
+                        }
+
+                        // 本地保存
+                        int result = LoginUtil.saveLoginInfo(mLoginInfo, false);
+                        if (result == 1) {
+                            StorageUtil.saveBoolean("showbookcard", false);
+                        } else if (result == 2) {
+                            StorageUtil.saveBoolean("showbookcard", true);
+                        }
+
+                        UserActionManager.getInstance().recordEventValue(Constants.IS_LOGIN + "true");
+
+                        // 放在CloudSyncUtil.getInstance().login();前执行
+                        onSuccess(false);
+                        // 云端同步登入处理
+                        CloudSyncUtil.getInstance().login();
+
+                        // 开启自动转发微博
+                        StorageUtil.saveBoolean(StorageUtil.KEY_AUTO_WEIBO, true);
+
+                        // 请求包月信息
+                        PaymentMonthMineUtil.getInstance().reqPaymentMonth();
+
+                    } else {
+                        onFail();
+                    }
+                    mReqUserToken = null;
+                }
+            }
+        });
+
+        mReqUserToken.execute(task1Params);
+    }
+
+    @Override
+    public void onTaskFinished(TaskResult taskResult) {
+        if (taskResult != null && taskResult.stateCode == HttpStatus.SC_OK) {
+            GenericTask task = taskResult.task;
+
+            if (KEY_QEQUSET_UID.equalsIgnoreCase(task.getType())) {
+                /**
+                 * 获取uId
+                 */
+                LogUtil.d(KEY_TAG, "获取uId!");
+                if (taskResult.retObj instanceof String) {
+                    String uId = (String) taskResult.retObj;
+                    mLoginInfo.setUID(uId);
+                    reqUserData();
+                    return;
+                } else {
+                    onFail();
+                    return;
+                }
+            } else if (KEY_QEQUSET_USERINFO.equalsIgnoreCase(task.getType())) {
+                /**
+                 * 获取userInfo
+                 */
+                if (taskResult.retObj instanceof UserInfo) {
+                    // LogUtil.d(KEY_TAG, "获取UserInfo!");
+                    // UserInfo userInfo = (UserInfo) taskResult.retObj;
+                    // mLoginInfo.setUserInfo(userInfo);
+                    // 本地保存LoginInfo
+                    int cardResult = LoginUtil.saveLoginInfo(mLoginInfo, false);
+
+                    if (cardResult == 1) {
+                        StorageUtil.saveBoolean("showbookcard", false);
+                    } else if (cardResult == 2) {
+                        StorageUtil.saveBoolean("showbookcard", true);
+                    }
+
+                    UserActionManager.getInstance().recordEventValue(Constants.IS_LOGIN + "true");
+
+                    // 开启自动转发微博,onSuccess中会更新自动转发微博UI
+                    StorageUtil.saveBoolean(StorageUtil.KEY_AUTO_WEIBO, true);
+
+                    // 放在CloudSyncUtil.getInstance().login();前执行
+                    onSuccess(true);
+                    // 云端同步登入处理
+                    CloudSyncUtil.getInstance().login();
+
+
+                    // 请求包月信息
+                    PaymentMonthMineUtil.getInstance().reqPaymentMonth();
+                } else {
+                    onFail();
+                }
+            }
+        } else {
+            onFail();
+        }
+        mReqLoginInfoTask = null;
+    }
+
+    private void onFail() {
+        DialogUtils.dismissProgressDialog();
+        if (mLoginStatusListener != null) {
+            mLoginStatusListener.onFail();
+        }
+
+        if (!HttpUtil.isConnected(mActivity)) {
+            Toast.makeText(mActivity, R.string.network_error, Toast.LENGTH_LONG).show();
+        } else {
+            Toast.makeText(mActivity, R.string.login_failed, Toast.LENGTH_SHORT).show();
+        }
+
+        if (mActivity instanceof BaseActivity) {
+            ((BaseActivity) mActivity).setLifecycleListener(null);
+        } else if (mActivity instanceof BaseFragmentActivity) {
+            ((BaseFragmentActivity) mActivity).setLifecycleListener(null);
+        }
+        mLoginResult = "FAIL";
+        sendRecordEvent();
+    }
+
+    private void onSuccess(boolean isWeiboLogin) {
+
+        CloudSyncUtil.getInstance().setFirstLoginAndSendOneSyncCompleteBroadcast(true);
+
+        // if (isWeiboLogin) {
+        // // LoginUtil.reqBalance(mActivity);
+        //
+        //
+        // // 发送用户信息更新通知
+        // Intent intent = new Intent();
+        // intent.setAction(ACTION_INFO_UPDATE);
+        // context.sendBroadcast(intent);
+        //
+        // } else {
+        // // 发送用户信息更新通知
+        // Intent intent = new Intent();
+        // intent.setAction(LoginUtil.ACTION_INFO_UPDATE);
+        // mActivity.sendBroadcast(intent);
+        // }
+
+        // CloudSyncUtil.getInstance().stopSyncService();
+        // CloudSyncUtil.getInstance().startSyncService();
+        // CloudSyncUtil.getInstance().setIsQuitAppOrLogoutAcount(false);
+
+        // 发送用户信息更新通知
+        Intent intent = new Intent();
+        intent.setAction(LoginUtil.ACTION_INFO_UPDATE);
+        mActivity.sendBroadcast(intent);
+
+        // CloudSyncUtil.getInstance().login();
+        if (mLoginStatusListener != null) {
+            mLoginStatusListener.onSuccess();
+        }
+        DialogUtils.dismissProgressDialog();
+        if (mActivity instanceof BaseActivity) {
+            ((BaseActivity) mActivity).setLifecycleListener(null);
+        } else if (mActivity instanceof BaseFragmentActivity) {
+            ((BaseFragmentActivity) mActivity).setLifecycleListener(null);
+        }
+
+        // TODO 针对二维码推广包的用户，在第一次登录的时候需要发送请求，请求中奖信息
+        String uid = LoginUtil.getLoginInfo().getUID();
+        int channelCode = ConstantData.getChannelCode(SinaBookApplication.gContext);
+        if ((channelCode == ConstantData.CHANNEL_QUAN_GIFT || channelCode == ConstantData.CHANNEL_QUAN_GIFT_UCBROWSER
+                || channelCode == ConstantData.CHANNEL_QUAN_GIFT_360BROWSER
+                || channelCode == ConstantData.CHANNEL_QUAN_GIFT_XUEERSI
+                || channelCode == ConstantData.CHANNEL_QUAN_GIFT_SOUGOUBROWSER
+                || channelCode == ConstantData.CHANNEL_QUAN_GIFT_OPERABROWSER || channelCode == ConstantData.CHANNEL_QUAN_GIFT_360)
+                && !TextUtils.isEmpty(uid)) {
+            boolean isFirstLogin = StorageUtil.getBoolean("channel_activity_user_" + uid, true);
+            if (isFirstLogin) {
+                ChannelActivityUtil.start(uid);
+            }
+        }
+
+        mLoginResult = "SUCCESS";
+        sendRecordEvent();
+
+        // 登录成功，自动发起一次书架信息的章节更新请求。
+//		UpdateChapterManager.getInstance().checkNewChapter(UpdateChapterManager.REQ_AUTO);
+    }
+
+    /**
+     * Req user data.
+     */
+    private void reqUserData() {
+        if (mReqLoginInfoTask != null) {
+            mReqLoginInfoTask.cancel(true);
+            mReqLoginInfoTask = null;
+        }
+
+        if (Util.isNullOrEmpty(mLoginInfo.getUID())) {
+            /**
+             * 请求uId
+             */
+            LogUtil.d(KEY_TAG, "quest uId!");
+            StringBuilder urlSb = new StringBuilder(ConstantData.WEIBO_GET_UID);
+            if (!ConstantData.WEIBO_GET_UID.contains("?")) {
+                urlSb.append("?");
+            } else {
+                urlSb.append("&");
+            }
+            urlSb.append("access_token=").append(mLoginInfo.getAccessToken());
+            mReqLoginInfoTask = new RequestTask(new UserIdParser());
+            mReqLoginInfoTask.setType(KEY_QEQUSET_UID);
+            TaskParams params = new TaskParams();
+            params.put(RequestTask.PARAM_URL, urlSb.toString());
+            params.put(RequestTask.PARAM_HTTP_METHOD, RequestTask.HTTP_GET);
+            mReqLoginInfoTask.setTaskFinishListener(this);
+            mReqLoginInfoTask.execute(params);
+        } else {
+            /**
+             * 请求userInfo
+             */
+            mReqLoginInfoTask = new GenericTask() {
+
+                @Override
+                protected TaskResult doInBackground(TaskParams... params) {
+                    TaskResult taskResult = new TaskResult(-1, this, null);
+
+                    // 1 取用户信息
+                    RequestTask task1 = new RequestTask(new UserInfoParser());
+                    TaskParams task1Params = new TaskParams();
+                    String task1url = String.format(ConstantData.URL_GET_USER_INFO_OUR, mLoginInfo.getAccessToken(),
+                            mLoginInfo.getUID());
+                    task1Params.put(RequestTask.PARAM_URL, task1url);
+                    task1Params.put(RequestTask.PARAM_HTTP_METHOD, RequestTask.HTTP_GET);
+                    TaskResult task1Result = task1.syncExecute(task1Params);
+                    taskResult.stateCode = task1Result.stateCode;
+                    taskResult.retObj = task1Result.retObj;
+
+                    if (taskResult.retObj instanceof UserInfo) {
+                        UserInfo originUserInfo = (UserInfo) taskResult.retObj;
+                        mLoginInfo.setUserInfo(originUserInfo);
+
+                        // 2 当安装包后，首次登陆，获取自动下载的书籍
+                        if (StorageUtil.isShowGuide()) {
+
+                            RequestTask task2 = new RequestTask(new AutoDownBidParser());
+                            TaskParams task2Params = new TaskParams();
+                            String task2url = ConstantData.URL_GET_DOWN_BID + "?access_token="
+                                    + mLoginInfo.getAccessToken();
+                            task2Params.put(RequestTask.PARAM_URL, task2url);
+                            task2Params.put(RequestTask.PARAM_HTTP_METHOD, RequestTask.HTTP_GET);
+                            TaskResult task2Result = task2.syncExecute(task2Params);
+                            if (task2Result.retObj instanceof String) {
+                                String bid = (String) task2Result.retObj;
+
+                                if (!Util.isNullOrEmpty(bid)) {
+                                    originUserInfo.setAutoDownBid(bid);
+                                }
+                            }
+                        }
+                    } else {
+                        taskResult.retObj = null;
+                        mLoginInfo = null;
+                        LoginUtil.i.clearLoginInfo(SinaBookApplication.gContext, "LoginDialog->1");
+                        mLoginResult = "FAIL";
+                        sendRecordEvent();
+                        return taskResult;
+                    }
+
+                    // 3, 通过tokenid获取gsid
+                    LoginUtil.saveLoginInfo(mLoginInfo, false);
+                    String gsid = LoginUtil.i.syncRequestGsidHttpClient().getGsid();
+                    if (gsid == null || gsid.length() == 0) {
+//                        taskResult.retObj = null;
+//                        mLoginInfo = null;
+//                        LoginUtil.i.clearLoginInfo(SinaBookApplication.gContext, "LoginDialog->2");
+//                        mLoginResult = "FAIL";
+//                        sendRecordEvent();
+//                        return taskResult;
+                    } else {
+                        mLoginInfo.getUserInfo().setGsid(gsid);
+                    }
+                    // if (taskResult.retObj instanceof UserInfo) {
+                    // UserInfo uinfo = (UserInfo) taskResult.retObj;
+                    // uinfo.setGsid(gsid);
+                    // }
+
+                    boolean result = reqUserInfoWithToken(mLoginInfo.getAccessToken());
+                    if (!result) {
+                        taskResult.retObj = null;
+                        mLoginInfo = null;
+                        LoginUtil.i.clearLoginInfo(SinaBookApplication.gContext, "LoginDialog->3");
+                        mLoginResult = "FAIL";
+                        sendRecordEvent();
+                    }
+                    return taskResult;
+                }
+            };
+            mReqLoginInfoTask.setType(KEY_QEQUSET_USERINFO);
+            mReqLoginInfoTask.setTaskFinishListener(this);
+            mReqLoginInfoTask.execute();
+        }
+    }
+
+    public interface LoginStatusListener {
+        public void onSuccess();
+
+        public void onFail();
+    }
+}

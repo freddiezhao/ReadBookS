@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="fill_parent"
+    android:layout_height="wrap_content"
+    android:clickable="true"
+    android:gravity="center"
+    android:orientation="vertical" >
+
+    <EditText
+        android:id="@+id/edt_my_comments_content"
+        android:layout_width="fill_parent"
+        android:layout_height="46.67dp"
+        android:background="@drawable/comment_inputbox"
+        android:gravity="center_vertical"
+        android:hint="@string/comments_my_hint"
+        android:paddingLeft="45dp"
+        android:textColorHint="@color/add_comment_input_hint"
+        android:textSize="16sp"
+        android:focusable="false" />
+
+</LinearLayout>

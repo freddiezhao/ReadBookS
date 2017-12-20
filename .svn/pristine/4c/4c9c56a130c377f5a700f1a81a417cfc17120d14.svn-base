@@ -1,0 +1,89 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:paddingBottom="10.67dp" >
+
+    <TextView
+        android:id="@+id/recommend_author_star_title"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentLeft="true"
+        android:gravity="left"
+        android:paddingBottom="14.67dp"
+        android:paddingLeft="14.67dp"
+        android:text="@string/recommend_star_author"
+        android:textColor="@color/recommend_title_color"
+        android:textSize="14.67sp" />
+
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="1dip"
+        android:visibility="gone"
+        android:layout_below="@+id/recommend_author_star_title"
+        android:background="#e1e1e1" />
+
+    <RelativeLayout
+        android:id="@+id/recommend_author_star_item"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/recommend_author_star_title"
+        android:layout_marginLeft="1.5dip"
+        android:layout_marginRight="1.5dip"
+        android:addStatesFromChildren="true"
+        android:background="@drawable/list_item_bg1" >
+
+        <ImageView
+            android:id="@+id/recommend_author_star_img"
+            android:layout_width="100dip"
+            android:layout_height="100dip"
+            android:layout_margin="14.67sp"
+            android:src="@drawable/main_avatar_defaut" />
+
+        <ImageView
+            android:id="@+id/recommend_author_star_arrow"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignBottom="@+id/recommend_author_star_img"
+            android:layout_alignParentRight="true"
+            android:layout_alignTop="@+id/recommend_author_star_img"
+            android:layout_marginLeft="14.67sp"
+            android:layout_marginRight="14.67sp"
+            android:src="@drawable/more_item_arrow" />
+
+        <TextView
+            android:id="@+id/recommend_author_star_name"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignTop="@+id/recommend_author_star_img"
+            android:layout_toLeftOf="@+id/recommend_author_star_arrow"
+            android:layout_toRightOf="@+id/recommend_author_star_img"
+            android:singleLine="true"
+            android:textAppearance="?android:attr/textAppearanceLarge"
+            android:textColor="#000"
+            android:textSize="15.67sp" />
+
+        <TextView
+            android:id="@+id/recommend_author_star_desp"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/recommend_author_star_name"
+            android:layout_marginTop="14.67sp"
+            android:layout_toLeftOf="@+id/recommend_author_star_arrow"
+            android:layout_toRightOf="@+id/recommend_author_star_img"
+            android:ellipsize="end"
+            android:maxLines="3"
+            android:textColor="@color/recommend_title_more"
+            android:textSize="13.67sp" />
+
+        <View
+            android:id="@+id/recommend_author_star_bottom_divider"
+            android:layout_width="match_parent"
+            android:layout_height="1dip"
+            android:layout_below="@+id/recommend_author_star_img"
+            android:layout_marginLeft="14.67sp"
+            android:layout_marginRight="14.67sp"
+            android:background="#e1e1e1" />
+    </RelativeLayout>
+
+</RelativeLayout>

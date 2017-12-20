@@ -1,0 +1,85 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/catalog_tag_layout"
+    style="@style/PublicBg"
+    android:layout_width="fill_parent"
+    android:layout_height="fill_parent" >
+
+    <RelativeLayout
+        android:id="@+id/title"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="13.33dp"
+        android:layout_marginRight="13.33dp" >
+
+        <ImageView
+            android:id="@+id/go_btn"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentLeft="true"
+            android:layout_marginTop="@dimen/catalog_go_btn_margin_top"
+            android:contentDescription="@null"
+            android:src="@drawable/back_btn_bg" />
+
+        <TextView
+            android:id="@+id/book_name"
+            android:layout_width="233.33dp"
+            android:layout_height="wrap_content"
+            android:layout_centerHorizontal="true"
+            android:layout_marginTop="@dimen/catalog_tag_book_title_margin_top"
+            android:ellipsize="end"
+            android:focusable="true"
+            android:focusableInTouchMode="true"
+            android:gravity="center_horizontal"
+            android:maxLines="2"
+            android:textColor="@color/book_tag_title_color"
+            android:textSize="@dimen/catalog_tag_book_title_size" />
+
+        <TextView
+            android:id="@+id/book_author"
+            android:layout_width="233.33dp"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/book_name"
+            android:layout_centerHorizontal="true"
+            android:layout_marginTop="@dimen/catalog_tag_book_author_margin_top"
+            android:focusable="true"
+            android:focusableInTouchMode="true"
+            android:gravity="center_horizontal"
+            android:singleLine="true"
+            android:textColor="@color/book_tag_author_color"
+            android:textSize="@dimen/catalog_tag_book_author_size" />
+    </RelativeLayout>
+
+    <ImageView
+        android:id="@+id/book_tag_divider"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/title"
+        android:layout_marginLeft="13.33dp"
+        android:layout_marginRight="13.33dp"
+        android:layout_marginTop="21.33dp"
+        android:contentDescription="@null" />
+
+    <RelativeLayout
+        android:id="@+id/total_layout"
+        android:layout_width="fill_parent"
+        android:layout_height="fill_parent"
+        android:layout_below="@id/book_tag_divider"
+        android:paddingLeft="13.33dp"
+        android:paddingRight="13.33dp" >
+
+        <RelativeLayout
+            android:id="@+id/lv_chapter"
+            android:layout_width="fill_parent"
+            android:layout_height="fill_parent" />
+
+        <include
+            android:id="@+id/lv_chapter_top"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:layout_alignTop="@id/lv_chapter"
+            layout="@layout/vw_chapter_group"
+            android:visibility="gone" />
+    </RelativeLayout>
+
+</RelativeLayout>

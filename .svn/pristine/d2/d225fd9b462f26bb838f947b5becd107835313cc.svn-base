@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    style="@style/PublicBg"
+    android:layout_width="fill_parent"
+    android:layout_height="fill_parent"
+    android:orientation="vertical" >
+
+    <include
+        android:id="@+id/search_bar"
+        android:layout_width="fill_parent"
+        android:layout_height="47dp"
+        layout="@layout/vw_search_bar" />
+
+    <RelativeLayout
+        android:layout_width="fill_parent"
+        android:layout_height="fill_parent"
+        android:orientation="vertical" >
+
+        <TextView
+            android:id="@+id/tv_result_txt"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="7dp"
+            android:layout_marginRight="7dp"
+            android:gravity="center"
+            android:textColor="@color/total_info_color"
+            android:textSize="15sp"
+            android:visibility="gone" />
+
+        <com.sina.book.ui.widget.XListView
+            android:id="@+id/lv_result"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/tv_result_txt"
+            android:cacheColorHint="#00000000"
+            android:divider="@null"
+            android:fadingEdge="none"
+            android:listSelector="#00000000"
+            android:scrollbars="none" />
+
+        <include
+            android:id="@+id/waitingLayout"
+            layout="@layout/vw_generic_progress_view"
+            android:visibility="gone" />
+
+        <include
+            android:id="@+id/error_layout"
+            layout="@layout/vw_error"
+            android:visibility="gone" />
+    </RelativeLayout>
+
+</LinearLayout>

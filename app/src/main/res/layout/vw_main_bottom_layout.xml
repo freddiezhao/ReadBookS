@@ -1,0 +1,271 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:viewFlow="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="vertical" >
+
+    <!-- android:background="@drawable/main_pannel_bg2" -->
+    <!-- android:background="@color/main_bottom_bg_color" -->
+
+    <View
+        android:id="@+id/book_book_type"
+        android:layout_width="30dip"
+        android:layout_height="30dip"
+        android:background="@drawable/main_recommand_icon2" />
+
+    <LinearLayout
+        android:id="@+id/book_layout"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="8dp"
+        android:layout_marginRight="8dp"
+        android:layout_marginTop="30dip"
+        android:orientation="vertical" >
+
+        <!-- android:background="@drawable/card_whole" -->
+
+        <TextView
+            android:id="@+id/book_layout_title"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="14.67dp"
+            android:layout_marginTop="12dp"
+            android:text="@string/main_recommend"
+            android:textColor="@color/main_bottom_title_color"
+            android:textSize="@dimen/main_bottom_title_font"
+            android:visibility="gone" />
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="122dp"
+            android:layout_marginLeft="14.67dp"
+            android:layout_marginRight="14.67dp"
+            android:orientation="horizontal" >
+
+            <RelativeLayout
+                android:id="@+id/book_cover_layout"
+                android:layout_width="67dp"
+                android:layout_height="94dp"
+                android:layout_marginTop="18dp"
+                android:background="@drawable/main_book_bg"
+                android:paddingBottom="@dimen/book_item_paddingBottom"
+                android:paddingLeft="@dimen/book_item_paddingLeft"
+                android:paddingRight="@dimen/book_item_paddingRight" >
+
+                <ImageView
+                    android:id="@+id/book_cover"
+                    android:layout_width="fill_parent"
+                    android:layout_height="fill_parent"
+                    android:contentDescription="@null"
+                    android:scaleType="fitXY"
+                    android:src="@drawable/sinabook" />
+
+                <!-- 找不到封皮时，显示的书名 -->
+
+                <com.sina.book.ui.widget.EllipsizeTextView
+                    android:id="@+id/book_cover_text"
+                    android:layout_width="50dp"
+                    android:layout_height="wrap_content"
+                    android:layout_centerHorizontal="true"
+                    android:layout_gravity="center"
+                    android:layout_marginTop="10dp"
+                    android:ellipsize="end"
+                    android:gravity="center"
+                    android:lineSpacingExtra="0dp"
+                    android:lineSpacingMultiplier="1"
+                    android:maxLines="2"
+                    android:textColor="@color/book_detail_font_color"
+                    android:textSize="10.67sp" />
+            </RelativeLayout>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="13.33dp"
+                android:layout_marginTop="13dp"
+                android:orientation="vertical" >
+
+                <TextView
+                    android:id="@+id/book_title"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:ellipsize="end"
+                    android:singleLine="true"
+                    android:textColor="@color/main_bottom_book_coolor"
+                    android:textSize="@dimen/main_bottom_title_font" />
+
+                <TextView
+                    android:id="@+id/book_author"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="4dp"
+                    android:ellipsize="end"
+                    android:singleLine="true"
+                    android:textColor="@color/main_bottom_content_color"
+                    android:textSize="@dimen/main_bottom_content_font" />
+
+                <TextView
+                    android:id="@+id/book_content"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="2dp"
+                    android:ellipsize="end"
+                    android:singleLine="true"
+                    android:textColor="@color/main_bottom_content_color"
+                    android:textSize="@dimen/main_bottom_content_font" />
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="29dp"
+                    android:layout_marginTop="5dp"
+                    android:orientation="horizontal" >
+
+                    <TextView
+                        android:id="@+id/book_read_btn"
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:layout_marginRight="6dp"
+                        android:layout_weight="1"
+                        android:background="@drawable/selector_btn_bg_red"
+                        android:gravity="center"
+                        android:text="@string/main_read"
+                        android:textColor="@color/white"
+                        android:textSize="15sp" />
+
+                    <TextView
+                        android:id="@+id/book_down_btn"
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:layout_marginLeft="6dp"
+                        android:layout_weight="1"
+                        android:background="@drawable/selector_btn_bg_gray"
+                        android:gravity="center"
+                        android:text="@string/download"
+                        android:textColor="@drawable/selector_btn_text_color_for_gray"
+                        android:textSize="15sp" />
+                </LinearLayout>
+            </LinearLayout>
+        </LinearLayout>
+    </LinearLayout>
+
+    <LinearLayout
+        android:id="@+id/drag_layout"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical" >
+
+        <!-- android:layout_marginTop="2dp" -->
+
+        <ImageView
+            android:id="@+id/drag_img"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:contentDescription="@null"
+            android:scaleType="centerInside" />
+        <!-- android:src="@drawable/handle" -->
+
+
+        <!-- android:layout_marginBottom="8dp" -->
+
+        <RelativeLayout
+            android:id="@+id/drag_title_layout"
+            android:layout_width="match_parent"
+            android:layout_height="30dip"
+            android:layout_marginLeft="8dp"
+            android:layout_marginRight="8dp" >
+
+            <!-- android:background="@drawable/card_main" -->
+
+
+            <!-- android:layout_marginTop="12dp" -->
+
+
+            <!-- android:layout_marginLeft="14.67dp" -->
+
+            <TextView
+                android:id="@+id/drag_title_text"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/main_recommend"
+                android:textColor="@color/main_bottom_title_color"
+                android:textSize="@dimen/main_bottom_title_font"
+                android:visibility="gone" />
+
+            <!-- android:layout_toRightOf="@id/drag_title_text" -->
+            <!-- android:layout_marginLeft="8dp" -->
+            <!-- android:layout_marginRight="8dp" -->
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_centerInParent="true"
+                android:gravity="center"
+                android:orientation="vertical" >
+
+                <TextView
+                    android:id="@+id/drag_title_content"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:ellipsize="end"
+                    android:paddingLeft="20dip"
+                    android:paddingRight="20dip"
+                    android:singleLine="true"
+                    android:text="@string/main_sina_store"
+                    android:textColor="@color/main_bottom_book_coolor"
+                    android:textSize="16sp" />
+
+                <TextView
+                    android:id="@+id/drag_title_recommend"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:ellipsize="end"
+                    android:singleLine="true"
+                    android:textColor="#BDBDBD"
+                    android:textSize="10.67sp"
+                    android:visibility="gone" />
+            </LinearLayout>
+        </RelativeLayout>
+    </LinearLayout>
+
+    <View
+        android:id="@+id/vm_main_bottom_divider"
+        android:layout_width="fill_parent"
+        android:layout_height="1dip"
+        android:layout_below="@id/book_layout"
+        android:layout_marginLeft="2dip"
+        android:layout_marginRight="2dip"
+        android:background="@color/main_bottom_divider_color" />
+
+    <RelativeLayout
+        android:id="@+id/books_layout"
+        android:layout_width="fill_parent"
+        android:layout_height="130dp"
+        android:layout_below="@+id/vm_main_bottom_divider"
+        android:layout_marginBottom="-3dp"
+        android:layout_marginTop="8dp"
+        android:gravity="center_horizontal" >
+
+        <com.sina.book.ui.widget.ViewFlow
+            android:id="@+id/books_view_flow"
+            android:layout_width="fill_parent"
+            android:layout_height="fill_parent"
+            android:focusable="true"
+            android:focusableInTouchMode="true"
+            viewFlow:offset_width="50"
+            viewFlow:support_offset="true" />
+<!--             viewFlow:side_buffer="2" -->
+
+        <com.sina.book.ui.widget.ImageFlowIndicator
+            android:id="@+id/books_flow_indicator"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignBottom="@id/books_view_flow"
+            android:layout_centerHorizontal="true"
+            android:layout_marginBottom="10dp"
+            android:background="@color/transparent"
+            android:padding="3dp" />
+    </RelativeLayout>
+
+</RelativeLayout>

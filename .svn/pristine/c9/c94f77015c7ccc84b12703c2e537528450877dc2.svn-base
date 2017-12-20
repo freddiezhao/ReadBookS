@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    style="@style/PublicBg"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:layout_centerInParent="true"
+    android:gravity="center"
+    android:orientation="vertical" >
+
+    <ImageView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:contentDescription="@null"
+        android:src="@drawable/empty_icon" />
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="40dp"
+        android:layout_marginRight="40dp"
+        android:layout_marginTop="16dp"
+        android:gravity="center_horizontal"
+        android:text="@string/related_book_note"
+        android:textColor="#EBCCAA"
+        android:textSize="16sp" />
+
+    <Button
+        android:id="@+id/book_home_btn"
+        android:layout_width="@dimen/common_btn_width1"
+        android:layout_height="@dimen/common_btn_height"
+        android:layout_marginTop="80dp"
+        android:background="@drawable/selector_btn_bg_red"
+        android:gravity="center"
+        android:text="@string/to_book_shops_text"
+        android:textColor="@color/white"
+        android:textSize="16sp" />
+
+</LinearLayout>

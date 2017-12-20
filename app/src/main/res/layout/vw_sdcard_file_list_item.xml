@@ -1,0 +1,81 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="fill_parent"
+    android:layout_height="wrap_content"
+    android:background="@drawable/list_item_bg"
+    android:descendantFocusability="blocksDescendants">
+
+	
+    <RelativeLayout 
+        android:id="@+id/image_file_layout"
+        android:layout_width="@dimen/has_import_arrow_width"
+        android:layout_height="@dimen/has_import_arrow_height"
+        android:layout_alignParentRight="true"
+        android:focusable="false">
+     
+	    <TextView
+	        android:id="@+id/image_file_arrow"
+	        android:layout_width="wrap_content"
+	        android:layout_height="wrap_content"
+	        android:layout_centerVertical="true"
+	        android:layout_alignParentRight="true"
+			android:layout_marginRight="10dp"
+	        android:textColor="#ff000000"
+	        android:textSize="14sp"
+	        android:gravity="center"/>
+        	    
+    </RelativeLayout>
+
+    
+    <RelativeLayout 
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:layout_toLeftOf="@id/image_file_layout"
+        android:paddingTop="10dp"
+        android:paddingBottom="10dp"
+        android:layout_marginRight="4dp">
+       
+	    <ImageView
+	        android:id="@+id/image_list_childs"
+	        android:layout_width="wrap_content"
+	        android:layout_height="wrap_content"
+	        android:layout_alignParentLeft="true"
+	        android:layout_centerVertical="true"
+	        android:contentDescription="@null"
+	        android:layout_marginLeft="9.34dp" >
+	    </ImageView>
+	    
+	    <LinearLayout
+	        android:layout_width="fill_parent"
+	        android:layout_height="wrap_content"
+	        android:layout_centerVertical="true"
+	        android:layout_marginLeft="5dp"
+	        android:layout_marginRight="5dp"
+	        android:gravity="center_vertical"
+	        android:layout_toRightOf="@id/image_list_childs"
+	        android:orientation="vertical">
+	
+	        <TextView
+	            android:id="@+id/text_list_childs"
+	            android:layout_width="fill_parent"
+	            android:layout_height="wrap_content"
+	            android:ellipsize="marquee"
+	            android:marqueeRepeatLimit="marquee_forever"
+	            android:singleLine="true"
+	            android:textColor="#ff444444"
+	            android:textSize="14sp" >
+	        </TextView>
+	
+	        <TextView
+	            android:id="@+id/text_file_info"
+	            android:layout_width="fill_parent"
+	            android:layout_height="wrap_content"
+	            android:singleLine="true"
+	            android:textColor="#ffb3b2b2"
+	            android:textSize="13sp" />
+	    </LinearLayout>
+        
+    </RelativeLayout>
+
+    
+</RelativeLayout>

@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:layout_centerInParent="true"
+    android:gravity="center"
+    android:orientation="vertical" >
+<!--     android:paddingBottom="30dp" -->
+<!--     android:paddingLeft="27dp" -->
+<!--     android:paddingRight="27dp" -->
+<!--     android:paddingTop="110dp" -->
+
+    <RelativeLayout
+        android:layout_width="230dip"
+        android:layout_height="170dip" >
+
+        <ImageView
+            android:id="@+id/general_activity_image"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_centerInParent="true"
+            android:layout_gravity="center"
+            android:contentDescription="@string/app_name"
+            android:scaleType="fitXY"
+            android:src="@drawable/general_activity_bg" />
+
+        <TextView
+            android:id="@+id/general_activity_subtitle"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerInParent="true"
+            android:gravity="left|center"
+            android:paddingTop="20dip"
+            android:textColor="@color/book_tag_title_color"
+            android:textSize="16sp"
+            android:visibility="gone" />
+
+        <LinearLayout
+            android:id="@+id/general_activity_buttons"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_alignBottom="@+id/general_activity_image"
+            android:layout_alignLeft="@+id/general_activity_image"
+            android:layout_alignRight="@+id/general_activity_image"
+            android:layout_centerHorizontal="true"
+            android:orientation="horizontal"
+            android:paddingBottom="@dimen/general_activity_dialog_btns_padding_bottom"
+            android:paddingLeft="20dip"
+            android:paddingRight="20dip" >
+        </LinearLayout>
+    </RelativeLayout>
+
+</LinearLayout>

@@ -1,0 +1,130 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="vertical"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:paddingTop="@dimen/card_space">
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/card_title_height"
+        android:background="@drawable/top"
+        android:gravity="center_vertical"
+        android:paddingLeft="@dimen/card_padding_horizontal"
+        android:text="@string/sina_reader"
+        android:textColor="@color/personal_title_font_color"
+        android:textSize="16sp" />
+
+    <RelativeLayout
+        android:id="@+id/feed_back_view"
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/card_item_height"
+        android:background="@drawable/selector_personal_middle_bg"
+        android:paddingLeft="@dimen/card_padding_horizontal"
+        android:paddingRight="@dimen/card_padding_horizontal">
+
+        <ImageView
+            android:id="@+id/right"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:layout_alignParentRight="true"
+            android:contentDescription="@null"
+            android:src="@drawable/more_item_arrow" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:layout_alignParentLeft="true"
+            android:layout_toLeftOf="@id/right"
+            android:gravity="center_vertical"
+            android:text="@string/feedback_text"
+            android:textColor="@color/personal_item_font_color"
+            android:textSize="@dimen/title_person_item" />
+
+    </RelativeLayout>
+
+    <RelativeLayout
+        android:id="@+id/update_view"
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/card_item_height"
+        android:background="@drawable/selector_personal_middle_bg"
+        android:paddingLeft="@dimen/card_padding_horizontal"
+        android:paddingRight="@dimen/card_padding_horizontal">
+
+        <ImageView
+            android:id="@+id/right1"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:layout_alignParentRight="true"
+            android:contentDescription="@null"
+            android:src="@drawable/more_item_arrow" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:layout_alignParentLeft="true"
+            android:layout_toLeftOf="@id/right1"
+            android:gravity="center_vertical"
+            android:text="@string/check_update__txt"
+            android:textColor="@color/personal_item_font_color"
+            android:textSize="@dimen/title_person_item" />
+
+    </RelativeLayout>
+
+    <RelativeLayout
+        android:id="@+id/about_view"
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/card_item_height"
+        android:background="@drawable/selector_personal_middle_bg"
+        android:paddingLeft="@dimen/card_padding_horizontal"
+        android:paddingRight="@dimen/card_padding_horizontal">
+
+        <ImageView
+            android:id="@+id/right2"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:layout_alignParentRight="true"
+            android:contentDescription="@null"
+            android:src="@drawable/more_item_arrow" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:layout_alignParentLeft="true"
+            android:layout_toLeftOf="@id/right2"
+            android:gravity="center_vertical"
+            android:text="@string/about_txt"
+            android:textColor="@color/personal_item_font_color"
+            android:textSize="@dimen/title_person_item" />
+
+    </RelativeLayout>
+
+    <RelativeLayout
+        android:id="@+id/app_recommend"
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/card_item_height"
+        android:background="@drawable/selector_personal_bottom_bg"
+        android:paddingBottom="@dimen/card_item_bottom_padding"
+        android:paddingLeft="@dimen/card_padding_horizontal"
+        android:paddingRight="@dimen/card_padding_horizontal">
+
+        <ImageView
+            android:id="@+id/right3"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:layout_alignParentRight="true"
+            android:contentDescription="@null"
+            android:src="@drawable/more_item_arrow" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:layout_alignParentLeft="true"
+            android:layout_toLeftOf="@id/right3"
+            android:gravity="center_vertical"
+            android:text="@string/app_recommend"
+            android:textColor="@color/personal_item_font_color"
+            android:textSize="@dimen/title_person_item" />
+
+    </RelativeLayout>
+</LinearLayout>

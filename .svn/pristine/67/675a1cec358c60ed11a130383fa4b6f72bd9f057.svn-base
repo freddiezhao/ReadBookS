@@ -1,0 +1,103 @@
+<?xml version="1.0" encoding="utf-8"?>
+<com.sina.book.ui.widget.IgnorePressedLinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="fill_parent"
+    android:layout_height="48dp"
+    android:orientation="vertical" >
+
+    <com.sina.book.ui.widget.IgnorePressedLinearLayout
+        android:id="@+id/partition_liked_item_layout"
+        android:layout_width="fill_parent"
+        android:layout_height="fill_parent"
+        android:orientation="horizontal" >
+
+        <RelativeLayout
+            android:id="@+id/partition_liked_item_layout1"
+            android:layout_width="fill_parent"
+            android:layout_height="fill_parent"
+            android:layout_weight="1" >
+
+            <ImageView
+                android:id="@+id/partition_liked_img1"
+                android:layout_width="24dp"
+                android:layout_height="24dp"
+                android:layout_centerVertical="true"
+                android:layout_marginLeft="13.33dp"
+                android:contentDescription="@null"
+                android:scaleType="fitXY"
+                android:src="@drawable/like_cate_default" />
+
+            <TextView
+                android:id="@+id/partition_liked_type1"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_centerVertical="true"
+                android:layout_marginLeft="10.67dp"
+                android:layout_toRightOf="@id/partition_liked_img1"
+                android:textColor="#000000"
+                android:textSize="17.33sp" />
+
+            <ImageView
+                android:id="@+id/partition_liked_divider_v"
+                android:layout_width="wrap_content"
+                android:layout_height="48dp"
+                android:layout_alignParentRight="true"
+                android:contentDescription="@null"
+                android:scaleType="fitXY" />
+
+            <ImageView
+                android:id="@+id/partition_liked_choosed_icon1"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentBottom="true"
+                android:layout_toLeftOf="@id/partition_liked_divider_v"
+                android:contentDescription="@null"
+                android:src="@drawable/icon_unchoosed"
+                android:visibility="visible" />
+        </RelativeLayout>
+
+        <RelativeLayout
+            android:id="@+id/partition_liked_item_layout2"
+            android:layout_width="fill_parent"
+            android:layout_height="fill_parent"
+            android:layout_weight="1" >
+
+            <ImageView
+                android:id="@+id/partition_liked_img2"
+                android:layout_width="24dp"
+                android:layout_height="24dp"
+                android:layout_centerVertical="true"
+                android:layout_marginLeft="13.33dp"
+                android:contentDescription="@null"
+                android:scaleType="fitXY"
+                android:src="@drawable/like_cate_default" />
+
+            <TextView
+                android:id="@+id/partition_liked_type2"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_centerVertical="true"
+                android:layout_marginLeft="10.67dp"
+                android:layout_toRightOf="@id/partition_liked_img2"
+                android:textColor="#000000"
+                android:textSize="17.33sp" />
+
+            <ImageView
+                android:id="@+id/partition_liked_choosed_icon2"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentBottom="true"
+                android:layout_alignParentRight="true"
+                android:contentDescription="@null"
+                android:src="@drawable/icon_unchoosed"
+                android:visibility="visible" />
+        </RelativeLayout>
+    </com.sina.book.ui.widget.IgnorePressedLinearLayout>
+
+    <ImageView
+        android:id="@+id/partition_liked_divider_h"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:contentDescription="@null"
+        android:scaleType="fitXY" />
+
+</com.sina.book.ui.widget.IgnorePressedLinearLayout>

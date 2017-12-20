@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="utf-8"?>
+<com.sina.book.ui.widget.IgnorePressedRelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="fill_parent"
+    android:layout_height="wrap_content"
+    android:baselineAligned="false"
+    android:orientation="vertical">
+
+    <include
+        android:id="@+id/sell_fast_book1"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentLeft="true"
+        layout="@layout/vw_recommend_book_item" />
+
+    <include
+        android:id="@+id/sell_fast_book2"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_centerHorizontal="true"
+        layout="@layout/vw_recommend_book_item" />
+
+    <include
+        android:id="@+id/sell_fast_book3"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentRight="true"
+        layout="@layout/vw_recommend_book_item" />
+
+</com.sina.book.ui.widget.IgnorePressedRelativeLayout>

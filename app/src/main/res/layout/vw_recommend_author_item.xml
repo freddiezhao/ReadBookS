@@ -1,0 +1,89 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="53.33dp"
+    android:background="@drawable/list_item_bg1"
+    android:orientation="vertical">
+
+    <ImageView
+        android:id="@+id/author_list_divider"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:contentDescription="@null"
+        android:scaleType="fitXY" />
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="53.33dp"
+        android:paddingLeft="13dp"
+        android:paddingRight="13dp">
+
+        <ImageView
+            android:id="@+id/author_img"
+            android:layout_width="32dp"
+            android:layout_height="32dp"
+            android:background="@drawable/user_icon"
+            android:layout_centerVertical="true"
+            android:contentDescription="@null"
+            android:scaleType="fitXY" />
+
+        <ImageView
+            android:id="@+id/author_img_icon"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:src="@drawable/icon_hot"
+            android:contentDescription="@null"
+            android:layout_alignRight="@id/author_img"
+            android:layout_alignTop="@id/author_img"
+            android:layout_marginTop="-6dp"
+            android:layout_marginRight="-6dp"
+            android:scaleType="fitXY" />
+
+        <LinearLayout
+            android:id="@+id/author_name_layout"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_toRightOf="@id/author_img"
+            android:layout_marginLeft="13dp"
+            android:layout_marginTop="8dp"
+            android:orientation="horizontal">
+
+            <TextView
+                android:id="@+id/author_name"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_vertical"
+                android:singleLine="true"
+                android:textColor="#383838"
+                android:textSize="15sp" />
+
+            <TextView
+                android:id="@+id/author_des"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:singleLine="true"
+                android:layout_marginLeft="8dp"
+                android:layout_gravity="center_vertical"
+                android:textColor="#B6B6B6"
+                android:textSize="11sp" />
+
+        </LinearLayout>
+
+        <com.sina.book.ui.widget.EllipsizeTextView
+            android:id="@+id/author_books"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/author_name_layout"
+            android:layout_toRightOf="@id/author_img"
+            android:layout_alignParentBottom="true"
+            android:drawableLeft="@drawable/recommend_book_icon"
+            android:drawablePadding="5dp"
+            android:layout_marginBottom="8dp"
+            android:layout_marginLeft="13dp"
+            android:ellipsize="end"
+            android:maxLines="1"
+            android:textColor="#888888"
+            android:textSize="12sp" />
+    </RelativeLayout>
+
+</LinearLayout>

@@ -1,0 +1,1207 @@
+package com.sina.book.data.util;
+
+import static com.sina.book.data.Book.BOOK_LOCAL;
+
+import java.io.File;
+import java.io.UnsupportedEncodingException;
+import java.net.URLEncoder;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.List;
+
+import org.htmlcleaner.Utils;
+
+import android.content.Context;
+import android.content.Intent;
+import android.text.TextUtils;
+import android.widget.Toast;
+
+import com.sina.book.R;
+import com.sina.book.SinaBookApplication;
+import com.sina.book.control.GenericTask;
+import com.sina.book.control.ITaskFinishListener;
+import com.sina.book.control.RequestTask;
+import com.sina.book.control.TaskParams;
+import com.sina.book.control.TaskResult;
+import com.sina.book.control.download.DownBookJob;
+import com.sina.book.control.download.DownBookManager;
+import com.sina.book.control.download.HtmlDownManager;
+import com.sina.book.data.Book;
+import com.sina.book.data.Chapter;
+import com.sina.book.data.CloudSyncData;
+import com.sina.book.data.ConstantData;
+import com.sina.book.db.DBService;
+import com.sina.book.parser.BatchCollectParser;
+import com.sina.book.parser.SimpleParser;
+import com.sina.book.parser.SyncDataParser;
+import com.sina.book.util.EpubHelper;
+import com.sina.book.util.FileUtils;
+import com.sina.book.util.LogUtil;
+import com.sina.book.util.LoginUtil;
+import com.sina.book.util.StorageUtil;
+import com.sina.book.util.Util;
+
+/**
+ * 书架云端同步工具类
+ * 
+ * @author Tsimle
+ * 
+ */
+public class CloudSyncUtil {
+
+	private static CloudSyncUtil mInstance;
+	public static String ACTION_LOGIN_SYNC_SUCCESS = "com.sina.book.action.loginsync";
+	public static String ACTION_SHELF_SYNC_SUCCESS = "com.sina.book.action.bookshelfsync.success";
+	public static String ACTION_SHELF_SYNC = "com.sina.book.action.bookshelfsync";
+	public static final long SHELF_SYNC_INTERVAL = 10 * 60 * 1000;// 十分钟轮询一次
+
+	/**
+	 * 持有task的引用，可以限制task不被重新启用<br>
+	 * 减少数量
+	 */
+	// private RequestTask mCollectTask;
+	private RequestTask mSyncFromTask;
+	private RequestTask mSyncToTask;
+
+	// ==== 在赠书卡H5界面领取的赠书卡 ==== //
+	private ArrayList<String> mH5GetCardBookIdLists;
+
+	public void clearH5GetCardBookIdLists() {
+		if (mH5GetCardBookIdLists == null) {
+			mH5GetCardBookIdLists = new ArrayList<String>();
+		}
+		mH5GetCardBookIdLists.clear();
+	}
+
+	public ArrayList<String> getH5GetCardBookIdLists() {
+		if (mH5GetCardBookIdLists == null) {
+			mH5GetCardBookIdLists = new ArrayList<String>();
+		}
+		return mH5GetCardBookIdLists;
+	}
+
+	public void addH5GetCardBookId(String bookId) {
+		if (mH5GetCardBookIdLists == null) {
+			mH5GetCardBookIdLists = new ArrayList<String>();
+		}
+		if (!TextUtils.isEmpty(bookId)) {
+			if (!mH5GetCardBookIdLists.contains(bookId)) {
+				mH5GetCardBookIdLists.add(bookId);
+			}
+		}
+	}
+
+	public void removeH5GetCardBookId(String bookId) {
+		if (mH5GetCardBookIdLists == null) {
+			mH5GetCardBookIdLists = new ArrayList<String>();
+		}
+		if (!TextUtils.isEmpty(bookId)) {
+			if (mH5GetCardBookIdLists.contains(bookId)) {
+				mH5GetCardBookIdLists.remove(bookId);
+			}
+		}
+	}
+
+	public boolean hasInH5GetCardBookIdLists(String bookId) {
+		if (mH5GetCardBookIdLists == null) {
+			mH5GetCardBookIdLists = new ArrayList<String>();
+		}
+		if (!TextUtils.isEmpty(bookId)) {
+			if (mH5GetCardBookIdLists.contains(bookId)) {
+				return true;
+			}
+		}
+		return false;
+	}
+
+	// 单例模式
+	private CloudSyncUtil() {
+
+	}
+
+	public static CloudSyncUtil getInstance() {
+		if (mInstance == null) {
+			synchronized (CloudSyncUtil.class) {
+				if (mInstance == null) {
+					mInstance = new CloudSyncUtil();
+				}
+			}
+		}
+		return mInstance;
+	}
+
+	/**
+	 * 同步数据到服务器
+	 */
+	public void syncTo(String log) {
+		// 未登录时，不同步
+		if (LoginUtil.isValidAccessToken(SinaBookApplication.gContext) != LoginUtil.TOKEN_TYPE_LOGIN_SUCCESS) {
+			return;
+		}
+
+		// 当前登录用户的新浪ID
+		final String ownerUid = LoginUtil.getLoginInfo().getUID();
+		String bookIds = generateNoUidBookIds(ownerUid);
+		// 没有任何书籍需要上传，不同步
+		if (TextUtils.isEmpty(bookIds)) {
+			return;
+		}
+		String syncToUrl = ConstantData.addLoginInfoToUrl(String.format(
+				ConstantData.URL_COLLECT_BATCH, bookIds));
+		LogUtil.d("SinaReaderLog", "CloudSyncUtil >> syncTo >> {syncToUrl="
+				+ syncToUrl + "}");
+
+		// 已经在同步时，不同步
+		if (mSyncToTask != null) {
+			return;
+		}
+		mSyncToTask = new RequestTask(new BatchCollectParser());
+		mSyncToTask.setTaskFinishListener(new ITaskFinishListener() {
+
+			@SuppressWarnings("unchecked")
+			@Override
+			public void onTaskFinished(TaskResult taskResult) {
+				mSyncToTask = null;
+
+				// 同步更新已收藏的书籍状态
+				if (taskResult.retObj instanceof HashMap<?, ?>) {
+					HashMap<String, Integer> ret = (HashMap<String, Integer>) (taskResult.retObj);
+					ArrayList<DownBookJob> jobs = DownBookManager.getInstance()
+							.getAllJobs();
+					ArrayList<Book> updateBooks = new ArrayList<Book>();
+
+					// 同步内存数据
+					for (DownBookJob job : jobs) {
+						if (job.getBook() != null
+								&& !Utils.isEmptyString(job.getBook()
+										.getBookId())) {
+							Book book = job.getBook();
+							Integer i = ret.get(book.getBookId());
+							// LogUtil.d("BugID=21363",
+							// "CloudSyncUtil >> syncTo >> {book=" +
+							// book.getTitle() + ", i=" + i
+							// + "}");
+							// 0.收藏失败
+							// 1.收藏成功
+							// 2.重复收藏
+							/*
+							 * String collectResultStr = "未知结果"; if (i != null)
+							 * { if (i == 1) { collectResultStr = "收藏成功"; } else
+							 * if (i == 2) { collectResultStr = "重复收藏"; } else
+							 * if (i == 0) { collectResultStr = "收藏失败"; } }
+							 * Log.i("ClouldSyncUtil",
+							 * "同步数据到服务器 >> syncTo >> book=" + book + ", i=" + i
+							 * + "_(" + collectResultStr + ")");
+							 */
+							if (i != null && (i == 1 || i == 2)) {
+								job.getBook().setOwnerUid(ownerUid);
+								updateBooks.add(job.getBook());
+							}
+						}
+					}
+
+					// 数据库处理
+					final ArrayList<Book> finalUpdateBooks = updateBooks;
+					new GenericTask() {
+
+						@Override
+						protected TaskResult doInBackground(
+								TaskParams... params) {
+							// LogUtil.e("BugID=21363",
+							// "CloudSyncUtil >> syncTo >> 数据库处理 >> begin");
+							DBService.saveBooksChange(finalUpdateBooks);
+							// LogUtil.e("BugID=21363",
+							// "CloudSyncUtil >> syncTo >> 数据库处理 >> end");
+							return null;
+						}
+					}.execute();
+				}
+			}
+		});
+		TaskParams params = new TaskParams();
+		params.put(RequestTask.PARAM_URL, syncToUrl);
+		params.put(RequestTask.PARAM_HTTP_METHOD, RequestTask.HTTP_GET);
+		mSyncToTask.execute(params);
+	}
+
+	/**
+	 * 取消从服务器同步数据
+	 */
+	public void cancelSyncFrom() {
+		if (mSyncFromTask != null) {
+			mSyncFromTask.setTaskFinishListener(null);
+			mSyncFromTask.abort();
+			// mSyncFromTask.cancel(true);
+			mSyncFromTask = null;
+		}
+	}
+
+	/**
+	 * 是否正在从服务器同步数据
+	 * 
+	 * @return
+	 */
+	public boolean isSyncing() {
+		if (mSyncFromTask != null) {
+			return true;
+		}
+
+		return false;
+	}
+
+	/**
+	 * 从服务器同步数据
+	 */
+	public synchronized boolean syncFrom(Context context,
+			final ITaskFinishListener listener, String log) {
+		// 未登录时不同步
+		if (LoginUtil.isValidAccessToken(context) != LoginUtil.TOKEN_TYPE_LOGIN_SUCCESS) {
+			return false;
+		}
+
+		// 请求task带上的关于本次同步的相关信息
+		SyncExtraHolder syncExtraHolder = new SyncExtraHolder();
+		final String ownerUid = LoginUtil.getLoginInfo().getUID();
+		final String bookIds = generateBookIds(ownerUid, syncExtraHolder);
+		syncExtraHolder.bookIdsString = bookIds;
+		String etag = "";
+		// 如果本地书籍为空，认为etag无意义，不如重新获取
+		if (Util.isNullOrEmpty(bookIds)) {
+			// StorageUtil.saveString("etag", "");
+			etag = this.etag = "";
+		} else {
+			etag = this.etag;
+		}
+
+		// else {
+		// etag = StorageUtil.getString("etag", "");
+		// }
+		syncExtraHolder.etag = etag;
+
+		String syncFromUrl = ConstantData.addLoginInfoToUrl(String.format(
+				ConstantData.URL_SYNC_FROM, etag, bookIds));
+
+		if (mSyncFromTask != null) {
+			// mSyncFromTask.setTaskFinishListener(new ITaskFinishListener() {
+			// @Override
+			// public void onTaskFinished(TaskResult taskResult) {
+			// mSyncFromTask = null;
+			//
+			// // 防止同步数据返回时间过长时已处于未登录状态
+			// if (LoginUtil.isValidAccessToken(SinaBookApplication.gContext) !=
+			// LoginUtil.TOKEN_TYPE_LOGIN_SUCCESS) {
+			// return;
+			// }
+			//
+			// Object extra = ((RequestTask) taskResult.task).getExtra();
+			// SyncExtraHolder extraObject = (SyncExtraHolder) extra;
+			//
+			// if (taskResult.retObj instanceof CloudSyncData) {
+			// CloudSyncData ret = (CloudSyncData) taskResult.retObj;
+			// handleSyncBooks(ret, ownerUid, extraObject);
+			// }
+			//
+			// if (listener != null) {
+			// listener.onTaskFinished(null);
+			// }
+			// }
+			// });
+			// return true;
+
+			mSyncFromTask.setTaskFinishListener(null);
+			mSyncFromTask.abort();
+			mSyncFromTask = null;
+		}
+
+		// TODO:ouyang
+		// List<Book> ownerBookCaches = DBService.getAllBookCache(ownerUid);
+		// for (Book cacheBook : ownerBookCaches) {
+		// DownBookManager.getInstance().addBookToShelves(cacheBook);
+		//
+		// }
+		// if (!ownerBookCaches.isEmpty()) {
+		// DBService.delBookCaches(ownerBookCaches);
+		// }
+
+		mSyncFromTask = new RequestTask(new SyncDataParser());
+		mSyncFromTask.setExtra(syncExtraHolder);
+		mSyncFromTask.setTaskFinishListener(new ITaskFinishListener() {
+			@Override
+			public void onTaskFinished(TaskResult taskResult) {
+				mSyncFromTask.setTaskFinishListener(null);
+				mSyncFromTask = null;
+
+				// 防止同步数据返回时间过长时已处于未登录状态
+				if (LoginUtil.isValidAccessToken(SinaBookApplication.gContext) != LoginUtil.TOKEN_TYPE_LOGIN_SUCCESS) {
+					return;
+				}
+
+				Object extra = ((RequestTask) taskResult.task).getExtra();
+				SyncExtraHolder extraObject = (SyncExtraHolder) extra;
+
+				if (taskResult.retObj instanceof CloudSyncData) {
+					CloudSyncData ret = (CloudSyncData) taskResult.retObj;
+					handleSyncBooks(ret, ownerUid, extraObject);
+				}
+
+				if (listener != null) {
+					listener.onTaskFinished(null);
+				}
+			}
+		});
+
+		TaskParams params = new TaskParams();
+		params.put(RequestTask.PARAM_URL, syncFromUrl);
+		params.put(RequestTask.PARAM_HTTP_METHOD, RequestTask.HTTP_GET);
+		mSyncFromTask.execute(params);
+
+		return true;
+	}
+
+	/**
+	 * 登出时书架信息整理
+	 */
+	public synchronized void logout(String log) {
+		CloudSyncUtil.getInstance().setEtag("");
+		CloudSyncUtil.getInstance().setFirstLoginAndSendOneSyncCompleteBroadcast(true);
+		
+		if (mSyncFromTask != null) {
+			mSyncFromTask.setTaskFinishListener(null);
+			mSyncFromTask.abort();
+			// mSyncFromTask.cancel(true);
+			mSyncFromTask = null;
+		}
+
+		// StorageUtil.saveString("etag", "");
+		etag = "";
+
+		ArrayList<DownBookJob> needDeleteJobs = new ArrayList<DownBookJob>();
+		ArrayList<Book> needDeleteBooks = new ArrayList<Book>();
+		// 获取当前所有的任务
+		ArrayList<DownBookJob> jobs = DownBookManager.getInstance()
+				.getAllJobs();
+		for (DownBookJob job : jobs) {
+			// 书籍信息具有拥有者的书籍删除掉
+			if (job.getBook() != null
+					&& !Utils.isEmptyString(job.getBook().getBookId())
+					&& !Utils.isEmptyString(job.getBook().getOwnerUid())) {
+				needDeleteJobs.add(job);
+				needDeleteBooks.add(job.getBook());
+				LogUtil.d("ReadInfoLeft",
+						"needDeleteJobs `s book is " + job.getBook());
+			}
+
+			// 取消下载任务
+			if (job.getTask() != null) {
+				job.getTask().cancel(true);
+				job.setTask(null);
+			}
+			if (job.getState() != DownBookJob.STATE_FINISHED) {
+				job.setState(DownBookJob.STATE_FAILED);
+				job.getBook().getDownloadInfo()
+						.setDownLoadState(job.getState());
+				// DBService.saveBook(job.getBook());
+			}
+		}
+
+		LogUtil.d("ReadInfoLeft",
+				"needDeleteJobs size is " + needDeleteJobs.size());
+
+		for (DownBookJob delJob : needDeleteJobs) {
+			DownBookManager.getInstance().removeJobMemory(log, delJob);
+		}
+		needDeleteJobs = null;
+
+		// 数据库处理
+		final List<Book> deleteBooks = needDeleteBooks;
+		new GenericTask() {
+
+			@Override
+			protected TaskResult doInBackground(TaskParams... params) {
+				DBService.delBooksOrToCache(deleteBooks);
+				return null;
+			}
+		}.execute();
+	}
+
+	/**
+	 * 登入时书架信息整理
+	 */
+	public void login() {
+		// 更改为先同步再上传，解决上传后，数据没法立即抓取，造成书架书籍被删除的现象。
+		syncFrom(SinaBookApplication.gContext, new ITaskFinishListener() {
+			public void onTaskFinished(TaskResult taskResult) {
+				Intent intent = new Intent();
+				intent.setAction(ACTION_LOGIN_SYNC_SUCCESS);
+				SinaBookApplication.gContext.sendBroadcast(intent);
+			}
+		}, "CloudSyncUtil-login");
+		syncTo("CloudSyncUtil-login");
+	}
+
+	private boolean isQuitAppOrLogoutAcount = false;
+
+	public boolean isQuitAppOrLogoutAcount() {
+		return isQuitAppOrLogoutAcount;
+	}
+
+	public void setIsQuitAppOrLogoutAcount(boolean quit) {
+		isQuitAppOrLogoutAcount = quit;
+	}
+
+	// /**
+	// * 开启轮询
+	// */
+	// public void startSyncService() {
+	// isQuitApp = false;
+	// AlarmManager manager = (AlarmManager)
+	// SinaBookApplication.gContext.getSystemService(Context.ALARM_SERVICE);
+	// Intent intent = new Intent(SinaBookApplication.gContext,
+	// SyncService.class);
+	// intent.setAction(ACTION_SHELF_SYNC);
+	// PendingIntent pendingIntent =
+	// PendingIntent.getService(SinaBookApplication.gContext, 0, intent,
+	// PendingIntent.FLAG_UPDATE_CURRENT);
+	// long triggerAtTime = SystemClock.elapsedRealtime();
+	// manager.setRepeating(AlarmManager.RTC_WAKEUP, triggerAtTime +
+	// SHELF_SYNC_INTERVAL, SHELF_SYNC_INTERVAL,
+	// pendingIntent);
+	// }
+	//
+	// /**
+	// * 停止轮询
+	// */
+	// public void stopSyncService() {
+	// if (mSyncFromTask != null) {
+	// mSyncFromTask.setTaskFinishListener(null);
+	// mSyncFromTask.abort();
+	// mSyncFromTask = null;
+	// }
+	//
+	// isQuitApp = true;
+	// AlarmManager manager = (AlarmManager)
+	// SinaBookApplication.gContext.getSystemService(Context.ALARM_SERVICE);
+	// Intent intent = new Intent(SinaBookApplication.gContext,
+	// SyncService.class);
+	// intent.setAction(ACTION_SHELF_SYNC);
+	// PendingIntent pendingIntent =
+	// PendingIntent.getService(SinaBookApplication.gContext, 0, intent,
+	// PendingIntent.FLAG_UPDATE_CURRENT);
+	// manager.cancel(pendingIntent);
+	// }
+
+	/**
+	 * 即以前的收藏和以在线方式加入书架<br>
+	 * 未登录时会跳转至个人中心<br>
+	 * 详情页使用
+	 * 
+	 * @param book
+	 */
+	public void add2CloudAndShelves(Context context, final Book book,
+			final ITaskFinishListener listener) {
+		final String ownerUid;
+		// 判断是否登录，登录即尝试去收藏
+		if (LoginUtil.isValidAccessToken(context) == LoginUtil.TOKEN_TYPE_LOGIN_SUCCESS) {
+			ownerUid = LoginUtil.getLoginInfo().getUID();
+			// 这里的逻辑貌似有点不合理
+			// 不合理性：用户在A书籍详情页点击了加入书架，这时候mCollectTask生效了，开启了请求
+			// 这时候用户点击了B书籍，进入B书籍详情页，在mCollectTask任务未结束返回的时候点击了
+			// 加入书架，在这里被return掉，B书籍无法成功加入书架。
+
+			// if (mCollectTask != null) {
+			// return;
+			// }
+
+			RequestTask mCollectTask = new RequestTask(new SimpleParser());
+			String reqUrl = String.format(ConstantData.URL_COLLECTE_BOOK,
+					LoginUtil.getLoginInfo().getAccessToken(),
+					book.getBookId(), book.getSid(), book.getBookSrc());
+
+			// FIXME: yqq setownerUid
+			book.setOwnerUid(ownerUid);
+			DBService.saveBook(book);
+
+			mCollectTask.setTaskFinishListener(new ITaskFinishListener() {
+				@Override
+				public void onTaskFinished(TaskResult taskResult) {
+					// mCollectTask = null;
+					if (taskResult != null && taskResult.retObj != null) {
+						if (ConstantData.CODE_SUCCESS.equals(taskResult.retObj)) {
+							book.setOwnerUid(ownerUid);
+							DBService.saveBook(book);
+							// 收藏数量达到上限
+						} else if (ConstantData.CODE_DATA_NULL
+								.equals(taskResult.retObj)) {
+							Toast.makeText(SinaBookApplication.gContext,
+									R.string.cloud_sync_fail_tip,
+									Toast.LENGTH_SHORT).show();
+						}
+					} else {
+						// Log.e("CloudSyncUtil",
+						// "网络异常等情况时操作“加入书架”导致没有真正的加入书架行为即同步到云端");
+						/*
+						 * // TODO：网络异常等情况时操作“加入书架”导致没有真正的加入书架行为 //
+						 * TODO：依然需要绑定该ownerUid到该书籍中 book.setOwnerUid(ownerUid);
+						 * DBService.updateBook(book); Book sBook =
+						 * DownBookManager.getInstance().getBook(book); if
+						 * (sBook != null) { sBook.setOwnerUid(ownerUid); }
+						 */
+					}
+
+				}
+			});
+			TaskParams params = new TaskParams();
+			params.put(RequestTask.PARAM_URL, reqUrl);
+			params.put(RequestTask.PARAM_HTTP_METHOD, RequestTask.HTTP_GET);
+			// 如果是epub书籍直接屏蔽
+			if (!book.isEpub()) {
+				mCollectTask.execute(params);
+			}
+		} else {
+			ownerUid = null;
+		}
+
+		addOnlineBook2Shelves(book, ownerUid);
+
+		// 现在的代码逻辑将导致无论联网与否，用户在点击了“加入书架”之后都将显示“已加入书架”
+		// 但是没有联网的情况下其实是没有同步到云端的，并且上面代码的ITaskFinishListener接口
+		// 回调没有被执行(因为返回的TaskResult的retObj对象为空)，即没有绑定ownerUid到book
+		// 中，但是该book已经被加入到DownBookManager的mBookJobs实例并加入到数据库中，接下来
+		// 使用到的该book实例没有再绑定ownerUid了，即使此时联网了，因为每次操作该book时都是取
+		// 的在DownBookManager的mBookJobs中的DownBookJob绑定的Book实例。具体看addOnlineBook2Shelves()方法
+		if (listener != null) {
+			listener.onTaskFinished(null);
+		}
+	}
+
+	/**
+	 * 即删除收藏<br>
+	 * 未登录时即什么都不做<br>
+	 * 书架上删除使用
+	 * 
+	 * @param book
+	 */
+	public void delCloud(Context context, Book book) {
+		// 删除收藏
+		if (LoginUtil.isValidAccessToken(context) != LoginUtil.TOKEN_TYPE_LOGIN_SUCCESS) {
+			return;
+		}
+
+		// epub书籍的删除不同步给服务器
+		if (book.isEpub()) {
+			// 但是要充值CloudSyncUtil的etag值
+			CloudSyncUtil.getInstance().setEtag("");
+			return;
+		}
+
+		String reqUrl = String.format(ConstantData.URL_DELETE_COLLECTE_BOOK,
+				LoginUtil.getLoginInfo().getAccessToken(), book.getBookId(),
+				book.getSid(), book.getBookSrc(), book.getBagId());
+		RequestTask task = new RequestTask(new SimpleParser());
+		TaskParams params = new TaskParams();
+		params.put(RequestTask.PARAM_URL, reqUrl);
+		params.put(RequestTask.PARAM_HTTP_METHOD, RequestTask.HTTP_GET);
+		task.execute(params);
+	}
+
+	public void add2Cloud(Context context, final Book book) {
+		add2Cloud(context, book, true);
+	}
+
+	/**
+	 * 即添加收藏<br>
+	 * 未登录时即什么都不做<br>
+	 * 下载时使用
+	 * 
+	 * @param book
+	 */
+	public void add2Cloud(Context context, final Book book,
+			final boolean saveBookToDB) {
+		if (LoginUtil.isValidAccessToken(context) != LoginUtil.TOKEN_TYPE_LOGIN_SUCCESS) {
+			return;
+		}
+		String reqUrl = String.format(ConstantData.URL_COLLECTE_BOOK, LoginUtil
+				.getLoginInfo().getAccessToken(), book.getBookId(), book
+				.getSid(), book.getBookSrc());
+
+		// LogUtil.e("BugID=21244", "reqUrl=" + reqUrl);
+
+		final String ownerUid = LoginUtil.getLoginInfo().getUID();
+
+		if (saveBookToDB) {
+			book.setOwnerUid(ownerUid);
+			DBService.saveBook(book);
+		}
+
+		// 如果是epub书籍直接屏蔽
+		if (book.isEpub()) {
+			return;
+		}
+
+		RequestTask task = new RequestTask(new SimpleParser());
+		task.setTaskFinishListener(new ITaskFinishListener() {
+			@Override
+			public void onTaskFinished(TaskResult taskResult) {
+				// mCollectTask = null;
+				// 仅当收藏成功时加入书架
+				if (taskResult != null && taskResult.retObj != null) {
+					if (ConstantData.CODE_SUCCESS.equals(taskResult.retObj)) {
+						// FIXME: yqq setownerUid
+						if (saveBookToDB) {
+							book.setOwnerUid(ownerUid);
+							DBService.saveBook(book);
+						}
+
+						Book jobBook = DownBookManager.getInstance().getBook(
+								book);
+						if (jobBook != null) {
+							jobBook.setOwnerUid(ownerUid);
+						}
+
+						// 收藏数量达到上限
+					} else if (ConstantData.CODE_DATA_NULL
+							.equals(taskResult.retObj)) {
+						Toast.makeText(SinaBookApplication.gContext,
+								R.string.cloud_sync_fail_tip,
+								Toast.LENGTH_SHORT).show();
+					}
+				}
+			}
+		});
+		TaskParams params = new TaskParams();
+		params.put(RequestTask.PARAM_URL, reqUrl);
+		params.put(RequestTask.PARAM_HTTP_METHOD, RequestTask.HTTP_GET);
+		task.execute(params);
+	}
+
+	private boolean etagForIgnoreSync = true;
+	private String etag;
+
+	public String getEtag() {
+		return etag;
+	}
+
+	public void setEtag(String etag) {
+		this.etag = etag;
+	}
+
+	/**
+	 * 处理同步回来的数据
+	 * 
+	 * 1）如果退出程序或者退出账户了，则<br>
+	 * return<br>
+	 * 
+	 * 判断需要删除的书籍的逻辑：<br>
+	 * 2）遍历书架上的所有书籍，如果书籍绑定了UID并且书籍ID包含在待删除书籍ID列表中，则可将该书籍加入要删除书籍的列表中<br>
+	 * 3）遍历删除全部确定要删除了的书籍<br>
+	 * <br>
+	 * 判断需要更新的书籍的逻辑：<br>
+	 * 4）遍历书架上的所有书籍，查找拥有bookId的书籍<br>
+	 * 5）遍历所有从服务器获取的待更新的书籍，判断是否有书籍的bookId与之相同<br>
+	 * 6）如果找到了，默认是需要将该书籍从待更新书籍列表中删除的，但是这里额外增加了一个判断，需要判断书架上这本书籍的filePath路径信息，<br>
+	 * 如果书架上的这本书籍的filePath路径信息是以file:///开头，说明这本书籍是被内置在APP内的书籍，判断书籍对应的文件是不是还在，<br>
+	 * 还在的话，将这本书籍从待更新书籍列表中删除掉，如果不在了，在直接从书架上移除这本书籍<br>
+	 * 7）以上的判断逻辑，其实就是从待更新书籍列表中删除书架上已经有了的书籍，然后就可以执行插入操作了<br>
+	 * <br>
+	 * 判断需要插入的书籍的逻辑：<br>
+	 * 8）根据当前登录用户的UID，获取其对应的所有缓存下来的书籍(退出登录时会缓存书架上的书籍到缓存表中)<br>
+	 * 9）遍历缓存下来的所有书籍，如果书籍被阅读过了，判断书籍对应的文件是否还存在，如果不在或者该文件长度为0，则添加到待删除缓存书籍列表中<br>
+	 * 10）遍历所有待更新的书籍，如果该缓存书籍不在其中，则将其添加到待删除缓存书籍列表中<br>
+	 * 11）该缓存书籍在其中，则将本地缓存表中记录的数据更新给待更新列表中对应的书籍，在这之前需要做一个判断，判断该书籍缓存表中的filePath数据<br>
+	 * 是否是file:///开头的(即assets路径下的文件)，如果是则判断这个路径是否还存在，如果不存在则不做更新<br>
+	 * 12）好了，现在待更新书籍列表中的所有书籍就都是最终需要更新的书籍了，都可以加入书架了<br>
+	 * 13）处理需要删除的书籍，需要插入的书籍，需要删除的缓存书籍等<br>
+	 * 
+	 * @param cloudSyncData
+	 * @param ownerUid
+	 * @param extraObject
+	 */
+	private void handleSyncBooks(CloudSyncData cloudSyncData, String ownerUid,
+			SyncExtraHolder extraObject) {
+		// 如果退出了APP或者登出了则不予处理
+		if (isQuitAppOrLogoutAcount()) {
+			return;
+		}
+
+		// 记录etag
+		etag = cloudSyncData.getEtag();
+		// StorageUtil.saveString("etag", cloudSyncData.getEtag());
+
+		ArrayList<DownBookJob> jobs = DownBookManager.getInstance()
+				.getAllJobs();
+
+		ArrayList<DownBookJob> needDelJobs = new ArrayList<DownBookJob>();
+		ArrayList<Book> needDelBooks = new ArrayList<Book>();
+
+		// 同步处理 删除
+		List<String> delBooks = cloudSyncData.getDelBooks();
+
+		// for (int i = 0; i < delBooks.size(); i++) {
+		// LogUtil.e("BugID=21363",
+		// "CloudSyncUtil >> handleSyncBooks >> cloudSyncData.getDelBooks bookid="
+		// + delBooks.get(i));
+		// }
+		// 删除所有书籍，可能是服务器出错了，直接忽略该次请求
+		if (delBooks != null && extraObject.countOfBookids > 1
+				&& delBooks.size() >= extraObject.countOfBookids
+				&& !Utils.isEmptyString(extraObject.etag)) {
+			if (etagForIgnoreSync) {
+				// StorageUtil.saveBoolean("etagForIgnoreSync", false);
+				etagForIgnoreSync = false;
+				// LogUtil.e("BugID=21363",
+				// "CloudSyncUtil >> handleSyncBooks >> 中止");
+				//
+				// 解决：BugID=21505
+				// return;
+			}
+		} else {
+			// StorageUtil.saveBoolean("etagForIgnoreSync", true);
+			etagForIgnoreSync = true;
+		}
+
+		// 书架上具备拥有者并且BookId包含在了要删除的Book列表中时，删除掉书架上的该书籍
+		for (DownBookJob job : jobs) {
+			if (job.getBook() != null
+					&& !Utils.isEmptyString(job.getBook().getOwnerUid())
+					&& !Utils.isEmptyString(job.getBook().getBookId())
+					&& delBooks.contains(job.getBook().getBookId())) {
+				// 修复BugID=21363
+				// if
+				// (!job.getBook().getDownloadInfo().getFilePath().contains("file:///"))
+				// {
+				needDelJobs.add(job);
+				needDelBooks.add(job.getBook());
+				// }
+
+				// LogUtil.e("BugID=21363",
+				// "CloudSyncUtil >> handleSyncBooks >> 判断需要删除的书籍 >> 删除 {book="
+				// + job.getBook()
+				// + "}");
+			}
+			// else {
+			// LogUtil.i("BugID=21363",
+			// "CloudSyncUtil >> handleSyncBooks >> 判断需要删除的书籍 >> 不删除 {book=" +
+			// job.getBook()
+			// + "}");
+			// }
+		}
+
+		// 删除书籍
+		for (DownBookJob delJob : needDelJobs) {
+			DownBookManager.getInstance().removeJobMemory("handleSyncBooks-1",
+					delJob);
+		}
+		needDelJobs = null;
+
+		// 插入记录，排除本地存在的
+		List<Book> updateBooks = cloudSyncData.getUpdateBooks();
+
+		for (DownBookJob job : jobs) {
+			if (job.getBook() != null
+					&& !Utils.isEmptyString(job.getBook().getBookId())) {
+				// 查找书架上的书
+				Book findBook = null;
+				for (Book updateBook : updateBooks) {
+					if (job.getBook().getBookId()
+							.equals(updateBook.getBookId())) {
+						findBook = updateBook;
+						break;
+					}
+				}
+				if (findBook != null) {
+					// CJL 移除之前判定一下，书架上的书籍其文件是否还存在
+					Book shekfBook = job.getBook();
+					boolean canRemove = true;
+					String bookFilePath = shekfBook.getDownloadInfo()
+							.getFilePath();
+					if (bookFilePath != null) {
+						if (bookFilePath.startsWith("file:///")) {
+							// 路径里有file的是asserts下的文件
+							if (!FileUtils.assertsFileExist(bookFilePath)) {
+								// assets文件不存在，还是要去检查下sdcard下存不存在这个文件。
+								int index = bookFilePath.lastIndexOf('/');
+								String path = StorageUtil.getDirByType(StorageUtil.DIR_TYPE_BOOK) +"/"+
+										bookFilePath.substring(index + 1);
+								File file = FileUtils.checkOrCreateFile(path, false);
+								if (file == null || !file.exists()) {
+									canRemove = false;
+								} else {
+									shekfBook.getDownloadInfo().setFilePath(path);
+									DBService.saveBook(shekfBook);
+//									downloadInfo.setFilePath(path);
+//									DBService.saveBook(book);
+								}
+
+//								canRemove = false;
+							}
+						}
+					}
+					if (canRemove) {
+						updateBooks.remove(findBook);
+					} else {
+						// 移除书架上的那本书籍
+						DownBookManager.getInstance().removeJobMemory(
+								"handleSyncBooks-2", job);
+					}
+					// LogUtil.w("BugID=21363",
+					// "CloudSyncUtil >> handleSyncBooks >> 本地存在，从updateBooks中排除findBook={"
+					// + findBook + "}");
+				}
+			}
+		}
+
+		// 插入
+		long now = new Date().getTime();
+		ArrayList<Book> cacheDelBooks = new ArrayList<Book>();
+		// LogUtil.d("BugID=21363",
+		// "CloudSyncUtil handleSyncBooks extraObject.etag=" +
+		// extraObject.etag);
+		// 匹配本地缓存完成的插入
+		if (Utils.isEmptyString(extraObject.etag)) {
+			List<Book> ownerBookCaches = DBService.getAllBookCache(ownerUid);
+
+			for (Book cacheBook : ownerBookCaches) {
+				Book findUpdateBook = null;
+				// try {
+				// String filePath = cacheBook.getDownloadInfo().getFilePath();
+				// File bookFile = new File(filePath);
+				// // 这里貌似永远都不会满足，因为cacheBook根本就没加载Tag信息，默认就是IS_NEW
+				// if (cacheBook.getTag() != Book.IS_NEW) {
+				// if (!bookFile.exists() || bookFile.length() <= 0) {
+				// cacheDelBooks.add(cacheBook);
+				// continue;
+				// }
+				// }
+				// } catch (Exception e) {
+				// }
+
+				for (Book updateBook : updateBooks) {
+					// 更新列表中的书籍A在本地缓存中也存在A
+					if (updateBook.equals(cacheBook)) {
+						// 对缓存书籍进行一次判断，处理epub书籍
+						boolean result = EpubHelper.i
+								.afterLoginHandleEpubBook(cacheBook);
+						if (result) {
+							updateBook.setIsEpub(true);
+						}
+						findUpdateBook = updateBook;
+						break;
+					}
+				}
+
+				if (findUpdateBook == null) {
+					// 本地缓存中的某书籍不在更新列表中，将该书籍从本地缓存表中删除
+					cacheDelBooks.add(cacheBook);
+				} else {
+					// 将本地缓存表中记录的数据更新给更新列表中的书籍
+					// 更新缓存数据给书籍之前做一个判断，判断该书籍缓存表中的filePath数据是否是
+					// file:///开头的(即assets路径下的文件)，如果是则判断这个路径是否还存在，如果不存在则不做更新
+					boolean canUpdate = true;
+					String cacheFilePath = cacheBook.getDownloadInfo()
+							.getFilePath();
+					if (cacheFilePath != null) {
+						if (cacheFilePath.startsWith("file:///")) {
+							// 路径里有file的是asserts下的文件
+							if (!FileUtils.assertsFileExist(cacheFilePath)) {
+								canUpdate = false;
+							}
+						}
+					}
+					if (canUpdate) {
+						findUpdateBook.setId(cacheBook.getId());
+						findUpdateBook.getDownloadInfo().setFilePath(
+								cacheBook.getDownloadInfo().getFilePath());
+						findUpdateBook.getDownloadInfo().setFileSize(
+								cacheBook.getDownloadInfo().getFileSize());
+						findUpdateBook.getDownloadInfo().setProgress(
+								cacheBook.getDownloadInfo().getProgress());
+						findUpdateBook.getDownloadInfo().setDownLoadState(
+								cacheBook.getDownloadInfo().getDownLoadState());
+						findUpdateBook.getReadInfo().setLastPos(
+								cacheBook.getReadInfo().getLastPos());
+						findUpdateBook.getDownloadInfo().setOriginalFilePath(
+								cacheBook.getDownloadInfo()
+										.getOriginalFilePath());
+						findUpdateBook.getReadInfo().setLastReadPercent(
+								cacheBook.getReadInfo().getLastReadPercent());
+						findUpdateBook.setBookContentType(cacheBook
+								.getBookContentType());
+						findUpdateBook.setSuiteId(cacheBook.getSuiteId());
+						findUpdateBook.getBookPage().setFontSize(
+								cacheBook.getBookPage().getFontSize());
+						findUpdateBook.getBookPage().setTotalPage(
+								cacheBook.getBookPage().getTotalPage());
+						findUpdateBook.getBookPage().setCurPage(
+								cacheBook.getBookPage().getCurPage());
+						findUpdateBook.setTag(cacheBook.getTag());
+					}
+				}
+			}
+		}
+
+		// 注销登录时缓存下来的epub书籍即使不在服务器down下来的更新书籍中
+		// 也要将该书籍放到书架中去
+		// 从待删除缓存书籍中查找是否有epub书籍
+
+		ArrayList<Book> tempRemoveFromCacheDelBooks = new ArrayList<Book>();
+		for (Book cache : cacheDelBooks) {
+			boolean result = EpubHelper.i.afterLoginHandleEpubBook(cache);
+			if (result) {
+				// 添加到待更新列表中
+				updateBooks.add(cache);
+				tempRemoveFromCacheDelBooks.add(cache);
+			}
+		}
+
+		for (Book tempCacheBook : tempRemoveFromCacheDelBooks) {
+			cacheDelBooks.remove(tempCacheBook);
+		}
+
+		if (isQuitAppOrLogoutAcount()) {
+			return;
+		}
+
+		// 最终需要更新到书架的书籍都在这里了
+		for (Book updateBook : updateBooks) {
+			// LogUtil.w("BugID=21363",
+			// "CloudSyncUtil >> handleSyncBooks >> 最终需要更新到书架的书籍都在这里了updateBook={"
+			// + updateBook
+			// + "}");
+			if (updateBook.getId() < 0) {
+				// LogUtil.e("BugID=21363",
+				// "CloudSyncUtil >> handleSyncBooks >> shit 这个书籍ID < 0 >> updateBook={"
+				// + updateBook + "}");
+				// ----- BugID=21665 start ----
+				updateBook.getDownloadInfo().setFilePath(null);
+				// ----- BugID=21665 end ----
+				updateBook.setOnlineBook(true);
+				updateBook.getDownloadInfo().setProgress(1.00);
+				updateBook.getDownloadInfo().setDownLoadState(
+						DownBookJob.STATE_FINISHED);
+			}
+			// if (!updateBook.getDownloadInfo().getFilePath()
+			// .contains("file:///")) {
+			// updateBook.setTag(HAS_READ);
+			// }
+
+			// 判断epub书籍的"更新"标识
+			// if (updateBook.isEpub()) {
+			// float precent = updateBook.getReadInfo().getLastReadPercent();
+			// boolean hasPrecent = precent > 0.0f ? true : false;
+			// // 如果没有阅读百分比，那说明注销前从来没阅读过
+			// if (!hasPrecent) {
+			// updateBook.setTag(IS_NEW);
+			// }
+			// }
+
+			updateBook.setOwnerUid(ownerUid);
+			updateBook.getDownloadInfo().setLocationType(BOOK_LOCAL);
+			updateBook.getDownloadInfo().setDownloadTime(--now);
+			DownBookManager.getInstance().addBookToShelves(updateBook);
+		}
+
+		final List<Book> deleteBooks = needDelBooks;
+		final List<Book> insertBooks = updateBooks;
+		final List<Book> cacheDeleteBooks = cacheDelBooks;
+
+		// 数据库处理
+		new GenericTask() {
+
+			@Override
+			protected TaskResult doInBackground(TaskParams... params) {
+				if (isQuitAppOrLogoutAcount()) {
+					return null;
+				}
+				DBService.saveBooksChange(deleteBooks, insertBooks);
+
+				if (!cacheDeleteBooks.isEmpty()) {
+					DBService.delBookCaches(cacheDeleteBooks);
+				}
+
+				if (firstLoginAndSendOneSyncCompleteBroadcast) {
+					firstLoginAndSendOneSyncCompleteBroadcast = false;
+					LogUtil.d("CursorError",
+							"CloudSyncUtil >> sendBroadcast >> 处理完毕发出一个广播...");
+					// 处理完毕发出一个广播
+					SinaBookApplication.gContext.sendBroadcast(new Intent(
+							ACTION_SYNC_COMPLETE));
+				}
+				return null;
+			}
+		}.execute();
+
+		// 防止进行同步数据返回后数据库操作时间过长时用户已处于未登录状态
+		if (LoginUtil.isValidAccessToken(SinaBookApplication.gContext) != LoginUtil.TOKEN_TYPE_LOGIN_SUCCESS) {
+			LoginUtil.i.clearLoginInfo(SinaBookApplication.gContext,
+					"CloudSyncUtil");
+		}
+	}
+
+	private boolean firstLoginAndSendOneSyncCompleteBroadcast = true;
+
+	public boolean isFirstLoginAndSendOneSyncCompleteBroadcast() {
+		return firstLoginAndSendOneSyncCompleteBroadcast;
+	}
+
+	public void setFirstLoginAndSendOneSyncCompleteBroadcast(
+			boolean firstLoginAndSendOneSyncCompleteBroadcast) {
+		this.firstLoginAndSendOneSyncCompleteBroadcast = firstLoginAndSendOneSyncCompleteBroadcast;
+	}
+
+	/**
+	 * 书架同步完成的Action
+	 */
+	public static final String ACTION_SYNC_COMPLETE = "com.sina.book.SHELVES_SYNC_COMPLETE";
+
+	/**
+	 * 添加在线书籍到书架并添加到数据库中
+	 * 
+	 * @param book
+	 * @param ownerUid
+	 */
+	private void addOnlineBook2Shelves(final Book book, final String ownerUid) {
+		if (DownBookManager.getInstance().hasBook(book)) {
+			return;
+		}
+		
+		if(book.isHtmlRead()){
+			book.getDownloadInfo().setVDiskDownUrl(Book.HTML_READ_PROTOCOL);
+			Book dBook = HtmlDownManager.getInstance().getBook(book);
+			if(dBook != null && dBook.getDownloadInfo().getDownLoadState() == DownBookJob.STATE_FINISHED){
+				book.setOnlineBook(false);
+			}else{
+				book.setOnlineBook(true);
+			}
+		}else{
+			book.setOnlineBook(true);
+		}
+
+		book.getDownloadInfo().setProgress(1.00);
+		long now = new Date().getTime();
+		book.getDownloadInfo().setDownloadTime(now);
+		book.getDownloadInfo().setDownLoadState(DownBookJob.STATE_FINISHED);
+		// book.setTag(HAS_READ);
+		book.getDownloadInfo().setLocationType(BOOK_LOCAL);
+		DownBookManager.getInstance().addBookToShelves(book);
+		DBService.saveBook(book);
+		
+//		// 加入书架时，如果章节列表已存在，将章节列表添加到数据库
+//		ArrayList<Chapter> cpList = book.getChapters();
+//		if(cpList != null && cpList.size() > 0){
+//			DBService.updateAllChapter(book, cpList);
+//		}
+	}
+
+	/**
+	 * 生成书架内所有与当前用户ID一致的书籍
+	 * 
+	 * @param ownerUid
+	 * @param syncExtraHolder
+	 * @return
+	 */
+	private String generateBookIds(String ownerUid,
+			SyncExtraHolder syncExtraHolder) {
+		syncExtraHolder.countOfBookids = 0;
+		if (Util.isNullOrEmpty(ownerUid)) {
+			return "";
+		}
+		StringBuilder idsb = new StringBuilder();
+
+		ArrayList<DownBookJob> jobs = DownBookManager.getInstance()
+				.getAllJobs();
+		for (DownBookJob job : jobs) {
+			if (job.getBook() != null
+					&& !Utils.isEmptyString(job.getBook().getBookId())
+					&& ownerUid.equalsIgnoreCase(job.getBook().getOwnerUid())
+					// epub书籍不要传给服务器
+					&& !job.getBook().isEpub()) {
+				syncExtraHolder.countOfBookids++;
+				idsb.append(job.getBook().getBookId()).append("|");
+			}
+		}
+		try {
+			return URLEncoder.encode(idsb.toString(), "UTF-8");
+		} catch (UnsupportedEncodingException e) {
+			return "";
+		}
+	}
+
+	/**
+	 * 生成书架上所有没有绑定过Uid的书籍ID列
+	 * 
+	 * @param ownerUid
+	 * @return
+	 */
+	private String generateNoUidBookIds(String ownerUid) {
+		StringBuilder idsb = new StringBuilder();
+		boolean hasBook = false;
+		ArrayList<DownBookJob> jobs = DownBookManager.getInstance()
+				.getAllJobs();
+		for (DownBookJob job : jobs) {
+			Book book = job.getBook();
+
+			if (book == null) {
+				continue;
+			}
+
+			// 1、BookId为空，不做同步
+			if (Utils.isEmptyString(book.getBookId())) {
+				continue;
+			}
+
+			
+			
+			
+			
+			// 2、书籍是epub书籍，不做同步
+			// ouyang: html书籍也是epub后悔最，需要上传，修改判断过滤条件
+//			String filePath = book.getDownloadInfo().getFilePath();
+//			String originalFilePath = book.getDownloadInfo()
+//					.getOriginalFilePath();
+//			if ((!TextUtils.isEmpty(filePath) && filePath.endsWith(".epub"))
+//					|| (!TextUtils.isEmpty(originalFilePath) && originalFilePath
+//							.endsWith(".epub"))) {
+//				continue;
+//			}
+			if(book.isEpub()){
+				continue;
+			}
+
+			// 书架上书籍同步条件：
+			// 3.下载状态为DownBookJob.STATE_FINISHED
+			// 4.书籍的OwnerUid为空
+			if (
+			// book != null&& !Utils.isEmptyString(book.getBookId())&&
+			book.getDownloadInfo().getDownLoadState() == DownBookJob.STATE_FINISHED
+					&& Utils.isEmptyString(book.getOwnerUid())) {
+				hasBook = true;
+				idsb.append(book.getBookId()).append("|");
+				// 这里需要绑定下当前登录账户的ID到Book中
+				String path = book.getDownloadInfo().getFilePath();
+				if (path != null && path.startsWith("file:///")) {
+
+				} else {
+					job.getBook().setOwnerUid(ownerUid);
+				}
+
+				DBService.saveBook(job.getBook());
+			}
+		}
+
+		if (hasBook) {
+			try {
+				return URLEncoder.encode(idsb.toString(), "UTF-8");
+			} catch (UnsupportedEncodingException e) {
+				return "";
+			}
+		}
+		return null;
+	}
+
+	private class SyncExtraHolder {
+		String etag;
+		int countOfBookids;
+		String bookIdsString;
+	}
+}

@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="fill_parent"
+    android:layout_height="66.67dp"
+    android:background="@drawable/read_bottom"
+    android:orientation="vertical"
+    android:paddingBottom="4dp"
+    android:paddingTop="4dp" >
+
+    <ImageView
+        android:id="@+id/read_comment_divider"
+        android:layout_width="wrap_content"
+        android:layout_height="21.33dp"
+        android:layout_centerInParent="true"
+        android:contentDescription="@null"
+        android:scaleType="fitXY"
+        android:src="@drawable/read_page_line_v" />
+
+    <TextView
+        android:id="@+id/read_comment_btn"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_centerVertical="true"
+        android:layout_marginLeft="37.33dp"
+        android:layout_toRightOf="@id/read_comment_divider"
+        android:drawableLeft="@drawable/toolbar_comment_btn"
+        android:drawablePadding="8dp"
+        android:text="@string/comment"
+        android:textColor="@drawable/toolbar_text_color"
+        android:textSize="@dimen/setting_font_size" />
+
+    <TextView
+        android:id="@+id/read_praise_btn"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_centerVertical="true"
+        android:layout_marginRight="37.33dp"
+        android:layout_toLeftOf="@id/read_comment_divider"
+        android:drawableLeft="@drawable/toolbar_praise_btn"
+        android:drawablePadding="8dp"
+        android:text="@string/praise"
+        android:textColor="@drawable/toolbar_text_color"
+        android:textSize="@dimen/setting_font_size" />
+
+</RelativeLayout>

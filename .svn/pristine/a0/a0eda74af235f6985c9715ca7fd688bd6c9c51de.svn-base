@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="fill_parent"
+    android:layout_height="53.33dp"
+    android:background="@drawable/list_item_bg"
+    android:paddingLeft="13dp"
+    android:paddingRight="13dp">
+
+    <TextView
+        android:id="@+id/hotwords_rank"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentLeft="true"
+        android:layout_centerVertical="true"
+        android:gravity="center_horizontal"
+        android:textColor="#FFFFFF"
+        android:textSize="14.67sp" />
+
+    <TextView
+        android:id="@+id/hotwords_name"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_centerVertical="true"
+        android:layout_marginLeft="13.33dp"
+        android:layout_toRightOf="@id/hotwords_rank"
+        android:textColor="#37312E"
+        android:textSize="14.67sp" />
+
+    <ImageView
+        android:id="@+id/hotwords_state"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentRight="true"
+        android:layout_centerVertical="true"
+        android:contentDescription="@null" />
+
+    <ImageView
+        android:id="@+id/hotwords_divider"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:contentDescription="@null"
+        android:scaleType="fitXY"
+        android:layout_alignParentBottom="true" />
+</RelativeLayout>

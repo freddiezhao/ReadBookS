@@ -1,0 +1,62 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="fill_parent"
+    android:layout_height="wrap_content"
+    android:background="@drawable/list_item_bg1"
+    android:orientation="vertical" >
+
+    <ImageView
+        android:layout_width="match_parent"
+        android:layout_height="1px"
+        android:background="#DFDFDF"
+        android:contentDescription="@null" />
+
+    <RelativeLayout
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:paddingBottom="12dp"
+        android:paddingLeft="14.67dp"
+        android:paddingRight="14.67dp"
+        android:paddingTop="12dp" >
+
+        <TextView
+            android:id="@+id/recommend_book_nums"
+            android:layout_width="wrap_content"
+            android:layout_height="17.33dp"
+            android:layout_alignParentRight="true"
+            android:background="@drawable/card_entire"
+            android:drawableLeft="@drawable/book_detail_praise_num_normal"
+            android:drawablePadding="3dp"
+            android:gravity="center_vertical"
+            android:paddingLeft="5.33dp"
+            android:paddingRight="5.33dp"
+            android:visibility="gone"
+            android:textColor="@color/all_recommend_num_color"
+            android:textSize="9.33sp" />
+
+        <TextView
+            android:id="@+id/book_title"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:gravity="top|left"
+            android:layout_toLeftOf="@id/recommend_book_nums"
+            android:drawableLeft="@drawable/bookicon_writerpage"
+            android:drawablePadding="5.33dp"
+            android:singleLine="true"
+            android:ellipsize="end"
+            android:textColor="#383838"
+            android:textSize="14.67sp" />
+
+        <TextView
+            android:id="@+id/book_tag"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/book_title"
+            android:layout_marginTop="8dp"
+            android:ellipsize="end"
+            android:singleLine="true"
+            android:textColor="#888888"
+            android:textSize="12sp" />
+    </RelativeLayout>
+
+</LinearLayout>

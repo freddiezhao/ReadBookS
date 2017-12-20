@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<selector xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <item android:state_checked="false" android:color="@color/book_tag_radio_font_color"/>
+    <item android:state_checked="true" android:color="@color/book_tag_radio_font_color_checked"/>
+
+</selector>

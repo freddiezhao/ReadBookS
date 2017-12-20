@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <!-- 将书本封面（可能长期驻留）大小统一放这里，希望在加载图片时做更精确的压缩，减小内存占用 -->
+    <!-- 大多列表的书籍图片高宽 -->
+    <dimen name="book_common_item_img_width">51.0dp</dimen>
+    <dimen name="book_common_item_img_height">72.0dp</dimen>
+
+    <!-- 大多列表以图片形式展现的书籍图片高宽-->
+    <dimen name="book_big_common_item_img_width">84dp</dimen>
+    <dimen name="book_big_common_item_img_height">117.3dp</dimen>
+
+    <!-- 精选推荐的书籍图片高宽-->
+    <dimen name="book_recommend_item_img_width">80dp</dimen>
+    <dimen name="book_recommend_item_img_height">108.67dp</dimen>
+    <dimen name="book_recommend_item_img_width2">60dp</dimen>
+    <dimen name="book_recommend_item_img_height2">81dp</dimen>
+    <dimen name="book_item_paddingLeft">2.67dp</dimen>
+    <dimen name="book_item_paddingRight">4dp</dimen>
+    <dimen name="book_item_paddingBottom">6.67dp</dimen>
+</resources>

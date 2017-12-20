@@ -1,0 +1,119 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+
+<resources>
+
+    <dimen name="defauleTitleHeight">41.33dp</dimen>
+    <dimen name="defauleTitleMidWidth">180dp</dimen>
+    <dimen name="margin_smallest">5dp</dimen>
+    <dimen name="item_padding">10dp</dimen>
+    <dimen name="list_item_height">90dip</dimen>
+    <dimen name="bottom_tab_height">46.67dp</dimen>
+
+    <!-- 读书页布局信息 -->
+    <dimen name="login_banner_height">44dp</dimen>
+
+    <!-- 书签目录页信息 -->
+    <dimen name="catalog_tag_title_height">101.33dp</dimen>
+    <dimen name="catalog_tag_book_title_margin_top">18.67dp</dimen>
+    <dimen name="catalog_go_btn_margin_top">11dp</dimen>
+    <dimen name="catalog_tag_book_title_size">17.33sp</dimen>
+    <dimen name="catalog_tag_book_author_margin_top">6.67dp</dimen>
+    <dimen name="catalog_tag_book_author_size">14.67sp</dimen>
+    <dimen name="catalog_tag_mark_item_height">94.67dp</dimen>
+    <dimen name="catalog_tag_mark_title_size">14.67sp</dimen>
+    <dimen name="catalog_tag_group_space">26.67sp</dimen>
+    <dimen name="catalog_tag_mark_content_space">5.33dp</dimen>
+    <dimen name="catalog_item_height">61.33dp</dimen>
+    <dimen name="title_person_item">14.67sp</dimen>
+
+    <!-- 阅读页信息 默认字体下的各个值 -->
+    <dimen name="reading_title_margin_top">21.33dp</dimen>
+    <dimen name="reading_book_mark_margin_right">9.33dp</dimen>
+    <dimen name="reading_content_margin_left_right">17.33dp</dimen>
+    <dimen name="reading_title_size">10.67sp</dimen>
+    <dimen name="reading_rollbox_padding">5dp</dimen>
+    <dimen name="reading_rollbox_width">31dp</dimen>
+    <dimen name="reading_rollbox_height">39.33dp</dimen>
+
+    <!-- 阅读页toolbar -->
+    <dimen name="toolbar_bg_height">50.67dp</dimen>
+    <dimen name="toolbar_btn_margin_h">8.33dp</dimen>
+    <dimen name="toolbar_btn_space">1.67dp</dimen>
+    <dimen name="toolbar_seek_info_bg_width">182.67dp</dimen>
+
+    <!-- 阅读页设置对话框 -->
+    <dimen name="setting_item_height">52dp</dimen>
+    <dimen name="setting_bg_padding_horizontal">20dp</dimen>
+    <dimen name="setting_seekbar_padding">10dp</dimen>
+    <dimen name="setting_font_size">16sp</dimen>
+    <dimen name="setting_theme_img_width">36.67dp</dimen>
+    <dimen name="setting_theme_img_height">36.67dp</dimen>
+
+    <!-- SeekBar -->
+    <dimen name="seekbar_bg_height">4dp</dimen>
+    <dimen name="has_import_arrow_width">80dp</dimen>
+    <dimen name="has_import_arrow_height">52dp</dimen>
+
+    <!-- 购买对话框 -->
+    <dimen name="pay_dialog_btn_height">37.33dp</dimen>
+    <dimen name="pay_dialog_msg_space">13.33dp</dimen>
+    <dimen name="pay_dialog_msg_space1">8dp</dimen>
+    <dimen name="pay_dialog_btn_fontsize">16sp</dimen>
+    <dimen name="pay_dialog_msg_fontsize">15sp</dimen>
+    <dimen name="pay_dialog_msg_fontsize1">12sp</dimen>
+    <dimen name="pay_dialog_msg_fontsize2">13sp</dimen>
+
+    <!-- 热门推荐头部的高度跟据分辨率变化 -->
+    <dimen name="recommend_header_height">105dp</dimen>
+
+    <!-- 书签下拉部分高度 -->
+    <dimen name="mark_pull_height">140dp</dimen>
+    <dimen name="mark_pull_change">45dp</dimen>
+
+    <!-- 包月相关的高度、宽度等 -->
+    <dimen name="payment_month_detail_title_height">48dp</dimen>
+    <dimen name="payment_month_btn_width">91dp</dimen>
+    <dimen name="payment_month_btn_height_other">29dp</dimen>
+    <dimen name="payment_month_open_text_width">210dp</dimen>
+
+    <!-- 收藏页面我的购买列表项的高度 -->
+    <dimen name="my_purchased_item_height">70dp</dimen>
+
+    <!-- VDISK列表相关值 -->
+    <dimen name="vdisk_item_dir_height">44dp</dimen>
+
+    <!-- 通用按钮的宽度、高度 -->
+    <dimen name="common_btn_width1">240dp</dimen>
+    <dimen name="common_btn_height">37.33dp</dimen>
+
+    <!-- 个人中心Card -->
+    <dimen name="card_title_height">34.67dp</dimen>
+    <dimen name="card_item_height">42.67dp</dimen>
+    <dimen name="card_margin_horizontal">13.33dp</dimen>
+    <dimen name="card_padding_horizontal">16dp</dimen>
+    <dimen name="card_space">10.67dp</dimen>
+    <dimen name="card_item_bottom_padding">4dp</dimen>
+
+    <!-- 主界面 -->
+    <dimen name="main_bottom_title_font">14.67sp</dimen>
+    <dimen name="main_bottom_content_font">12sp</dimen>
+
+    <!-- 新浪微博登陆 -->
+    <dimen name="login_dialog_left_margin">15dp</dimen>
+    <dimen name="login_dialog_top_margin">35dp</dimen>
+    <dimen name="login_dialog_right_margin">15dp</dimen>
+    <dimen name="login_dialog_bottom_margin">15dp</dimen>
+
+    <!-- 基本对话框宽度 -->
+    <dimen name="custom_dialog_width">320dip</dimen>
+    
+    <dimen name="login_dialog_x_rect">20dip</dimen>
+    <dimen name="login_dialog_x_margin_left">5dp</dimen>
+    <dimen name="login_dialog_x_margin_top">25dp</dimen>
+    <dimen name="general_activity_dialog_btns_padding_bottom">10dip</dimen>
+    
+    <dimen name="general_activity_dialog_width">230dip</dimen>
+    <dimen name="general_activity_dialog_height">170dip</dimen>
+
+</resources>

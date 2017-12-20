@@ -1,0 +1,56 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    style="@style/PublicBg"
+    android:layout_width="fill_parent"
+    android:layout_height="fill_parent"
+    android:orientation="vertical" >
+
+    <CheckBox
+        android:id="@+id/share_weibo"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:layout_alignParentRight="true"
+        android:layout_marginBottom="10dp"
+        android:layout_marginRight="14dp"
+        android:layout_marginTop="10dip"
+        android:background="@null"
+        android:button="@drawable/selector_share_weibo"
+        android:checked="false"
+        android:paddingLeft="20dp"
+        android:text="@string/share_weibo"
+        android:textColor="@color/detail_info_color" />
+
+    <RelativeLayout
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:layout_above="@id/share_weibo"
+        android:layout_marginLeft="13dip"
+        android:layout_marginRight="13dip"
+        android:layout_marginTop="10dip" >
+
+        <EditText
+            android:id="@+id/edt_comments_content"
+            android:layout_width="fill_parent"
+            android:layout_height="fill_parent"
+            android:background="@drawable/comments_edit"
+            android:gravity="top"
+            android:hint="@string/comments_hint"
+            android:padding="9dip"
+            android:textColor="@color/feed_back_input"
+            android:textCursorDrawable="@null"
+            android:textColorHint="@color/feed_back_input_hint" />
+
+        <TextView
+            android:id="@+id/txt_show_txtnum"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignBottom="@id/edt_comments_content"
+            android:layout_alignParentRight="true"
+            android:layout_marginBottom="2dp"
+            android:layout_marginLeft="10dip"
+            android:layout_marginRight="10dip"
+            android:text="@string/comment_num" />
+    </RelativeLayout>
+
+</RelativeLayout>

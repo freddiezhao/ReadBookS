@@ -1,0 +1,61 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@drawable/splashbg3"
+    android:orientation="vertical" >
+<!--     android:background="@drawable/splashbg2" -->
+
+    <ImageView
+        android:id="@+id/title_logo"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="88dp"
+        android:contentDescription="@null"
+         />
+<!--         android:src="@drawable/spring_festival_sina_logo" -->
+
+    <ImageView
+        android:id="@+id/sinaapp_img"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/title_logo"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="60dp"
+        android:contentDescription="@null"
+        android:src="@drawable/sinaapp_img" 
+        android:visibility="gone"/>
+
+    <LinearLayout
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:layout_marginBottom="28dp"
+        android:orientation="vertical" >
+
+        <TextView
+            android:id="@+id/login"
+            android:layout_width="261.33dp"
+            android:layout_height="37.33dp"
+            android:layout_gravity="center_horizontal"
+            android:background="@drawable/selector_btn_bg_red"
+            android:gravity="center"
+            android:text="@string/login_and_down"
+            android:textColor="@color/white"
+            android:textSize="@dimen/title_person_item" />
+
+        <TextView
+            android:id="@+id/cancel_enter"
+            android:layout_width="261.33dp"
+            android:layout_height="37.33dp"
+            android:layout_gravity="center_horizontal"
+            android:layout_marginTop="20dp"
+            android:background="@drawable/selector_single_item"
+            android:gravity="center"
+            android:text="@string/cancel_down"
+            android:textColor="@color/personal_item_font_color"
+            android:textSize="@dimen/title_person_item" />
+    </LinearLayout>
+
+</RelativeLayout>

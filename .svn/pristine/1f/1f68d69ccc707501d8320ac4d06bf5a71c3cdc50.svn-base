@@ -1,0 +1,123 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="fill_parent"
+    android:layout_height="wrap_content"
+    android:background="@drawable/book_home_item_bg_nochange"
+    android:orientation="vertical">
+
+    <RelativeLayout
+        android:layout_width="fill_parent"
+        android:layout_height="@dimen/bookhome_item_height">
+
+        <ImageView
+            android:id="@+id/item_menu_btn"
+            android:layout_width="@dimen/bookhome_item_rightbtn_width"
+            android:layout_height="match_parent"
+            android:layout_alignParentRight="true"
+            android:layout_centerVertical="true"
+            android:contentDescription="@null"
+            android:focusable="false"
+            android:scaleType="center" />
+
+        <ImageView
+            android:layout_width="wrap_content"
+            android:layout_height="@dimen/bookhome_item_divider_height"
+            android:layout_alignLeft="@id/item_menu_btn"
+            android:contentDescription="@null"
+            android:layout_centerVertical="true"
+            android:scaleType="fitXY"
+            android:src="@drawable/divider_line_v" />
+
+        <RelativeLayout
+            android:id="@+id/item_content_layout"
+            android:layout_width="fill_parent"
+            android:layout_height="match_parent"
+            android:layout_marginRight="@dimen/bookhome_item_rightbtn_width"
+            android:background="@drawable/book_home_item_bg">
+
+            <ImageView
+                android:id="@+id/file_icon"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentLeft="true"
+                android:layout_centerVertical="true"
+                android:layout_marginLeft="13dp"
+                android:src="@drawable/epub"
+                android:contentDescription="@null" />
+
+            <LinearLayout
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                android:layout_centerVertical="true"
+                android:layout_marginLeft="20dp"
+                android:layout_marginRight="5dp"
+                android:layout_toRightOf="@id/file_icon"
+                android:orientation="vertical">
+
+                <com.sina.book.ui.widget.EllipsizeTextView
+                    android:id="@+id/vdisk_file_name"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:lines="1"
+                    android:maxLines="1"
+                    android:ellipsize="end"
+                    android:textColor="@color/bookhome_book_title"
+                    android:textSize="16sp" />
+
+                <TextView
+                    android:id="@+id/vdisk_file_info"
+                    android:layout_width="fill_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="11dp"
+                    android:singleLine="true"
+                    android:textColor="#67655F"
+                    android:textSize="12sp" />
+            </LinearLayout>
+        </RelativeLayout>
+    </RelativeLayout>
+
+    <com.sina.book.ui.widget.IgnorePressedRelativeLayout
+        android:id="@+id/item_menu_layout"
+        android:layout_width="fill_parent"
+        android:layout_height="@dimen/bookhome_item_menu_height"
+        android:background="@drawable/menu_layout_bg"
+        android:onClick="menuLayoutOnClick"
+        android:visibility="gone">
+
+        <TextView
+            android:id="@+id/item_menu_btn_down"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentLeft="true"
+            android:layout_marginLeft="@dimen/bookhome_item_menubtn_margin"
+            android:drawableTop="@drawable/menu_down_btn_bg"
+            android:layout_centerVertical="true"
+            android:gravity="center"
+            android:text="@string/bookhome_down"
+            android:textColor="@drawable/menu_btn_text_color"
+            android:textSize="12sp" />
+
+        <TextView
+            android:id="@+id/item_menu_btn_share"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentRight="true"
+            android:layout_marginRight="@dimen/bookhome_item_menubtn_margin"
+            android:drawableTop="@drawable/menu_share_btn_bg"
+            android:layout_centerVertical="true"
+            android:gravity="center"
+            android:text="@string/bookhome_share"
+            android:textColor="@drawable/menu_btn_text_color"
+            android:textSize="12sp" />
+    </com.sina.book.ui.widget.IgnorePressedRelativeLayout>
+
+    <ImageView
+        android:id="@+id/vdisk_file_divider"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="13dp"
+        android:layout_marginRight="13dp"
+        android:contentDescription="@null"
+        android:scaleType="fitXY" />
+
+</LinearLayout>

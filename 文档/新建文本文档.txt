@@ -1,0 +1,21 @@
+1.免费专区＝》免费试读
+精选推荐界面数据模块增加title显示栏目名：/interface/c/recommend_list.php
+二级接口增加title显示栏目名：/interface/c/index.php?type=3
+
+2.明星作家＝》人气作者
+精选推荐界面数据模块增加title显示栏目名：/interface/c/recommend_list.php
+二级接口增加title显示栏目名：/interface/c/recommend_author.php
+
+3－4 男生爱看，女生爱看
+精选推荐界面数据模块增加title显示栏目名：/interface/c/recommend_list.php
+二级接口增加title显示栏目名,支持分页（page，perpage）：/interface/c/recommend_bookcms.php
+这几个服务器接口已经改好了，可以直接用线上的测试了
+
+=================================================================
+新浪微博账号
+账号：2dpw@sina.cn   密码：readsina2011
+
+使用账户：joycienet@sina.com 密码：beijing10 
+vipbook2010@sina.cn     密码sinabook
+ceshixiaomajia@sina.cn  密码nicaicai2013
+woceshi@sina.cn    123456ba

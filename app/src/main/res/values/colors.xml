@@ -1,0 +1,183 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+   Copyright (C) 2008 Romain Guy
+
+   Licensed under the Apache License, Version 2.0 (the "License");
+   you may not use this file except in compliance with the License.
+   You may obtain a copy of the License at
+
+        http://www.apache.org/licenses/LICENSE-2.0
+
+   Unless required by applicable law or agreed to in writing, software
+   distributed under the License is distributed on an "AS IS" BASIS,
+   WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+   See the License for the specific language governing permissions and
+   limitations under the License.
+-->
+
+<resources>
+
+    <color name="translucent_white">#3fffffff</color>
+<!--     <color name="transparent">#00000000</color> -->
+    <drawable name="transparent">#00000000</drawable>
+
+    <color name="total_info_color">#94887A</color>
+    <color name="bg_black">#000000</color>
+    <color name="title_color">#333333</color>
+    <color name="book_title_color">#333333</color>
+    <color name="book_store_color">#333333</color>
+    <color name="detail_info_color">#7e7e7e</color>
+    <color name="detail_info_color_night">#ffffff</color>
+    <color name="current_chapter_color">#F1774C</color>
+    <color name="feed_back_input">#333333</color>
+    <color name="feed_back_input_hint">#D8D8D8</color>
+    <color name="add_comment_input_hint">#A1A9BA</color>
+    <color name="white">#FFFFFF</color>
+    <color name="book_tag_title_color">#4D4D4D</color>
+    <color name="book_tag_title_color_night">#8B8B8B</color>
+    <color name="book_tag_author_color">#848484</color>
+    <color name="book_tag_author_color_night">#8B8B8B</color>
+    <color name="book_tag_radio_font_color">#626262</color>
+    <color name="book_tag_radio_font_color_night">#6E7983</color>
+    <color name="book_tag_radio_font_color_checked">#F1774C</color>
+    <color name="book_chapter_title_font_color">#626262</color>
+    <color name="book_chapter_title_font_color_night">#A6A6A6</color>
+    <color name="book_chapter_info_font_color">#848484</color>
+    <color name="book_chapter_info_font_color_night">#A6A6A6</color>
+    <color name="book_mark_chapter_color">#848484</color>
+    <color name="book_mark_chapter_color_night">#A6A6A6</color>
+    <color name="book_mark_font_color">#B2B2B2</color>
+    <color name="book_mark_font_color_night">#A6A6A6</color>
+    <color name="has_not_mark_font_color">#B2B2B2</color>
+    <color name="has_not_mark_font_color_night">#6A6A6A</color>
+
+    <!-- 书城推荐 -->
+    <color name="recommend_title_color">#565658</color>
+    <color name="recommend_title_more">#A0A0A0</color>
+    <color name="partition_light_normal">#F7F7F7</color>
+    <color name="partition_light_pressed">#EEEEEE</color>
+    <color name="partition_dark_normal">#EEEEEE</color>
+    <color name="partition_dark_pressed">#E8E8E8</color>
+    <!-- 书城页面的title indicator颜色 -->
+    <color name="title_indicator_light">#F1774C</color>
+    <color name="title_indicator_def">#717171</color>
+    <color name="title_indicator_def_night">#ffffff</color>
+    <!-- 个人中心页颜色 -->
+    <color name="personal_title_font_color">#F8810D</color>
+    <color name="personal_item_font_color">#8E8D8D</color>
+    <color name="personal_login_note_font_color">#BEB4A3</color>
+    <color name="personal_account_balance_color">#FFA200</color>
+
+    <!-- 阅读页面颜色信息 -->
+    <color name="reading_bg">#F7F4F0</color>
+    <color name="reading_bg_fb">#FAFAFA</color>
+    <color name="reading_bg_night">#2C2C2C</color>
+    <color name="reading_title">#adacac</color>
+    <color name="reading_title_night">#6A6A6A</color>
+    <color name="reading_content">#555555</color>
+    <color name="reading_content_night">#A6A6A6</color>
+    <color name="book_tag_mark_bg">#F7F4F0</color>
+    <color name="book_tag_mark_bg_night">#2C2C2C</color>
+    <color name="setting_text_color_normal">#7A6F67</color>
+    <color name="setting_text_color_pressed">#E09222</color>
+    <color name="toolbar_text_color_normal">#FFFFFF</color>
+    <color name="toolbar_text_color_pressed">#EE9C27</color>
+
+    <!-- 购买对话框颜色信息 -->
+    <color name="pay_dialog_text_color">#666666</color>
+    <color name="pay_dialog_text_gray_color">#C5C5C5</color>
+    <color name="pay_dialog_checkbox_note_color">#B07B4B</color>
+    <color name="pay_dialog_checkbox_note1_color">#BEB4A3</color>
+    <color name="pay_dialog_pay_tip1_color">#F17850</color>
+    <color name="pay_dialog_price_font_color">#F1774C</color>
+
+    <!-- 包月相关的字体颜色 -->
+    <color name="payment_month_has_opened_font_color">#4db610</color>
+    <color name="payment_month_open_btn_color">#808080</color>
+    <color name="payment_month_opened_btn_color">#C5C5C5</color>
+
+    <!-- 文字选中相关字体颜色 -->
+    <color name="selector_menu_text_n">#FFFFFF</color>
+    <color name="selector_menu_text_p">#F8AE20</color>
+    <color name="selector_text_bg_color">#FCE8B5</color>
+    <color name="selector_text_bg_color_night">#FCE8B5</color>
+    <color name="selector_under_line_color">#FFA40F</color>
+    <color name="selector_under_line_color_night">#FFA40F</color>
+
+    <!-- 充值相关颜色 -->
+    <color name="recharge_note_font_color">#BEB4A3</color>
+    <color name="recharge_item_text_font_color">#8E8D8D</color>
+    <color name="recharge_item_top_font_color">#F8810D</color>
+    <color name="recharge_edit_font_color">#000000</color>
+    <color name="recharge_edit_hint_color">#D8D7D7</color>
+    <color name="recharge_tip_color">#BEB4A3</color>
+
+    <!-- 主界面 -->
+    <color name="main_btn_pressed">#F1774C</color>
+    <color name="main_bottom_bg_color">#F5F5F5</color>
+    <color name="main_bottom_title_color">#565658</color>
+    <color name="main_bottom_book_coolor">#37312E</color>
+    <color name="main_bottom_content_color">#A1A1A1</color>
+    <color name="main_bottom_special_color">#E65F45</color>
+    <color name="main_bottom_divider_color">#D1D1D1</color>
+
+    <!-- 书籍详情页 -->
+    <color name="book_detail_font_color">#929292</color>
+    <color name="book_detail_checked_font_color">#F1774C</color>
+    <color name="book_detail_mouth_pay_font_color">#DDBB5F</color>
+    <color name="book_detail_intro_font_color">#908F8F</color>
+    <color name="book_detail_tag_font_color">#6E6E6E</color>
+    <color name="book_detail_praise_comment_color">#5C5C5C</color>
+    <color name="book_detail_cannot_praise_color">#CACACA</color>
+    <color name="book_detail_open_all_color">#505050</color>
+    <color name="book_detail_title_font_color">#707070</color>
+    <color name="book_detail_praise_unchoosed_color">#8E8E8E</color>
+    <color name="book_detail_praise_choosed_color">#646464</color>
+    <color name="book_detail_btn_font_color">#808080</color>
+    <color name="book_detail_btn_grayed_color">#C5C5C5</color>
+    <color name="book_detail_cannot_open_color">#CBC9C5</color>
+    <color name="book_detail_new_chapter_color">#000000</color>
+    <color name="book_detail_update_time_color">#A7A7A7</color>
+    <color name="book_detail_special_font_color">#F8810D</color>
+    <color name="book_detail_author_font_color">#E55F42</color>
+
+    <!-- 书籍简介页 -->
+    <color name="book_simple_title_font_color">#464646</color>
+    <color name="book_simple_content_font_color">#7F7F7F</color>
+
+    <!-- 书籍免费、连载等tag颜色信息 -->
+    <color name="book_seria_color">#A1A1A1</color>
+    <color name="book_charge_color">#A1A1A1</color>
+    <color name="book_free_color">#79C764</color>
+    <color name="book_cost_color">#A1A1A1</color>
+
+    <!-- 畅销榜单 -->
+    <color name="praise_num_color">#F8810D</color>
+
+    <!-- 页面背景颜色 -->
+    <color name="public_bg">#F7F4F0</color>
+    <color name="public_card_bg">#FFebebeb</color>
+
+    <!-- 大家推荐 -->
+    <color name="all_recommend_time_color">#F8810D</color>
+    <color name="all_recommend_title_color">#383838</color>
+    <color name="all_recommend_username_color">#383838</color>
+    <color name="all_recommend_line_color">#DFDFDF</color>
+    <color name="all_recommend_font_color">#A0A0A0</color>
+    <color name="all_recommend_book_color">#A7A7A7</color>
+    <color name="all_recommend_num_color">#8E8E8E</color>
+    <color name="male">#1C99F1</color>
+    <color name="female">#FE6565</color>
+    <color name="publish">#909090</color>
+
+    <!-- 消费页面 -->
+    <color name="consume_radio_checked">#2F3239</color>
+    <color name="consume_item_normal">#7c7c7c</color>
+    <color name="consume_item_title">#575757</color>
+    <color name="consume_item_light">#FB7032</color>
+
+    <!-- 明星作家 -->
+    <color name="star_author_name">#37312e</color>
+    <color name="star_author_desp">#a1a1a1</color>
+
+</resources>

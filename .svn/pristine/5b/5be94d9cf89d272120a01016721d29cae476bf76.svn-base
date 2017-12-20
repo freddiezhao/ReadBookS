@@ -1,0 +1,117 @@
+package com.sina.book.ui.adapter;
+
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Locale;
+
+import android.content.Context;
+import android.graphics.drawable.Drawable;
+import android.text.TextUtils;
+import android.view.LayoutInflater;
+import android.view.View;
+import android.view.View.OnClickListener;
+import android.view.ViewGroup;
+import android.widget.ImageView;
+import android.widget.TextView;
+
+import com.sina.book.R;
+import com.sina.book.data.ConstantData;
+import com.sina.book.data.RecommendCateItem;
+import com.sina.book.ui.PartitionDetailActivity;
+import com.sina.book.ui.RecommendCmsActivity;
+import com.sina.book.ui.widget.EllipsizeTextView;
+import com.sina.book.useraction.Constants;
+import com.sina.book.useraction.UserActionManager;
+
+/**
+ * 【推荐页】热门分类Adapter
+ * 
+ * @author MarkMjw
+ * @date 2013-5-10
+ */
+public class RecommendClassicAdapter extends ListAdapter<RecommendCateItem> {
+	private Context mContext;
+	private Drawable mDividerDrawable;
+
+	public RecommendClassicAdapter(Context context, Drawable divider) {
+		this.mContext = context;
+		this.mDividerDrawable = divider;
+	}
+
+	@Override
+	public View getView(int position, View convertView, ViewGroup parent) {
+		if (convertView == null || convertView.getTag() == null) {
+			convertView = createView();
+		}
+
+		ViewHolder holder = (ViewHolder) convertView.getTag();
+		RecommendCateItem item = (RecommendCateItem) getItem(position);
+
+		holder.mDivider.setImageDrawable(mDividerDrawable);
+		holder.mType.setText(item.getName());
+
+		String title = "";
+		for (int i = 0; i < item.getBooks().size(); i++) {
+			title += item.getBooks().get(i).getTitle().trim();
+
+			if (i + 1 < item.getBooks().size()) {
+				title += " | ";
+			}
+		}
+		holder.mBooks.setText(title);
+		convertView.setOnClickListener(new ClickListener(item));
+
+		return convertView;
+	}
+
+	@Override
+	protected List<RecommendCateItem> createList() {
+		return new ArrayList<RecommendCateItem>();
+	}
+
+	protected View createView() {
+		View itemView = LayoutInflater.from(mContext).inflate(R.layout.vw_recommend_classic_item, null);
+		ViewHolder holder = new ViewHolder();
+
+		holder.mDivider = (ImageView) itemView.findViewById(R.id.classic_list_divider);
+		holder.mType = (TextView) itemView.findViewById(R.id.classic_type);
+		holder.mBooks = (EllipsizeTextView) itemView.findViewById(R.id.classic_books);
+
+		itemView.setTag(holder);
+		return itemView;
+	}
+
+	private class ViewHolder {
+		public ImageView mDivider;
+		public TextView mType;
+		public EllipsizeTextView mBooks;
+	}
+
+	private class ClickListener implements OnClickListener {
+		private RecommendCateItem mItem;
+
+		public ClickListener(RecommendCateItem item) {
+			mItem = item;
+		}
+
+		@Override
+		public void onClick(View v) {
+			String type = mItem.getId();
+			String title = mItem.getName();
+
+			// 进入详情
+			if (!TextUtils.isEmpty(type) && !TextUtils.isEmpty(title)) {
+				// 男生，女生，出版
+				if ("boy".equals(type) || "girl".equals(type) || "pub".equals(type)) {
+					String url = String.format(Locale.CHINA, ConstantData.URL_RECOMMEND_CMS, type);
+					RecommendCmsActivity.launch(mContext, url, title, type);
+
+				} else {
+					PartitionDetailActivity.launch(mContext, type, title, 1);
+
+					UserActionManager.getInstance().recordEvent(Constants.CLICK_RECOMMEND_CLASSIFIED);
+				}
+			}
+		}
+	}
+}

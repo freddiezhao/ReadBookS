@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8"?>
+<TextView xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/vm_general_btn_positive_txt"
+    android:layout_width="match_parent"
+    android:layout_height="@dimen/pay_dialog_btn_height"
+    android:layout_marginLeft="7dp"
+    android:layout_weight="1"
+    android:background="@drawable/selector_btn_bg_red"
+    android:gravity="center"
+    android:text="@string/ok"
+    android:textColor="@color/white"
+    android:textSize="@dimen/pay_dialog_btn_fontsize" />

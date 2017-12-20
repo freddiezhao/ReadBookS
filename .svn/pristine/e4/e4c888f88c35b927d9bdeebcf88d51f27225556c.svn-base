@@ -1,0 +1,63 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="fill_parent"
+    android:layout_height="fill_parent"
+    android:background="@color/public_bg"
+    android:baselineAligned="false" >
+
+    <RelativeLayout
+        android:id="@+id/payment_month_detail_title"
+        android:layout_width="fill_parent"
+        android:layout_height="@dimen/payment_month_detail_title_height" >
+
+        <TextView
+            android:id="@+id/payment_month_booklist_text"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:layout_alignParentLeft="true"
+            android:layout_centerVertical="true"
+            android:layout_marginLeft="10dp"
+            android:text="@string/open_payment_month_tip"
+            android:textColor="#BEB4A3"
+            android:textSize="13.33sp" />
+
+        <Button
+            android:id="@+id/payment_month_booklist_btn"
+            android:layout_width="@dimen/payment_month_btn_width"
+            android:layout_height="@dimen/payment_month_btn_height_other"
+            android:layout_alignParentRight="true"
+            android:layout_centerVertical="true"
+            android:layout_marginRight="10dp"
+            android:background="@drawable/selector_btn_bg_red"
+            android:gravity="center"
+            android:text="@string/open_payment_month"
+            android:textColor="@color/white"
+            android:textSize="15sp" />
+    </RelativeLayout>
+
+    <com.sina.book.ui.widget.XListView
+        android:id="@+id/payment_month_books_listview"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/payment_month_detail_title"
+        android:cacheColorHint="#00000000"
+        android:divider="@null"
+        android:fadingEdge="none"
+        android:focusable="true"
+        android:listSelector="@drawable/book_home_item_bg_nochange" />
+
+    <include
+        android:id="@+id/payment_month_booklist_progress"
+        android:layout_width="fill_parent"
+        android:layout_height="fill_parent"
+        layout="@layout/vw_generic_progress_view"
+        android:visibility="gone" />
+
+    <include
+        android:id="@+id/error_layout"
+        android:layout_width="fill_parent"
+        android:layout_height="fill_parent"
+        layout="@layout/vw_error"
+        android:visibility="gone" />
+
+</RelativeLayout>

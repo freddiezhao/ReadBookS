@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    style="@style/PublicBg"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:layout_centerInParent="true"
+    android:gravity="center"
+    android:orientation="vertical" >
+
+    <ImageView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:contentDescription="@null"
+        android:src="@drawable/payment_month_icon" />
+
+    <TextView
+        android:layout_width="@dimen/payment_month_open_text_width"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="16dp"
+        android:gravity="center_horizontal"
+        android:text="@string/continue_month_pay_text"
+        android:textColor="#EBCCAA"
+        android:textSize="16sp" />
+
+    <Button
+        android:id="@+id/payment_month_continue_btn"
+        android:layout_width="@dimen/common_btn_width1"
+        android:layout_height="@dimen/common_btn_height"
+        android:layout_marginTop="80dp"
+        android:background="@drawable/selector_btn_bg_red"
+        android:gravity="center"
+        android:text="@string/continue_month_pay"
+        android:textColor="@color/white"
+        android:textSize="16sp" />
+
+</LinearLayout>

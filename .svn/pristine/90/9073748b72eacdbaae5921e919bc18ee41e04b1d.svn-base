@@ -1,0 +1,92 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="fill_parent"
+    android:layout_height="wrap_content"
+    android:orientation="vertical" >
+
+    <RelativeLayout
+        android:layout_width="fill_parent"
+        android:layout_height="32dp"
+        android:background="@drawable/top" >
+
+        <TextView
+            android:id="@+id/payment_month_type"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentBottom="true"
+            android:layout_marginLeft="16dp"
+            android:paddingBottom="2.67dp"
+            android:textColor="@color/personal_title_font_color"
+            android:textSize="16sp" />
+
+        <TextView
+            android:id="@+id/payment_month_time_remain"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentBottom="true"
+            android:layout_marginLeft="7dp"
+            android:layout_toRightOf="@id/payment_month_type"
+            android:paddingBottom="2.67dp"
+            android:textColor="@color/payment_month_has_opened_font_color"
+            android:textSize="16sp" />
+    </RelativeLayout>
+
+    <LinearLayout
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:background="@drawable/selector_personal_bottom_bg"
+        android:orientation="vertical" >
+
+        <RelativeLayout
+            android:id="@+id/payment_month_layout"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:paddingBottom="13.33dp"
+            android:paddingLeft="16dp"
+            android:paddingRight="16dp"
+            android:paddingTop="10.67dp" >
+
+            <TextView
+                android:id="@+id/payment_month_text"
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                android:textColor="#8E8D8D"
+                android:textSize="12sp" />
+        </RelativeLayout>
+
+        <LinearLayout
+            android:layout_width="fill_parent"
+            android:layout_height="33.33dp"
+            android:layout_marginBottom="13.33dp"
+            android:orientation="horizontal" >
+
+            <Button
+                android:id="@+id/payment_month_btn"
+                android:layout_width="fill_parent"
+                android:layout_height="fill_parent"
+                android:layout_gravity="center_horizontal"
+                android:layout_weight="1"
+                android:background="@drawable/selector_btn_bg_gray"
+                android:gravity="center"
+                android:textColor="@color/white"
+                android:textSize="14.67sp" 
+                android:layout_marginLeft="16dp"
+                android:layout_marginRight="5.33dp"/>
+
+            <Button
+                android:id="@+id/payment_month_see_list_btn"
+                android:layout_width="fill_parent"
+                android:layout_height="fill_parent"
+                android:layout_gravity="center_horizontal"
+                android:layout_weight="1"
+                android:background="@drawable/selector_btn_bg_gray"
+                android:gravity="center"
+                android:textColor="#808080"
+                android:textSize="14.67sp" 
+                android:layout_marginLeft="5.33dp"
+                android:layout_marginRight="16dp"
+                android:text="@string/see_payment_month_list"/>
+        </LinearLayout>
+    </LinearLayout>
+
+</LinearLayout>

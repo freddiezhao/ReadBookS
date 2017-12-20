@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <!-- 阅读页工具栏 -->
+    <dimen name="read_toolbar_chapter_rela_text">13dip</dimen>
+
+</resources>

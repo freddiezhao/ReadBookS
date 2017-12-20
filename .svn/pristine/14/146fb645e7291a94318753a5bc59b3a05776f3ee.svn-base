@@ -1,0 +1,5 @@
+1.首先将需要下载的书整理成excel（97-03格式）表格，格式参照：1128.xls（如出现异常检查excel的格式是否正确）
+2.将该文件放到../assert目录下,同时修改AutoDownBookManager.java中CONFIG_NAME的值为该文件名
+3.到个人中心随便一个按钮的onClick事件中增加如下代码：AutoDownBookManager.getInstance(Context).start();
+4.运行程序到个人中心，点击该按钮即可自动下载
+5.最后到sdcard/sina/目录下查看下载好的文件

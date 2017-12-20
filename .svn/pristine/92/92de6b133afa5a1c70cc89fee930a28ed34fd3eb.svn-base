@@ -1,0 +1,78 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="fill_parent"
+    android:layout_height="fill_parent"
+    android:clipChildren="false"
+    android:clipToPadding="false"
+    android:descendantFocusability="blocksDescendants">
+
+    <!-- 书的封皮 -->
+    <RelativeLayout
+        android:id="@+id/book_img_layout"
+        android:layout_width="fill_parent"
+        android:layout_height="fill_parent"
+        android:background="@drawable/main_book_bgshadow"
+        android:paddingLeft="0.66dp"
+        android:paddingRight="6.66dp"
+        android:paddingTop="1.3dp">
+
+        <ImageView
+            android:id="@+id/book_img"
+            android:layout_width="fill_parent"
+            android:layout_height="fill_parent"
+            android:contentDescription="@null"
+            android:scaleType="fitXY" />
+
+        <!-- 右下标签 -->
+
+        <ImageView
+            android:id="@+id/book_tip"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignBottom="@id/book_img"
+            android:layout_alignRight="@id/book_img"
+            android:contentDescription="@null"
+            android:visibility="gone" />
+
+        <!-- 找不到封皮时，显示的书名 -->
+
+        <com.sina.book.ui.widget.EllipsizeTextView
+            android:id="@+id/book_title"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:layout_centerHorizontal="true"
+            android:layout_gravity="center"
+            android:layout_marginLeft="15dp"
+            android:layout_marginRight="15dp"
+            android:layout_marginTop="32dp"
+            android:gravity="center"
+            android:lineSpacingExtra="2dp"
+            android:lineSpacingMultiplier="1"
+            android:maxLines="2"
+            android:textColor="#705332"
+            android:textSize="15sp" />
+
+        <ImageView
+            android:id="@+id/book_img_shadow"
+            android:layout_width="fill_parent"
+            android:layout_height="fill_parent"
+            android:background="@drawable/main_book_click"
+            android:contentDescription="@null"
+            android:scaleType="fitXY" />
+    </RelativeLayout>
+
+    <!-- 右上书籍章节更新提示 -->
+
+    <TextView
+        android:id="@+id/book_new_chapter"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignRight="@id/book_img_layout"
+        android:layout_alignTop="@id/book_img_layout"
+        android:background="@drawable/update_chapters_num"
+        android:gravity="center"
+        android:textColor="@color/white"
+        android:textSize="12sp"
+        android:visibility="visible" />
+
+</RelativeLayout>

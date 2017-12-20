@@ -1,0 +1,108 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:orientation="vertical"
+    android:padding="5dp">
+
+    <RelativeLayout
+        android:id="@+id/book_cover_layout"
+        android:layout_width="wrap_content"
+        android:layout_height="match_parent">
+
+        <!-- 图书封面 -->
+        <ImageView
+            android:id="@+id/book_cover"
+            android:layout_width="@dimen/book_recommend_item_img_width2"
+            android:layout_height="@dimen/book_recommend_item_img_height2"
+            android:layout_alignParentLeft="true"
+            android:layout_centerVertical="true"
+            android:background="@drawable/main_book_bg"
+            android:contentDescription="@null"
+            android:paddingBottom="@dimen/book_item_paddingBottom"
+            android:paddingLeft="@dimen/book_item_paddingLeft"
+            android:paddingRight="@dimen/book_item_paddingRight"
+            android:scaleType="fitXY"
+            android:src="@drawable/sinabook" />
+
+        <!-- 用于实现图书封面的点击效果 -->
+        <ImageView
+            android:id="@+id/book_cover_click"
+            android:layout_width="@dimen/book_recommend_item_img_width2"
+            android:layout_height="@dimen/book_recommend_item_img_height2"
+            android:layout_alignParentLeft="true"
+            android:layout_centerVertical="true"
+            android:contentDescription="@null"
+            android:paddingBottom="@dimen/book_item_paddingBottom"
+            android:paddingLeft="@dimen/book_item_paddingLeft"
+            android:paddingRight="@dimen/book_item_paddingRight"
+            android:scaleType="fitXY"
+            android:src="@drawable/main_book_click" />
+
+        <ImageView
+            android:id="@+id/book_icon"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignLeft="@id/book_cover"
+            android:layout_alignTop="@id/book_cover"
+            android:layout_marginLeft="@dimen/book_item_paddingLeft"
+            android:contentDescription="@null" />
+
+    </RelativeLayout>
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_alignBottom="@id/book_cover_layout"
+        android:layout_alignTop="@id/book_cover_layout"
+        android:layout_marginBottom="5dp"
+        android:layout_marginLeft="15dp"
+        android:layout_marginTop="5dp"
+        android:layout_toRightOf="@id/book_cover_layout"
+        android:orientation="vertical">
+
+        <com.sina.book.ui.widget.EllipsizeTextView
+            android:id="@+id/book_title"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentTop="true"
+            android:layout_gravity="top"
+            android:ellipsize="end"
+            android:gravity="center_vertical"
+            android:maxLines="2"
+            android:paddingLeft="@dimen/book_item_paddingLeft"
+            android:paddingRight="@dimen/book_item_paddingRight"
+            android:textColor="#37312E"
+            android:textSize="15sp" />
+
+        <TextView
+            android:id="@+id/book_author"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/book_title"
+            android:layout_gravity="center_vertical"
+            android:layout_marginTop="3dp"
+            android:ellipsize="end"
+            android:gravity="center_vertical"
+            android:maxLines="2"
+            android:paddingLeft="@dimen/book_item_paddingLeft"
+            android:paddingRight="@dimen/book_item_paddingRight"
+            android:singleLine="true"
+            android:textColor="@color/book_cost_color"
+            android:textSize="13sp" />
+
+
+        <com.sina.book.ui.widget.EllipsizeTextView
+            android:id="@+id/book_intro"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/book_author"
+            android:ellipsize="end"
+            android:gravity="center_vertical"
+            android:paddingLeft="@dimen/book_item_paddingLeft"
+            android:paddingRight="@dimen/book_item_paddingRight"
+            android:textColor="#A1A1A1"
+            android:textSize="13sp" />
+    </RelativeLayout>
+
+</RelativeLayout>

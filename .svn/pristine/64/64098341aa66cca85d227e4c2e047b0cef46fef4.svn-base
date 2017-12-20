@@ -1,0 +1,95 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="66.67dp"
+    android:background="@drawable/read_bottombar"
+    android:orientation="horizontal" >
+
+    <TextView
+        android:id="@+id/toolbar_progress_btn"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center_vertical"
+        android:layout_weight="1"
+        android:background="@drawable/toolbar_tab_btn_bg"
+        android:drawablePadding="-5dp"
+        android:drawableTop="@drawable/toolbar_progress_bg"
+        android:gravity="center"
+        android:padding="5dp"
+        android:text="@string/toolbar_progress"
+        android:textColor="@drawable/toolbar_text_color"
+        android:textSize="12sp" />
+
+    <ImageView
+        android:layout_width="wrap_content"
+        android:layout_height="21.33dp"
+        android:layout_gravity="center_vertical"
+        android:contentDescription="@null"
+        android:scaleType="fitXY"
+        android:src="@drawable/read_page_line_v" />
+
+    <TextView
+        android:id="@+id/toolbar_night_btn"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center_vertical"
+        android:layout_weight="1"
+        android:drawablePadding="-5dp"
+        android:drawableTop="@drawable/toolbar_bright_bg"
+        android:gravity="center"
+        android:padding="5dp"
+        android:text="@string/toolbar_bright"
+        android:textColor="@drawable/toolbar_text_color"
+        android:textSize="12sp" />
+
+    <ImageView
+        android:id="@+id/toolbar_comment_divider"
+        android:layout_width="wrap_content"
+        android:layout_height="21.33dp"
+        android:layout_gravity="center_vertical"
+        android:contentDescription="@null"
+        android:scaleType="fitXY"
+        android:src="@drawable/read_page_line_v" />
+
+    <!-- 隐藏点评 -->
+    <TextView
+        android:id="@+id/toolbar_comment_btn"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center_vertical"
+        android:layout_weight="1"
+        android:background="@drawable/toolbar_tab_btn_bg"
+        android:drawablePadding="-5dp"
+        android:drawableTop="@drawable/toolbar_comment_bg"
+        android:gravity="center"
+        android:padding="5dp"
+        android:text="@string/toolbar_comment"
+        android:textColor="@drawable/toolbar_text_color"
+        android:textSize="12sp"
+        android:visibility="gone"/>
+
+    <ImageView
+        android:layout_width="wrap_content"
+        android:layout_height="21.33dp"
+        android:layout_gravity="center_vertical"
+        android:contentDescription="@null"
+        android:scaleType="fitXY"
+        android:src="@drawable/read_page_line_v"
+        android:visibility="gone"/>
+
+    <TextView
+        android:id="@+id/toolbar_setting_btn"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center_vertical"
+        android:layout_weight="1"
+        android:background="@drawable/toolbar_tab_btn_bg"
+        android:drawablePadding="-5dp"
+        android:drawableTop="@drawable/toolbar_setting_bg"
+        android:gravity="center"
+        android:padding="5dp"
+        android:text="@string/toolbar_setting"
+        android:textColor="@drawable/toolbar_text_color"
+        android:textSize="12sp" />
+
+</LinearLayout>

@@ -1,0 +1,296 @@
+package com.sina.book.control.download;
+
+import java.io.File;
+import java.io.IOException;
+import java.io.InputStream;
+import java.util.ArrayList;
+import java.util.List;
+
+import jxl.Sheet;
+import jxl.Workbook;
+import jxl.read.biff.BiffException;
+import jxl.write.Label;
+import jxl.write.WritableSheet;
+import jxl.write.WritableWorkbook;
+import jxl.write.WriteException;
+import jxl.write.biff.RowsExceededException;
+
+import org.apache.http.HttpStatus;
+
+import android.content.Context;
+import android.text.TextUtils;
+
+import com.sina.book.control.GenericTask;
+import com.sina.book.control.RequestTask;
+import com.sina.book.control.TaskParams;
+import com.sina.book.control.TaskResult;
+import com.sina.book.data.Book;
+import com.sina.book.data.BookDetailData;
+import com.sina.book.data.BookDownloadInfo;
+import com.sina.book.data.ChapterList;
+import com.sina.book.data.ConstantData;
+import com.sina.book.db.DBOpenHelper;
+import com.sina.book.db.DBService;
+import com.sina.book.parser.BookDetailParser;
+import com.sina.book.parser.ChapterListParser;
+import com.sina.book.util.HttpUtil;
+import com.sina.book.util.LogUtil;
+import com.sina.book.util.StorageUtil;
+
+/**
+ * 自动下载书籍（用于单本书籍打包）
+ * 
+ * @author MarkMjw
+ * @date 13-11-8.
+ */
+public class AutoDownBookManager implements ITaskUpdateListener {
+	private static final String TAG = "AutoDownBookManager";
+
+	private static AutoDownBookManager sInstance;
+	private static Context sContext;
+
+	private static final String CONFIG_NAME = "2016.xls";
+
+	public static AutoDownBookManager getInstance(Context context) {
+		sContext = context;
+		if (sInstance == null) {
+			synchronized (AutoDownBookManager.class) {
+				if (sInstance == null) {
+					sInstance = new AutoDownBookManager();
+				}
+			}
+		}
+		return sInstance;
+	}
+
+	public void start() {
+		// 只是为了初始化
+		new DownFileTask("url", "path", 0);
+
+		new GenericTask() {
+			@Override
+			protected TaskResult doInBackground(TaskParams... params) {
+				try {
+					InputStream inputStream = sContext.getAssets().open(CONFIG_NAME);
+					LogUtil.e(TAG, "Parse config start.");
+					List<Book> books = readExcel(inputStream);
+					LogUtil.e(TAG, "Parse config finish.");
+
+					LogUtil.w(TAG, "Down task start.");
+					// String sdPath = "/sina/reader_" +
+					// book.getBookId();
+					String sdPath = "/sina/reader_autodownload";
+					DBOpenHelper.DB_PATH = StorageUtil.EXTERNAL_STORAGE + sdPath + "/db/";
+					StorageUtil.DIR_HOME = StorageUtil.EXTERNAL_STORAGE + sdPath;
+
+					// 1. 打开数据库
+					DBService.close();
+					DBService.init(sContext);
+					DBService.clear();
+
+					if (!books.isEmpty()) {
+						for (final Book book : books) {
+
+							// 2. 请求书籍详情
+							reqBookInfo(book);
+
+							// 3. 请求章节列表
+							Book localBook = DBService.getBook(book);
+							if(localBook == null){
+								continue;
+							}
+							
+							reqChapterList(localBook);
+
+							// 4. 下载书籍
+							DownBookManager.getInstance().resetCacheBooks();
+							DownBookManager.getInstance().addProgressListener(sInstance);
+							DownBookManager.getInstance().downBook(localBook);
+
+							synchronized (sInstance) {
+								try {
+									LogUtil.w(TAG, "4.Down task waiting.");
+									sInstance.wait();
+								} catch (InterruptedException e) {
+									e.printStackTrace();
+								}
+							}
+
+							// 5. 更新书籍相关信息如：文件路径、contentType等
+							localBook.setBookContentType(256);
+							BookDownloadInfo downloadInfo = localBook.getDownloadInfo();
+							String filePath = downloadInfo.getFilePath();
+							if (!TextUtils.isEmpty(filePath)) {
+								String str = filePath.substring(filePath.lastIndexOf("/") + 1);
+								String path = "file:///android_asset/book/" + str;
+
+								downloadInfo.setFilePath(path);
+
+								String pStr = downloadInfo.getOriginalFilePath();
+								pStr = pStr.substring(0, pStr.lastIndexOf("."));
+								pStr += Book.BOOK_SUFFIX;
+								downloadInfo.setOriginalFilePath(pStr);
+
+								DBService.updateBook(localBook);
+							}
+
+						}
+					}
+				} catch (IOException e) {
+					e.printStackTrace();
+				} finally {
+					// 6. 关闭数据库
+					DBService.close();
+					LogUtil.w(TAG, "Down task finish.");
+				}
+				return null;
+			}
+		}.execute();
+	}
+
+	@Override
+	public void onUpdate(Book book, boolean mustUpdate, boolean mustRefresh, int progress, int stateCode) {
+		if (DownBookJob.STATE_FINISHED == stateCode) {
+			DownBookManager.getInstance().removeProgressListener(sInstance);
+			synchronized (sInstance) {
+				sInstance.notifyAll();
+				LogUtil.w(TAG, "Down task start continue.");
+			}
+		}
+	}
+
+	/**
+	 * 请求书籍详情
+	 */
+	private void reqBookInfo(Book book) {
+		String reqUrl = String.format(ConstantData.URL_BOOK_INFO, book.getBookId(), book.getSid(), book.getBookSrc());
+		reqUrl = ConstantData.addLoginInfoToUrl(reqUrl);
+		// reqUrl = HttpUtil.addAuthCode2Url(reqUrl);
+
+		RequestTask reqTask = new RequestTask(new BookDetailParser());
+		TaskParams params = new TaskParams();
+		params.put(RequestTask.PARAM_URL, reqUrl);
+		params.put(RequestTask.PARAM_HTTP_METHOD, RequestTask.HTTP_GET);
+
+		TaskResult result = reqTask.syncExecute(params);
+		if (null != result && result.stateCode == HttpStatus.SC_OK) {
+			if (result.retObj instanceof BookDetailData) {
+				BookDetailData data = (BookDetailData) result.retObj;
+
+				book = data.getBook();
+				DBService.saveBook(book);
+
+				LogUtil.i(TAG, "Request book info success.");
+			}
+		}
+	}
+
+	/**
+	 * 请求章节信息
+	 */
+	private void reqChapterList(Book book) {
+		String reqUrl = String
+				.format(ConstantData.URL_GET_CHAPTERS, book.getBookId(), book.getSid(), book.getBookSrc());
+		reqUrl = ConstantData.addLoginInfoToUrl(reqUrl);
+		reqUrl = HttpUtil.addAuthCode2Url(reqUrl);
+
+		RequestTask task = new RequestTask(new ChapterListParser());
+		TaskParams params = new TaskParams();
+		params.put(RequestTask.PARAM_URL, reqUrl);
+		params.put(RequestTask.PARAM_HTTP_METHOD, RequestTask.HTTP_GET);
+		TaskResult taskResult = task.syncExecute(params);
+
+		if (taskResult != null && taskResult.retObj instanceof ChapterList) {
+			ChapterList updateChaptersResult = (ChapterList) taskResult.retObj;
+			book.setChapters(updateChaptersResult.getChapters());
+			DBService.updateAllChapter(book, book.getChapters());
+
+			LogUtil.i(TAG, "Request chapter list success. size = " + book.getChapters().size());
+		}
+	}
+
+	public List<Book> readExcel(InputStream inputStream) {
+		List<Book> books = new ArrayList<Book>();
+		try {
+			Workbook workBook = Workbook.getWorkbook(inputStream);
+			Sheet sheet = workBook.getSheet(0);
+			int column = sheet.getColumns();
+			int row = sheet.getRows();
+			LogUtil.d(TAG, "Row -> " + row + "  Column -> " + column);
+
+			for (int i = 0; i < row; i++) {
+				Book book = new Book();
+
+				String rowStr = "";
+				for (int j = 0; j < column; j++) {
+					// 得到x行y列所在单元格的内容
+					String cellStr = null;
+					try{
+						cellStr = sheet.getRow(i)[j].getContents();
+					}catch(Exception e){
+
+					}
+
+					if(TextUtils.isEmpty(cellStr)){
+						break;
+					}
+
+					rowStr += cellStr;
+					rowStr += " : ";
+
+					if (0 == j) {
+						book.setBookId(cellStr);
+					} else if (1 == j) {
+						book.setTitle(cellStr);
+					} else {
+						// 忽略其他列
+						break;
+					}
+				}
+				LogUtil.i(TAG, "Row : " + i + " -> " + rowStr);
+
+				books.add(book);
+			}
+		} catch (BiffException e) {
+			e.printStackTrace();
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+
+		return books;
+	}
+
+	public void writeExcel(String fileName) {
+		WritableWorkbook wwb = null;
+		try {
+			// 创建一个可写入的工作薄(Workbook)对象
+			wwb = Workbook.createWorkbook(new File(fileName));
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+		if (wwb != null) {
+			// 第一个参数是工作表的名称，第二个是工作表在工作薄中的位置
+			WritableSheet ws = wwb.createSheet("sheet1", 0);
+			// 在指定单元格插入数据
+			Label lbl1 = new Label(5, 5, "Excel");
+			Label bll2 = new Label(10, 10, "的操作");
+			try {
+				ws.addCell(lbl1);
+				ws.addCell(bll2);
+			} catch (RowsExceededException e1) {
+				e1.printStackTrace();
+			} catch (WriteException e1) {
+				e1.printStackTrace();
+			}
+			try {
+				// 从内存中写入文件中
+				wwb.write();
+				wwb.close();
+			} catch (IOException e) {
+				e.printStackTrace();
+			} catch (WriteException e) {
+				e.printStackTrace();
+			}
+		}
+	}
+}

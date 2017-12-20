@@ -1,0 +1,153 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    style="@style/PublicBg"
+    android:layout_width="fill_parent"
+    android:layout_height="fill_parent"
+    android:paddingLeft="13.33dp"
+    android:paddingRight="13.33dp"
+    android:paddingBottom="13.33dp" >
+
+    <ScrollView
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:scrollbars="none" >
+
+        <LinearLayout
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical" >
+
+            <RelativeLayout
+                android:id="@+id/book_head"
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content" >
+
+                <RelativeLayout
+                    android:id="@+id/book_img_layout"
+                    android:layout_width="94.67dp"
+                    android:layout_height="133.33dp"
+                    android:layout_marginTop="13.33dp"
+                    android:background="@drawable/main_book_bg"
+                    android:paddingBottom="@dimen/book_item_paddingBottom"
+                    android:paddingLeft="@dimen/book_item_paddingLeft"
+                    android:paddingRight="@dimen/book_item_paddingRight" >
+
+                    <ImageView
+                        android:id="@+id/book_head_img"
+                        android:layout_width="fill_parent"
+                        android:layout_height="fill_parent"
+                        android:contentDescription="@null"
+                        android:scaleType="fitXY"
+                        android:src="@drawable/sinabook" />
+
+                    <!-- 找不到封皮时，显示的书名 -->
+
+                    <com.sina.book.ui.widget.EllipsizeTextView
+                        android:id="@+id/book_head_title"
+                        android:layout_width="80dp"
+                        android:layout_height="wrap_content"
+                        android:layout_centerHorizontal="true"
+                        android:layout_gravity="center"
+                        android:layout_marginTop="10dp"
+                        android:gravity="center"
+                        android:lineSpacingExtra="0dp"
+                        android:lineSpacingMultiplier="1"
+                        android:maxLines="2"
+                        android:textColor="@color/book_detail_font_color"
+                        android:textSize="13.33sp" />
+                </RelativeLayout>
+
+                <LinearLayout
+                    android:layout_width="fill_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginLeft="13.33dp"
+                    android:layout_marginTop="10dp"
+                    android:layout_toRightOf="@id/book_img_layout"
+                    android:orientation="vertical" >
+
+                    <TextView
+                        android:id="@+id/book_name"
+                        android:layout_width="fill_parent"
+                        android:layout_height="wrap_content"
+                        android:ellipsize="end"
+                        android:maxLines="2"
+                        android:textColor="@color/book_simple_title_font_color"
+                        android:textSize="17.33sp" />
+
+                    <TextView
+                        android:id="@+id/book_author"
+                        android:layout_width="fill_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="10dp"
+                        android:ellipsize="end"
+                        android:singleLine="true"
+                        android:textColor="@color/book_simple_content_font_color"
+                        android:textSize="13.33sp" />
+
+                    <TextView
+                        android:id="@+id/book_cate"
+                        android:layout_width="fill_parent"
+                        android:layout_height="wrap_content"
+                        android:ellipsize="end"
+                        android:singleLine="true"
+                        android:textColor="@color/book_simple_content_font_color"
+                        android:textSize="13.33sp" />
+
+                    <TextView
+                        android:id="@+id/book_state"
+                        android:layout_width="fill_parent"
+                        android:layout_height="wrap_content"
+                        android:ellipsize="end"
+                        android:singleLine="true"
+                        android:textColor="@color/book_simple_content_font_color"
+                        android:textSize="13.33sp" />
+
+                    <TextView
+                        android:id="@+id/book_chapter_num"
+                        android:layout_width="fill_parent"
+                        android:layout_height="wrap_content"
+                        android:ellipsize="end"
+                        android:singleLine="true"
+                        android:textColor="@color/book_simple_content_font_color"
+                        android:textSize="13.33sp" />
+                </LinearLayout>
+            </RelativeLayout>
+
+            <ImageView
+                android:id="@+id/book_divider"
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="13dp"
+                android:contentDescription="@null"
+                android:scaleType="fitXY" />
+
+            <TextView
+                android:id="@+id/book_intro"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="8dp"
+                android:text="@string/book_info"
+                android:textColor="@color/book_simple_title_font_color"
+                android:textSize="16sp" />
+
+            <TextView
+                android:id="@+id/book_intro_content"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="14.67dp"
+                android:textColor="@color/book_simple_content_font_color"
+                android:textSize="13.33sp" />
+        </LinearLayout>
+    </ScrollView>
+
+    <include
+        android:id="@+id/rl_progress"
+        layout="@layout/vw_generic_progress_view"
+        android:visibility="gone" />
+
+    <include
+        android:id="@+id/error_layout"
+        layout="@layout/vw_error"
+        android:visibility="gone" />
+
+</RelativeLayout>

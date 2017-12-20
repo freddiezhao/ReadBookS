@@ -1,0 +1,73 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:paddingBottom="8dp"
+    android:paddingLeft="8dp"
+    android:paddingRight="8dp"
+    android:orientation="vertical">
+
+    <LinearLayout
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:paddingLeft="14.67dp"
+        android:paddingRight="14.67dp"
+        android:paddingTop="8dp"
+        android:paddingBottom="16dp"
+        android:background="@drawable/card_main"
+        android:orientation="vertical">
+
+        <RelativeLayout
+            android:id="@+id/sell_fast_title_layout"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content">
+
+            <TextView
+                android:id="@+id/sell_fast_title"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentLeft="true"
+                android:layout_centerVertical="true"
+                android:textColor="@color/recommend_title_color"
+                android:textSize="14.67sp" />
+
+            <TextView
+                android:id="@+id/sell_fast_count"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentRight="true"
+                android:layout_centerVertical="true"
+                android:contentDescription="@null"
+                android:gravity="center"
+                android:textColor="@color/recommend_title_more"
+                android:textSize="12sp" />
+        </RelativeLayout>
+
+        <include
+            android:id="@+id/sell_fast_book_layout"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="16dp"
+            layout="@layout/vw_sell_fast_book_layout" />
+    </LinearLayout>
+    
+    <RelativeLayout
+        android:id="@+id/all_recommend_btn"
+        android:layout_width="match_parent"
+        android:layout_height="42.67dp"
+        android:background="@drawable/selector_card_button_bg" >
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="fill_parent"
+            android:layout_centerHorizontal="true"
+            android:drawablePadding="5dp"
+            android:drawableRight="@drawable/partition_icon_more"
+            android:gravity="center"
+            android:text="@string/all_recommend"
+            android:textColor="@color/book_detail_btn_font_color"
+            android:textSize="14.67sp" />
+
+    </RelativeLayout>
+
+</LinearLayout>

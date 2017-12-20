@@ -1,0 +1,261 @@
+package com.sina.book.ui;
+
+import android.content.Intent;
+import android.os.Bundle;
+import android.text.TextUtils;
+import android.view.LayoutInflater;
+import android.view.View;
+import android.view.ViewGroup;
+import android.widget.*;
+import android.widget.AdapterView.OnItemClickListener;
+import com.sina.book.R;
+import com.sina.book.control.ITaskFinishListener;
+import com.sina.book.control.RequestTask;
+import com.sina.book.control.TaskParams;
+import com.sina.book.control.TaskResult;
+import com.sina.book.data.ConstantData;
+import com.sina.book.data.PartitionDataResult;
+import com.sina.book.data.PartitionItem;
+import com.sina.book.parser.PartitionParser;
+import com.sina.book.ui.adapter.CommonListAdapter;
+import com.sina.book.ui.adapter.PartitionAdapter;
+import com.sina.book.ui.adapter.PartitionAdapter1;
+import com.sina.book.useraction.Constants;
+import com.sina.book.useraction.UserActionManager;
+import com.sina.book.useraction.UserActionUtil;
+import com.sina.book.util.ResourceUtil;
+import com.sina.book.util.Util;
+import org.apache.http.HttpStatus;
+
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Locale;
+
+/**
+ * 分类界面
+ * 
+ * @author MarkMjw
+ * @date 2013-5-14
+ */
+public class PartitionActivity extends CustomTitleActivity implements OnItemClickListener, ITaskFinishListener {
+    private View mProgressView;
+    private View mErrorView;
+
+    private ScrollView mScrollView;
+    private ListView mListView;
+    private PartitionAdapter1 mAdapter;
+
+    private ListView mRecommendList;
+    private TypeAdapter mTypeAdapter;
+
+    @Override
+    protected void init(Bundle savedInstanceState) {
+        setContentView(R.layout.act_partition);
+        initTitle();
+        initViews();
+        requestData();
+    }
+
+    @Override
+    public void onTaskFinished(TaskResult taskResult) {
+        if (taskResult.retObj != null && taskResult.stateCode == HttpStatus.SC_OK) {
+            if (taskResult.retObj instanceof PartitionDataResult) {
+                PartitionDataResult result = (PartitionDataResult) taskResult.retObj;
+
+                mAdapter.setList(result.getItems());
+                mAdapter.notifyDataSetChanged();
+                Util.measureListViewHeight(mListView);
+
+                mTypeAdapter.setList(result.getRecommendCates());
+                mTypeAdapter.notifyDataSetChanged();
+                Util.measureListViewHeight(mRecommendList);
+
+                mScrollView.setVisibility(View.VISIBLE);
+            } else {// 网络错误
+                mErrorView.setVisibility(View.VISIBLE);
+            }
+        } else {// 网络错误
+            mErrorView.setVisibility(View.VISIBLE);
+        }
+        mProgressView.setVisibility(View.GONE);
+    }
+
+    @Override
+    public void onClickLeft() {
+        finish();
+    }
+
+    @Override
+    public void onClickRight() {
+        Intent intent = new Intent();
+        intent.setClass(this, SearchActivity.class);
+        startActivity(intent);
+    }
+
+    @Override
+    public void onItemClick(AdapterView<?> arg0, View arg1, int arg2, long arg3) {
+        PartitionItem item = (PartitionItem) mAdapter.getItem(arg2);
+        if (!PartitionAdapter.DEFALUT_PARTITION.equalsIgnoreCase(item.getName())) {
+            PartitionDetailActivity.launch(mContext, item.getId(), item.getName(), 1);
+
+            String tag = UserActionUtil.getActionCateTag(item.getName());
+            if (!TextUtils.isEmpty(tag)) {
+                UserActionManager.getInstance().recordEvent(tag);
+            }
+        }
+    }
+
+    @Override
+    protected void retry() {
+        mErrorView.setVisibility(View.GONE);
+        requestData();
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+    }
+
+    /**
+     * 初始化标题
+     */
+    private void initTitle() {
+        TextView middleView = (TextView) LayoutInflater.from(this).inflate(R.layout.vw_title_textview, null);
+        if (null != middleView) {
+            middleView.setText(R.string.partition);
+            setTitleMiddle(middleView);
+        }
+
+        View leftView = LayoutInflater.from(this).inflate(R.layout.vw_generic_title_backmain_left, null);
+        setTitleLeft(leftView);
+
+        // 顶部右侧添加进入搜索页的入口
+        View rightV = LayoutInflater.from(this).inflate(R.layout.vw_generic_title_search, null);
+        setTitleRight(rightV);
+    }
+
+    private void initViews() {
+        mProgressView = findViewById(R.id.rl_progress);
+        mErrorView = findViewById(R.id.error_layout);
+
+        mScrollView = (ScrollView) findViewById(R.id.partition_scroll_view);
+
+        mListView = (ListView) findViewById(R.id.partition_lv);
+        mAdapter = new PartitionAdapter1(this);
+        mListView.setAdapter(mAdapter);
+        mListView.setOnItemClickListener(this);
+
+        mRecommendList = (ListView) findViewById(R.id.partition_recommend_lv);
+        mTypeAdapter = new TypeAdapter();
+        mRecommendList.setAdapter(mTypeAdapter);
+    }
+
+    private void requestData() {
+        mProgressView.setVisibility(View.VISIBLE);
+
+        String url = ConstantData.addLoginInfoToUrl(ConstantData.URL_NEW_PARTITION);
+
+        TaskParams params = new TaskParams();
+        params.put(RequestTask.PARAM_URL, url);
+        params.put(RequestTask.PARAM_HTTP_METHOD, RequestTask.HTTP_GET);
+
+        RequestTask reqTask = new RequestTask(new PartitionParser());
+        reqTask.setTaskFinishListener(this);
+        reqTask.execute(params);
+    }
+
+    /**
+     * 男生女生列表Adapter
+     */
+    private class TypeAdapter extends com.sina.book.ui.adapter.ListAdapter<PartitionDataResult.RecommendCate> {
+
+        @Override
+        protected List<PartitionDataResult.RecommendCate> createList() {
+            return new ArrayList<PartitionDataResult.RecommendCate>();
+        }
+
+        @Override
+        public View getView(int position, View convertView, ViewGroup parent) {
+            if (convertView == null || null == convertView.getTag()) {
+                convertView = createView();
+            }
+
+            ViewHolder holder = (ViewHolder) convertView.getTag();
+
+            PartitionDataResult.RecommendCate cate = (PartitionDataResult.RecommendCate) getItem(position);
+            if (null != cate) {
+                final String type = cate.type;
+                final String name = cate.name;
+
+                if ("boy".equals(type)) {
+                    holder.icon.setImageResource(R.drawable.icon_male);
+                    holder.type.setTextColor(ResourceUtil.getColor(R.color.male));
+
+                } else if ("girl".equals(type)) {
+                    holder.icon.setImageResource(R.drawable.icon_female);
+                    holder.type.setTextColor(ResourceUtil.getColor(R.color.female));
+
+                } else if ("pub".equals(type)) {
+                    holder.icon.setImageResource(R.drawable.icon_chuban);
+                    holder.type.setTextColor(ResourceUtil.getColor(R.color.publish));
+
+                } else {
+                    // 基本不可能到这里，随便给个值
+                    holder.icon.setImageResource(R.drawable.icon_chuban);
+                    holder.type.setTextColor(ResourceUtil.getColor(R.color.publish));
+                }
+
+                holder.type.setText(name);
+
+                String bookName = "";
+                for (int i = 0; i < cate.books.size(); i++) {
+                    bookName += cate.books.get(i).getTitle();
+                    bookName += (i + 1 == cate.books.size()) ? "" : " | ";
+                }
+                holder.books.setText(bookName);
+                holder.view.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        String url = String.format(Locale.CHINA, ConstantData.URL_RECOMMEND_CMS, type);
+//                        RecommendCmsActivity.launch(mContext, url, name, type);
+                        CommonListActivity.launch(PartitionActivity.this, url, name, CommonListAdapter.TYPE_BOYANDGIRL);
+                        
+                        if ("boy".equals(type)) {
+                            UserActionManager.getInstance().recordEvent(Constants.CLICK_BOY);
+                        } else if ("girl".equals(type)) {
+                            UserActionManager.getInstance().recordEvent(Constants.CLICK_GIRL);
+                        } else if ("pub".equals(type)) {
+                            UserActionManager.getInstance().recordEvent(Constants.CLICK_PUB);
+                        }
+                    }
+                });
+            }
+
+            return convertView;
+        }
+
+        private View createView() {
+            View view = LayoutInflater.from(mContext).inflate(R.layout.vw_parttion_type_item, null);
+
+            if (view == null) {
+                return null;
+            }
+
+            ViewHolder holder = new ViewHolder();
+            holder.view = view.findViewById(R.id.partition_type_layout);
+            holder.icon = (ImageView) view.findViewById(R.id.partition_type_icon);
+            holder.type = (TextView) view.findViewById(R.id.partition_type_name);
+            holder.books = (TextView) view.findViewById(R.id.partition_type_books);
+            view.setTag(holder);
+
+            return view;
+        }
+
+        private class ViewHolder {
+            public View view;
+            public ImageView icon;
+            public TextView type;
+            public TextView books;
+        }
+    }
+}

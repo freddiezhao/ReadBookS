@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <string-array name="book_tag_functions">
+        <item>删除</item>
+    </string-array>
+    <string-array name="selector_menu_0">
+        <item>@string/text_selector_summary</item>
+        <item>@string/text_selector_share</item>
+        <item>@string/text_selector_copy</item>
+    </string-array>
+    <string-array name="selector_menu_1">
+        <item>@string/text_selector_summary</item>
+        <item>@string/text_selector_copy</item>
+    </string-array>
+    
+    <string-array name="summary_menu_0">
+        <item>@string/text_selector_share</item>
+        <item>@string/text_selector_copy</item>
+        <item>@string/delete</item>
+    </string-array>
+    <string-array name="summary_menu_1">
+        <item>@string/text_selector_copy</item>
+        <item>@string/delete</item>
+    </string-array>
+
+</resources>

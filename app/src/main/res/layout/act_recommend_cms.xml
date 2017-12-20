@@ -1,0 +1,56 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    style="@style/PublicCardBg"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content">
+
+    <!-- 进度条 -->
+
+    <include
+        android:id="@+id/progress"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_centerInParent="true"
+        layout="@layout/vw_generic_progress_view"
+        android:visibility="gone" />
+
+    <!-- 错误View -->
+
+    <include
+        android:id="@+id/error_layout"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_centerInParent="true"
+        layout="@layout/vw_error"
+        android:visibility="gone" />
+
+    <com.sina.book.ui.widget.IgnoreHScrollView
+        android:id="@+id/scroll_view"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:fadingEdge="none"
+        android:fillViewport="true">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:paddingBottom="8dp">
+
+            <include
+                android:id="@+id/layout_cms_today"
+                layout="@layout/vw_recommend_cms_today" />
+
+            <com.sina.book.ui.widget.CommonViewPager
+                android:id="@+id/layout_cms_cate"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="8dp"
+                android:layout_marginLeft="8dp"
+                android:layout_marginRight="8dp"
+                android:background="@drawable/card_whole"
+                android:orientation="vertical" />
+        </LinearLayout>
+    </com.sina.book.ui.widget.IgnoreHScrollView>
+
+</RelativeLayout>

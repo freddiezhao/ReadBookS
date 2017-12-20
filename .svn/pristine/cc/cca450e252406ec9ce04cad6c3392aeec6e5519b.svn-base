@@ -1,0 +1,84 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="fill_parent"
+    android:layout_height="wrap_content"
+    android:orientation="vertical">
+
+    <RelativeLayout
+        android:id="@+id/head_pl"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:paddingBottom="9dp"
+        android:paddingLeft="9dp"
+        android:paddingRight="9dp"
+        android:paddingTop="9dp">
+
+        <RelativeLayout
+            android:id="@+id/user_img_layout"
+            android:layout_width="50dip"
+            android:layout_height="50dip">
+
+            <ImageView
+                android:id="@+id/user_head_img"
+                android:layout_width="fill_parent"
+                android:layout_height="fill_parent"
+                android:contentDescription="@null"
+                android:paddingBottom="@dimen/book_item_paddingBottom"
+                android:paddingLeft="@dimen/book_item_paddingLeft"
+                android:paddingRight="@dimen/book_item_paddingRight"
+                android:background="@drawable/main_book_bg"
+                android:scaleType="fitXY" />
+        </RelativeLayout>
+
+        <RelativeLayout
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="8dp"
+            android:layout_toRightOf="@id/user_img_layout">
+
+            <com.sina.book.ui.widget.EllipsizeTextView
+                android:id="@+id/desc"
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                android:layout_below="@id/title"
+                android:ellipsize="end"
+                android:maxLines="4"
+                android:textColor="@color/title_color"
+                android:textSize="14sp" />
+
+            <TextView
+                android:id="@+id/num"
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                android:layout_below="@id/desc"
+                android:layout_marginTop="5dp"
+                android:ellipsize="end"
+                android:gravity="right"
+                android:singleLine="true"
+                android:textColor="#059902"
+                android:textSize="14sp" />
+        </RelativeLayout>
+    </RelativeLayout>
+
+    <ImageView
+        android:id="@+id/devider"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/head_pl"
+        android:background="@drawable/divider_line"
+        android:contentDescription="@null" />
+
+    <!--TextView
+        android:id="@+id/detail_title"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/devider"
+        android:background="@color/infor_pl_bg_color"
+        android:paddingBottom="3.5dip"
+        android:paddingLeft="9dip"
+        android:paddingRight="9dip"
+        android:paddingTop="3.5dip"
+        android:text="@string/booklist_info"
+        android:textColor="@color/detail_info_color"
+        android:textSize="12sp" /-->
+</RelativeLayout>

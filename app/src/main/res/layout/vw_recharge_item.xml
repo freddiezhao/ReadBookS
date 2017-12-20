@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/recharge_item_layout"
+    style="@style/PublicBg"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:background="@drawable/selector_personal_middle_bg">
+
+    <ImageView
+        android:id="@+id/right"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentRight="true"
+        android:layout_marginRight="@dimen/card_padding_horizontal"
+        android:layout_centerVertical="true"
+        android:contentDescription="@null"
+        android:src="@drawable/more_item_arrow" />
+
+    <LinearLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentLeft="true"
+        android:layout_marginLeft="@dimen/card_padding_horizontal"
+        android:layout_toLeftOf="@id/right"
+        android:layout_centerVertical="true"
+        android:orientation="vertical"
+        android:paddingBottom="11dp"
+        android:paddingTop="11dp">
+
+        <TextView
+            android:id="@+id/recharge_item_text"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textColor="@color/recharge_item_text_font_color"
+            android:textSize="@dimen/title_person_item" />
+
+        <TextView
+            android:id="@+id/recharge_item_tip"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="5dp"
+            android:textColor="@color/recharge_tip_color"
+            android:textSize="10.67sp"
+            android:visibility="gone" />
+    </LinearLayout>
+
+</RelativeLayout>

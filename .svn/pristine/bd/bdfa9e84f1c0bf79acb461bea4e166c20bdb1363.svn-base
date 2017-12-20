@@ -1,0 +1,541 @@
+<?xml version="1.0" encoding="utf-8"?>
+<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    package="com.sina.book"
+    android:versionCode="41186"
+    android:versionName="2.1.1" >
+
+    <uses-sdk
+        android:minSdkVersion="8"
+        android:targetSdkVersion="21" />
+
+    <supports-screens
+        android:anyDensity="true"
+        android:largeScreens="true"
+        android:normalScreens="true"
+        android:resizeable="true"
+        android:smallScreens="true" />
+
+    <uses-permission android:name="android.permission.INTERNET" />
+    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
+    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
+    <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
+    <uses-permission android:name="android.permission.MOUNT_UNMOUNT_FILESYSTEMS" />
+    <uses-permission android:name="android.permission.READ_PHONE_STATE" />
+    <uses-permission android:name="android.permission.VIBRATE" />
+    <uses-permission android:name="android.permission.ACCESS_WIFI_STATE" />
+    <uses-permission android:name="android.permission.WRITE_SETTINGS" />
+    <uses-permission android:name="android.permission.WAKE_LOCK" />
+    <uses-permission android:name="android.permission.SYSTEM_ALERT_WINDOW" />
+    <uses-permission android:name="android.permission.GET_TASKS" />
+
+    <application
+        android:name="com.sina.book.SinaBookApplication"
+        android:allowBackup="true"
+        android:hardwareAccelerated="@bool/hardwareAccelerateEnable"
+        android:icon="@drawable/ic_launcher"
+        android:label="@string/app_name"
+        android:persistent="true">
+        <meta-data
+            android:name="CHANNEL" android:value="2" />
+
+        <activity
+            android:name="com.sina.book.ui.SplashActivity"
+            android:hardwareAccelerated="@bool/hardwareAccelerateEnable"
+            android:label="@string/app_name"
+            android:screenOrientation="portrait"
+            android:theme="@android:style/Theme.NoTitleBar.Fullscreen" >
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+        </activity>
+        <activity
+            android:name="com.sina.book.ui.MainTabActivity"
+            android:hardwareAccelerated="@bool/hardwareAccelerateEnable"
+            android:label="@string/app_name"
+            android:launchMode="singleTask"
+            android:screenOrientation="portrait"
+            android:theme="@style/ThemeActivity" />
+        <activity
+            android:name="com.sina.book.ui.PartitionActivity"
+            android:hardwareAccelerated="@bool/hardwareAccelerateEnable"
+            android:label="@string/app_name"
+            android:screenOrientation="portrait"
+            android:theme="@style/ThemeActivity" />
+        <activity
+            android:name="com.sina.book.ui.PartitionDetailActivity"
+            android:hardwareAccelerated="@bool/hardwareAccelerateEnable"
+            android:label="@string/app_name"
+            android:screenOrientation="portrait"
+            android:theme="@style/ThemeActivity" />
+        <activity
+            android:name="com.sina.book.ui.RecommendActivity"
+            android:hardwareAccelerated="@bool/hardwareAccelerateEnable"
+            android:label="@string/app_name"
+            android:screenOrientation="portrait"
+            android:theme="@style/ThemeActivity" />
+        <activity
+            android:name="com.sina.book.ui.RecommendCmsActivity"
+            android:hardwareAccelerated="@bool/hardwareAccelerateEnable"
+            android:label="@string/app_name"
+            android:screenOrientation="portrait"
+            android:theme="@style/ThemeActivity" />
+        <activity
+            android:name="com.sina.book.ui.CommonListActivity"
+            android:hardwareAccelerated="@bool/hardwareAccelerateEnable"
+            android:label="@string/app_name"
+            android:screenOrientation="portrait"
+            android:theme="@style/ThemeActivity" />
+        <activity
+            android:name="com.sina.book.ui.FamousRecommendActivity"
+            android:hardwareAccelerated="@bool/hardwareAccelerateEnable"
+            android:label="@string/app_name"
+            android:screenOrientation="portrait"
+            android:theme="@style/ThemeActivity" />
+        <activity
+            android:name="com.sina.book.ui.SearchActivity"
+            android:hardwareAccelerated="@bool/hardwareAccelerateEnable"
+            android:label="@string/app_name"
+            android:screenOrientation="portrait"
+            android:theme="@style/ThemeActivity"
+            android:windowSoftInputMode="stateHidden" />
+        <activity
+            android:name="com.sina.book.ui.BookTagActivity"
+            android:hardwareAccelerated="@bool/hardwareAccelerateEnable"
+            android:label="@string/app_name"
+            android:screenOrientation="portrait"
+            android:theme="@style/ThemeActivity" />
+        <activity
+            android:name=".ui.MainActivity"
+            android:hardwareAccelerated="@bool/hardwareAccelerateEnable"
+            android:label="@string/app_name"
+            android:launchMode="singleTask"
+            android:screenOrientation="portrait"
+            android:theme="@style/PanelActivity" />
+        <activity
+            android:name="com.sina.book.ui.ReadActivity"
+            android:hardwareAccelerated="@bool/hardwareAccelerateEnable"
+            android:label="@string/app_name"
+            android:launchMode="singleTask"
+            android:screenOrientation="portrait"
+            android:theme="@style/ThemeActivity" 
+            />
+        
+        <activity
+            android:name="com.sina.book.ui.TransitActivity"
+            android:hardwareAccelerated="@bool/hardwareAccelerateEnable"
+            android:label="@string/app_name"
+            android:launchMode="singleTask"
+            android:screenOrientation="portrait"
+            android:theme="@style/ThemeActivity" >
+            <intent-filter>
+                <action android:name="android.intent.action.VIEW" />
+                <category android:name="android.intent.category.DEFAULT" />
+                <category android:name="android.intent.category.BROWSABLE" /> 
+				
+<!--                     android:host="book" -->
+                <data
+                    android:scheme="asr" />
+<!--                 <data -->
+<!--                     android:scheme="android_sina_reader" /> -->
+            </intent-filter>
+        </activity>
+        <activity
+            android:name="com.sina.book.ui.PersonalCenterActivity"
+            android:hardwareAccelerated="@bool/hardwareAccelerateEnable"
+            android:label="@string/app_name"
+            android:screenOrientation="portrait"
+            android:theme="@style/ThemeActivity" />
+        <activity
+            android:name="com.sina.book.ui.SearchResultActivity"
+            android:hardwareAccelerated="@bool/hardwareAccelerateEnable"
+            android:label="@string/app_name"
+            android:screenOrientation="portrait"
+            android:theme="@style/ThemeActivity" />
+        <activity
+            android:name="com.sina.book.ui.RecommendDetailListAativity"
+            android:hardwareAccelerated="@bool/hardwareAccelerateEnable"
+            android:label="@string/app_name"
+            android:screenOrientation="portrait"
+            android:theme="@style/ThemeActivity" />
+        <activity
+            android:name="com.sina.book.ui.BookDetailActivity"
+            android:hardwareAccelerated="@bool/hardwareAccelerateEnable"
+            android:label="@string/app_name"
+            android:screenOrientation="portrait"
+            android:theme="@style/ThemeActivity" />
+        <activity
+            android:name="com.sina.book.ui.BrowserSchemeInterceptActivity"
+            android:alwaysRetainTaskState="true"
+            android:hardwareAccelerated="@bool/hardwareAccelerateEnable"
+            android:label="@string/app_name"
+            android:launchMode="singleTask"
+            android:screenOrientation="portrait"
+            android:theme="@style/ThemeActivity" >
+            <intent-filter>
+                <action android:name="android.intent.action.VIEW" />
+
+                <category android:name="android.intent.category.DEFAULT" />
+                <category android:name="android.intent.category.BROWSABLE" />
+
+                <data
+                    android:host="detail"
+                    android:scheme="androidsinareader" />
+            </intent-filter>
+        </activity>
+        <activity
+            android:name="com.sina.book.ui.CommentListActivity"
+            android:hardwareAccelerated="@bool/hardwareAccelerateEnable"
+            android:label="@string/app_name"
+            android:screenOrientation="portrait"
+            android:theme="@style/ThemeActivity" />
+        <activity
+            android:name="com.sina.book.ui.ShareWeiboActivity"
+            android:hardwareAccelerated="@bool/hardwareAccelerateEnable"
+            android:label="@string/app_name"
+            android:screenOrientation="portrait"
+            android:theme="@style/ThemeActivity"
+            android:windowSoftInputMode="adjustResize" />
+        <activity
+            android:name="com.sina.book.ui.SendCommentsPostActivity"
+            android:hardwareAccelerated="@bool/hardwareAccelerateEnable"
+            android:label="@string/app_name"
+            android:screenOrientation="portrait"
+            android:theme="@style/ThemeActivity"
+            android:windowSoftInputMode="adjustResize" />
+        <activity
+            android:name="com.sina.book.ui.AboutActivity"
+            android:hardwareAccelerated="@bool/hardwareAccelerateEnable"
+            android:label="@string/app_name"
+            android:screenOrientation="portrait"
+            android:theme="@style/ThemeActivity"
+            android:windowSoftInputMode="adjustResize" />
+        <activity
+            android:name="com.sina.book.ui.PaymentMonthDetailActivity"
+            android:hardwareAccelerated="@bool/hardwareAccelerateEnable"
+            android:label="@string/app_name"
+            android:screenOrientation="portrait"
+            android:theme="@style/ThemeActivity"
+            android:windowSoftInputMode="adjustResize" />
+        <activity
+            android:name="com.sina.book.ui.PaymentMonthBookListActivity"
+            android:hardwareAccelerated="@bool/hardwareAccelerateEnable"
+            android:label="@string/app_name"
+            android:screenOrientation="portrait"
+            android:theme="@style/ThemeActivity"
+            android:windowSoftInputMode="adjustResize" />
+        <activity
+            android:name="com.sina.book.ui.SDCardActivity"
+            android:hardwareAccelerated="@bool/hardwareAccelerateEnable"
+            android:label="@string/app_name"
+            android:screenOrientation="portrait"
+            android:theme="@style/ThemeActivity" />
+        <activity
+            android:name="com.sina.basicfunc.sendsuggestion.SendSuggestionActivity"
+            android:configChanges="orientation|keyboardHidden"
+            android:hardwareAccelerated="@bool/hardwareAccelerateEnable"
+            android:label="@string/app_name"
+            android:screenOrientation="portrait"
+            android:theme="@style/ThemeActivity" />
+        <activity
+            android:name="com.sina.book.ui.FamousDetailActivity"
+            android:hardwareAccelerated="@bool/hardwareAccelerateEnable"
+            android:label="@string/app_name"
+            android:screenOrientation="portrait"
+            android:theme="@style/ThemeActivity"
+            android:windowSoftInputMode="adjustResize|stateHidden" />
+        <activity
+            android:name="com.sina.book.ui.MaskGuideActivity"
+            android:hardwareAccelerated="@bool/hardwareAccelerateEnable"
+            android:label="@string/app_name"
+            android:screenOrientation="portrait"
+            android:theme="@style/GuideDialog"
+            android:windowSoftInputMode="adjustResize|stateHidden" />
+        <activity
+            android:name="com.sina.book.ui.MyPurchasedActivity"
+            android:hardwareAccelerated="@bool/hardwareAccelerateEnable"
+            android:label="@string/app_name"
+            android:screenOrientation="portrait"
+            android:theme="@style/ThemeActivity"
+            android:windowSoftInputMode="adjustResize|stateHidden" />
+        <activity
+            android:name="com.sina.book.ui.RechargeActivity"
+            android:hardwareAccelerated="@bool/hardwareAccelerateEnable"
+            android:label="@string/app_name"
+            android:screenOrientation="portrait"
+            android:theme="@style/ThemeActivity"
+            android:windowSoftInputMode="adjustResize|stateHidden" />
+        <activity
+            android:name="com.sina.book.ui.RechargeCenterActivity"
+            android:hardwareAccelerated="@bool/hardwareAccelerateEnable"
+            android:label="@string/app_name"
+            android:screenOrientation="portrait"
+            android:theme="@style/ThemeActivity"
+            android:windowSoftInputMode="adjustResize" />
+        <activity
+            android:name="com.sina.book.ui.SellFastListActivity"
+            android:hardwareAccelerated="@bool/hardwareAccelerateEnable"
+            android:label="@string/app_name"
+            android:screenOrientation="portrait"
+            android:theme="@style/ThemeActivity"
+            android:windowSoftInputMode="adjustResize|stateHidden" />
+        <activity
+            android:name="com.sina.book.ui.SquareActivity"
+            android:hardwareAccelerated="@bool/hardwareAccelerateEnable"
+            android:label="@string/app_name"
+            android:screenOrientation="portrait"
+            android:theme="@style/ThemeActivity"
+            android:windowSoftInputMode="adjustResize|stateHidden" />
+        <activity
+            android:name="com.sina.book.ui.RecommendWebUrlActivity"
+            android:hardwareAccelerated="@bool/hardwareAccelerateEnable"
+            android:label="@string/app_name"
+            android:screenOrientation="portrait"
+            android:theme="@style/ThemeActivity"
+            android:windowSoftInputMode="adjustResize|stateHidden" />
+        <activity
+            android:name="com.sina.book.ui.MainThemeSettingActivity"
+            android:hardwareAccelerated="@bool/hardwareAccelerateEnable"
+            android:label="@string/app_name"
+            android:screenOrientation="portrait"
+            android:theme="@style/ThemeActivity"
+            android:windowSoftInputMode="adjustResize|stateHidden" />
+        <activity
+            android:name="com.sina.book.ui.PartitionLikedActivity"
+            android:hardwareAccelerated="@bool/hardwareAccelerateEnable"
+            android:label="@string/app_name"
+            android:screenOrientation="portrait"
+            android:theme="@style/ThemeActivity"
+            android:windowSoftInputMode="adjustResize|stateHidden" />
+        <activity
+            android:name="com.sina.book.ui.BookCatalogActivity"
+            android:hardwareAccelerated="@bool/hardwareAccelerateEnable"
+            android:label="@string/app_name"
+            android:screenOrientation="portrait"
+            android:theme="@style/ThemeActivity"
+            android:windowSoftInputMode="adjustResize|stateHidden" />
+        <activity
+            android:name="com.sina.book.ui.RemindListActivity"
+            android:hardwareAccelerated="@bool/hardwareAccelerateEnable"
+            android:label="@string/app_name"
+            android:screenOrientation="portrait"
+            android:theme="@style/ThemeActivity"
+            android:windowSoftInputMode="adjustResize|stateHidden" />
+        <activity
+            android:name="com.sina.book.ui.HotWordsActivity"
+            android:hardwareAccelerated="@bool/hardwareAccelerateEnable"
+            android:label="@string/app_name"
+            android:screenOrientation="portrait"
+            android:theme="@style/ThemeActivity" />
+        <activity
+            android:name="com.sina.book.ui.CommonRecommendActivity"
+            android:hardwareAccelerated="@bool/hardwareAccelerateEnable"
+            android:label="@string/app_name"
+            android:screenOrientation="portrait"
+            android:theme="@style/ThemeActivity" />
+        <activity
+            android:name="com.sina.book.ui.AuthorActivity"
+            android:hardwareAccelerated="@bool/hardwareAccelerateEnable"
+            android:label="@string/app_name"
+            android:screenOrientation="portrait"
+            android:theme="@style/ThemeActivity" />
+        <activity
+            android:name="com.sina.book.ui.AuthorRecommendActivity"
+            android:hardwareAccelerated="@bool/hardwareAccelerateEnable"
+            android:label="@string/app_name"
+            android:screenOrientation="portrait"
+            android:theme="@style/ThemeActivity" />
+        <activity
+            android:name="com.sina.book.ui.RelatedBookActivity"
+            android:hardwareAccelerated="@bool/hardwareAccelerateEnable"
+            android:label="@string/app_name"
+            android:screenOrientation="portrait"
+            android:theme="@style/ThemeActivity" />
+        <activity
+            android:name="com.sina.book.ui.PaymentMonthActivity"
+            android:hardwareAccelerated="@bool/hardwareAccelerateEnable"
+            android:label="@string/app_name"
+            android:screenOrientation="portrait"
+            android:theme="@style/ThemeActivity" />
+        <activity
+            android:name="com.sina.book.ui.PurchasedActivity"
+            android:hardwareAccelerated="@bool/hardwareAccelerateEnable"
+            android:label="@string/app_name"
+            android:screenOrientation="portrait"
+            android:theme="@style/ThemeActivity" />
+        <activity
+            android:name="com.sina.book.ui.VDiskActivity"
+            android:hardwareAccelerated="@bool/hardwareAccelerateEnable"
+            android:label="@string/app_name"
+            android:screenOrientation="portrait"
+            android:theme="@style/ThemeActivity" />
+        <activity
+            android:name="com.sina.book.ui.SinaAppLoginActivity"
+            android:hardwareAccelerated="@bool/hardwareAccelerateEnable"
+            android:label="@string/app_name"
+            android:screenOrientation="portrait"
+            android:theme="@style/ThemeActivity" />
+        <activity
+            android:name="com.sina.book.ui.TopicActivity"
+            android:hardwareAccelerated="@bool/hardwareAccelerateEnable"
+            android:label="@string/app_name"
+            android:screenOrientation="portrait"
+            android:theme="@style/ThemeActivity" />
+        <activity
+            android:name="com.sina.book.ui.ConsumeActivity"
+            android:hardwareAccelerated="@bool/hardwareAccelerateEnable"
+            android:label="@string/app_name"
+            android:screenOrientation="portrait"
+            android:theme="@style/ThemeActivity" />
+        <activity
+            android:name="com.sina.book.ui.GiftActivity"
+            android:hardwareAccelerated="@bool/hardwareAccelerateEnable"
+            android:label="@string/app_name"
+            android:screenOrientation="portrait"
+            android:theme="@style/ThemeActivity" />
+        <activity
+            android:name="com.sina.book.ui.EpubChapterActivity"
+            android:hardwareAccelerated="@bool/hardwareAccelerateEnable"
+            android:label="@string/app_name"
+            android:screenOrientation="portrait"
+            android:theme="@style/ThemeActivity"
+            android:windowSoftInputMode="adjustResize|stateHidden" />
+
+        <service
+            android:name="com.sina.book.useraction.OpenUDIDService"
+            android:exported="false" />
+
+        <receiver
+            android:name="com.sina.book.ui.notification.BootCompletedAndNetChangeReceiver"
+            android:exported="false" >
+            <intent-filter>
+                <action android:name="android.net.conn.CONNECTIVITY_CHANGE" />
+                <action android:name="android.intent.action.USER_PRESENT" />
+            </intent-filter>
+        </receiver>
+
+        <service
+            android:name="org.geometerplus.android.fbreader.api.ApiService"
+            android:launchMode="singleTask" >
+            <intent-filter>
+                <action android:name="android.fbreader.action.API" />
+
+                <category android:name="android.intent.category.DEFAULT" />
+            </intent-filter>
+        </service>
+
+        <activity
+            android:name="org.geometerplus.android.fbreader.FBReader"
+            android:configChanges="orientation|keyboardHidden|screenSize"
+            android:hardwareAccelerated="@bool/hardwareAccelerateEnable"
+            android:label="@string/app_name"
+            android:launchMode="singleTask"
+            android:screenOrientation="portrait"
+            android:theme="@style/ThemeActivity" 
+            >
+
+        </activity>
+        <activity
+            android:name="org.geometerplus.android.fbreader.PluginListActivity"
+            android:configChanges="orientation|keyboardHidden|screenSize"
+            android:hardwareAccelerated="@bool/hardwareAccelerateEnable"
+            android:theme="@style/FBReader.Dialog" />
+        <activity
+            android:name="org.geometerplus.android.fbreader.image.ImageViewActivity"
+            android:configChanges="orientation|keyboardHidden|screenSize"
+            android:hardwareAccelerated="@bool/hardwareAccelerateEnable"
+            android:theme="@style/FBReader.Activity" />
+
+        <service
+            android:name="org.geometerplus.android.fbreader.libraryService.LibraryService"
+            android:exported="false"
+            android:launchMode="singleTask" >
+            <intent-filter>
+                <action android:name="android.fbreader.action.LIBRARY_SERVICE" />
+            </intent-filter>
+        </service>
+        <service
+            android:name="org.geometerplus.android.fbreader.config.ConfigService"
+            android:exported="false"
+            android:launchMode="singleTask" >
+            <intent-filter>
+                <action android:name="android.fbreader.action.CONFIG_SERVICE" />
+            </intent-filter>
+        </service>
+        <service
+            android:name="org.geometerplus.android.fbreader.sync.SyncService"
+            android:exported="false"
+            android:launchMode="singleTask" >
+            <intent-filter>
+                <action android:name="android.fbreader.action.sync.START" />
+            </intent-filter>
+            <intent-filter>
+                <action android:name="android.fbreader.action.sync.QUICK_SYNC" />
+            </intent-filter>
+        </service>
+
+        <activity
+            android:name="org.geometerplus.android.fbreader.BookmarksActivity"
+            android:configChanges="orientation|keyboardHidden|screenSize"
+            android:hardwareAccelerated="@bool/hardwareAccelerateEnable"
+            android:launchMode="singleTask"
+            android:theme="@style/FBReader.Activity" >
+        </activity>
+        <activity
+            android:name="org.geometerplus.android.fbreader.BookmarkEditActivity"
+            android:configChanges="orientation|keyboardHidden|screenSize"
+            android:hardwareAccelerated="@bool/hardwareAccelerateEnable"
+            android:theme="@style/FBReader.Dialog" />
+        <activity
+            android:name="org.geometerplus.android.fbreader.network.BookDownloader"
+            android:hardwareAccelerated="@bool/hardwareAccelerateEnable"
+            android:theme="@android:style/Theme.NoDisplay" >
+        </activity>
+
+        <service
+            android:name="org.geometerplus.android.fbreader.network.BookDownloaderService"
+            android:exported="false"
+            android:launchMode="singleTask" />
+
+        <activity
+            android:name="org.geometerplus.android.fbreader.network.auth.WebAuthorisationScreen"
+            android:configChanges="orientation|keyboardHidden|screenSize"
+            android:exported="false"
+            android:hardwareAccelerated="@bool/hardwareAccelerateEnable"
+            android:theme="@style/FBReader.Activity" />
+        <activity
+            android:name="org.geometerplus.android.fbreader.network.NetworkLibrarySecondaryActivity"
+            android:configChanges="orientation|keyboardHidden|screenSize"
+            android:hardwareAccelerated="@bool/hardwareAccelerateEnable"
+            android:theme="@style/FBReader.Activity" />
+        <activity
+            android:name="com.paragon.dictionary.fbreader.OpenDictionaryActivity"
+            android:configChanges="orientation|keyboardHidden|screenSize"
+            android:hardwareAccelerated="@bool/hardwareAccelerateEnable"
+            android:theme="@style/FBReader.Transparent" />
+
+        <service
+            android:name="org.geometerplus.android.fbreader.httpd.DataService"
+            android:exported="false"
+            android:launchMode="singleTask" />
+
+        <uses-library android:name="android.test.runner" />
+
+        <!-- 更新微博SDK到3.1.4，没有客户端的情况下，授权调用此Activity -->
+        <activity android:name="com.sina.weibo.sdk.component.WeiboSdkBrowser"
+                  android:configChanges="keyboardHidden|orientation"
+                  android:windowSoftInputMode="adjustResize"
+                  android:theme="@style/ThemeActivity"
+                  android:exported="false" >
+        </activity>
+
+    </application>
+
+    <instrumentation
+        android:name="android.test.InstrumentationTestRunner"
+        android:label="Tests for SinaBook"
+        android:targetPackage="com.sina.book" />
+
+</manifest>

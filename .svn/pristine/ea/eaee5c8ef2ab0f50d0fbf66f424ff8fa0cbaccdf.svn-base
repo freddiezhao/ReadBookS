@@ -1,0 +1,409 @@
+package com.sina.book.ui;
+
+import java.util.ArrayList;
+import java.util.Map;
+
+import org.apache.http.HttpStatus;
+import org.geometerplus.android.util.ZLog;
+
+import android.os.Bundle;
+import android.text.TextUtils;
+import android.view.LayoutInflater;
+import android.view.View;
+import android.view.View.OnClickListener;
+import android.view.ViewGroup;
+import android.webkit.CookieManager;
+import android.webkit.CookieSyncManager;
+import android.widget.AdapterView;
+import android.widget.AdapterView.OnItemClickListener;
+import android.widget.BaseAdapter;
+import android.widget.EditText;
+import android.widget.ListView;
+import android.widget.TextView;
+
+import com.sina.book.R;
+import com.sina.book.control.GenericTask;
+import com.sina.book.control.ITaskFinishListener;
+import com.sina.book.control.RequestTask;
+import com.sina.book.control.TaskParams;
+import com.sina.book.control.TaskResult;
+import com.sina.book.data.ConstantData;
+import com.sina.book.data.RechargeBean;
+import com.sina.book.parser.IParser;
+import com.sina.book.parser.RechargeChooseParser;
+import com.sina.book.parser.SimpleParser;
+import com.sina.book.util.LoginUtil;
+import com.sina.book.util.Util;
+
+/**
+ * 充值页面
+ * 
+ * @author YangZhanDong
+ * 
+ */
+public class RechargeActivity extends CustomTitleActivity implements OnItemClickListener, ITaskFinishListener,
+		OnClickListener {
+
+	private final static String REQ_PAY_PARAM = "req_pay_param";
+	private final static String REQ_EXCHANGE = "req_exchange";
+
+	private static final int MIN_WEIBI = 1;
+	private static final int MAX_WEIBI = 5000;
+
+	private EditText mAmountEdit;
+	private View mRechargeConfirm;
+
+	private ListView mListView;
+	private RechargeAdapter mAdapter;
+
+	private RechargeBean mRechargeBean;
+
+	private View mExchangeLayout;
+	private View mExchangeView;
+	private TextView mExchangeTv;
+
+	private View mProgress;
+	private View mError;
+
+	@Override
+	protected void init(Bundle savedInstanceState) {
+		setContentView(R.layout.act_recharge);
+		initTitle();
+		initView();
+		reqPayParams();
+	}
+
+	@Override
+	protected void onPause() {
+		Util.hideSoftInput(this, mAmountEdit);
+		super.onPause();
+	}
+
+	private void initTitle() {
+		TextView middleV = (TextView) LayoutInflater.from(this).inflate(R.layout.vw_title_textview, null);
+		middleV.setText(R.string.account_recharge);
+		setTitleMiddle(middleV);
+
+		View leftV = LayoutInflater.from(this).inflate(R.layout.vw_generic_title_back, null);
+		setTitleLeft(leftV);
+	}
+
+	private void initView() {
+		mListView = (ListView) findViewById(R.id.recharge_listview);
+
+		View headerView = getLayoutInflater().inflate(R.layout.vw_recharge_header, null);
+		mListView.addHeaderView(headerView);
+
+		View footerView = getLayoutInflater().inflate(R.layout.vw_recharge_footer, null);
+
+		mAmountEdit = (EditText) footerView.findViewById(R.id.recharge_edit);
+		mAmountEdit.setHint(getString(R.string.pay_enter_tip));
+
+		mRechargeConfirm = footerView.findViewById(R.id.recharge_confirm);
+		
+		mExchangeLayout = footerView.findViewById(R.id.exchange_layout);
+		mExchangeView = mExchangeLayout.findViewById(R.id.exchange_view);
+		mExchangeTv = (TextView) mExchangeLayout.findViewById(R.id.exchange_weibi);
+		mListView.addFooterView(footerView);
+//		mAdapter = new RechargeAdapter();
+//		mListView.setAdapter(mAdapter);
+
+		mRechargeConfirm.setOnClickListener(this);
+		mListView.setOnItemClickListener(this);
+
+		mProgress = findViewById(R.id.progress_layout);
+		mError = findViewById(R.id.error_layout);
+	}
+
+	@Override
+	public void onClickLeft() {
+		this.finish();
+	}
+
+	@Override
+	public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+
+		position -= mListView.getHeaderViewsCount();
+
+		if (position >= 0 && position < mAdapter.getCount()) {
+			RechargeBean.Amount amount = (RechargeBean.Amount) mAdapter.getItem(position);
+			int money = amount.moneyFen;
+			RechargeCenterActivity.launch(RechargeActivity.this, money);
+		}
+	}
+
+	@Override
+	protected void retry() {
+		reqPayParams();
+	}
+
+	@Override
+	public void onClick(View v) {
+		switch (v.getId()) {
+		case R.id.exchange_view:
+			reqExchangeVb();
+			break;
+
+		case R.id.recharge_confirm:
+			int amount;
+			if (Util.isNullOrEmpty(mAmountEdit.getText().toString())) {
+				shortToast(R.string.recharge_amount_null);
+				return;
+			}
+
+			try {
+				amount = Integer.parseInt(mAmountEdit.getText().toString());
+			} catch (Exception e) {
+				shortToast(R.string.recharge_amount_null);
+				return;
+			}
+
+			if (amount < MIN_WEIBI || amount > MAX_WEIBI) {
+				shortToast(String.format(getString(R.string.recharge_amount_invalid), MIN_WEIBI, MAX_WEIBI));
+				return;
+			}
+
+			RechargeCenterActivity.launch(RechargeActivity.this, amount * 100);
+			break;
+
+		default:
+			break;
+		}
+	}
+
+	@Override
+	public void onTaskFinished(TaskResult taskResult) {
+
+		String type = taskResult.task.getType();
+		if (REQ_PAY_PARAM.equals(type)) {
+			mProgress.setVisibility(View.GONE);
+
+			if (taskResult.retObj != null) {
+				mRechargeBean = (RechargeBean) taskResult.retObj;
+				float userVb = mRechargeBean.getUserVb() / 100.0f;
+				if (userVb <= 0.0f) {
+					mExchangeLayout.setVisibility(View.GONE);
+					mExchangeTv.setText(null);
+					mExchangeView.setOnClickListener(null);
+				} else {
+					mExchangeLayout.setVisibility(View.VISIBLE);
+					mExchangeTv.setText(String.format(getString(R.string.recharge_vb), userVb));
+					mExchangeView.setOnClickListener(this);
+				}
+				
+				if(mAdapter == null){
+					mAdapter = new RechargeAdapter();
+					mAdapter.setAmountArrays(mRechargeBean.getAmounts());
+					mListView.setAdapter(mAdapter);
+				}else{
+					mAdapter.setAmountArrays(mRechargeBean.getAmounts());
+					mAdapter.notifyDataSetChanged();
+				}
+				return;
+			}
+
+			mError.setVisibility(View.VISIBLE);
+
+		} else if (REQ_EXCHANGE.equals(type)) {
+			dismissProgress();
+
+			RequestTask reqTask = (RequestTask) taskResult.task;
+
+			String msg = "请求失败";
+			if (taskResult.stateCode == HttpStatus.SC_OK) {
+				IParser parser = reqTask.getParser();
+
+				if (null != parser) {
+					String code = parser.getCode();
+					String msgStr = parser.getMsg();
+
+					// 转换成功之后隐藏转换card
+					if (ConstantData.CODE_SUCCESS.equals(code)) {
+						mExchangeLayout.setVisibility(View.GONE);
+					}
+
+					if (!TextUtils.isEmpty(msgStr)) {
+						msg = msgStr;
+					}
+				}
+			}
+			shortToast(msg);
+		}
+
+	}
+
+	/**
+	 * 获取充值相关的参数
+	 */
+	private void reqPayParams() {
+		TaskParams params = new TaskParams();
+		params.put(RequestTask.PARAM_URL, ConstantData.addLoginInfoToUrl(ConstantData.URL_RECHARGE_CHOOSE));
+		params.put(RequestTask.PARAM_HTTP_METHOD, RequestTask.HTTP_GET);
+
+		RequestTask reqTask = new RequestTask(new RechargeChooseParser());
+		reqTask.setTaskFinishListener(this);
+		reqTask.setType(REQ_PAY_PARAM);
+		reqTask.execute(params);
+
+		mProgress.setVisibility(View.VISIBLE);
+		mError.setVisibility(View.GONE);
+		
+		// 每次进入充值界面前都重新获取一次GSID，获取其Cookie，防止Cookie过期
+		new GenericTask() {
+			@Override
+			protected TaskResult doInBackground(TaskParams... params) {
+				LoginUtil.i.syncRequestGsidHttpClient();
+				return null;
+			}
+		}.execute();
+
+		//TODO:
+//		setCookie();
+	}
+
+
+	private void setCookie(){
+		// 种cookie
+		// String url ="https://m.weibo.cn/login?backurl=book.sina.cn&ns=1&vt=4&access_token=2.00dHLLMCMHPhmC73e1a6b2d5ZIlmtD";
+		// 正确添加cookie的参考资料:
+		// 1）http://blog.csdn.net/jjj706/article/details/5906636
+		// 2）http://blog.sina.com.cn/s/blog_623868100101jlxz.html
+
+		String url = "http://weibo.cn";
+		CookieSyncManager.createInstance(this);
+		CookieManager cookieManager = CookieManager.getInstance();
+		cookieManager.setAcceptCookie(true);
+		// 需要添加domain信息
+//		String gsidStr = "gsid_CTandWM=" + LoginUtil.getLoginInfo().getUserInfo().getGsid() + "; domain=weibo.cn";
+//		ZLog.d(ZLog.Cookies, "RechargeCenterActivity >> gsidStr == " + gsidStr);
+		cookieManager.removeAllCookie();
+//		cookieManager.setCookie(url, gsidStr);
+
+		// 新浪登录系统带的Cookie信息
+		// pay=usrmdinst_0;
+		// _T_WM=a623cbca5f696312c5766be0e9479fa9;
+		// gsid_CTandWM=4uyfe7771bH3CvFEpqsWP8rtA0Z;
+		// SUB=_2AkMjMPzda8NlrAFRmfoXyG3iaoxH-jyQavwrAn7oJhMyCBgv7mkxqSeETSPjv2OYOsmDg4lhIIwGFRkmEA..
+
+		// 旧版本获取到gsid
+		// GSID=3_5bc65b3fd84c8e786d33eaac6e44d42adfb4e6d57de7672756
+		// 新gsid
+		// 4uyfe7771bH3CvFEpqsWP8rtA0Z
+		// 4uu6CpOz1aAY4hGcdKbLZgbVEdw
+		// 中下的cookie至少包含如下三个key
+		// cookieManager.setCookie(url, "_T_WM=a623cbca5f696312c5766be0e9479fa9; domain=weibo.cn");
+		// cookieManager.setCookie(url, " gsid_CTandWM=4uyfe7771bH3CvFEpqsWP8rtA0Z; domain=weibo.cn");
+		// cookieManager.setCookie(url, " SUB=_2AkMjMPzda8NlrAFRmfoXyG3iaoxH-jyQavwrAn7oJhMyCBgv7mkxqSeETSPjv2OYOsmDg4lhIIwGFRkmEA..; domain=weibo.cn");
+
+		Map<String, ?> cookieMap = LoginUtil.i.getAllCookies();
+		if(cookieMap != null && cookieMap.size() > 0) {
+			for(String key : cookieMap.keySet()) {
+				String cookie = key+"="+cookieMap.get(key)+"; domain=weibo.cn";
+				ZLog.d(ZLog.Cookies, "RechargeCenterActivity >> 种下 cookie == " + cookie);
+				cookieManager.setCookie(url, cookie);
+			}
+
+//			String gsid = LoginUtil.getLoginInfo().getUserInfo().getGsid();
+////			String gsid = LoginUtil.i.syncRequestGsidHttpClient().getGsid();
+//			String cookie1 = "gsid_CTandWM="+gsid;
+			cookieManager.setCookie(url, " domain=weibo.cn");
+		}
+
+//		String test = "_T_WM=0d4afc2333d0919cbb3bb96078d594a0; SUB=_2A25588TyDeTxGedL71sR8y3NzDmIHXVbH-y6rDV6PENMuNIMZBmVky2w0L-fvHAP4vWT6u5D3aYFWZns; gsid_CTandWM=4u5RCpOz1R7qI1H3NpNK56uYp2P" +"; domain=.weibo.cn";
+//		cookieManager.setCookie(url, test);
+
+		CookieSyncManager.getInstance().sync();
+		String cookie = cookieManager.getCookie(url);
+		ZLog.d(ZLog.Cookies, "RechargeCenterActivity >> 获取 cookie == " + cookie);
+	}
+
+
+	private void reqExchangeVb() {
+		showProgress(R.string.recharge_exchanging, false);
+
+		TaskParams params = new TaskParams();
+		params.put(RequestTask.PARAM_URL, ConstantData.addLoginInfoToUrl(ConstantData.URL_RECHARGE_EXCHANGE));
+		params.put(RequestTask.PARAM_HTTP_METHOD, RequestTask.HTTP_GET);
+
+		RequestTask task = new RequestTask(new SimpleParser());
+		task.setTaskFinishListener(this);
+		task.setType(REQ_EXCHANGE);
+		task.execute(params);
+	}
+
+	private class RechargeAdapter extends BaseAdapter {
+
+		private ArrayList<RechargeBean.Amount> mAmountArrays;
+		private ViewHolder mHolder;
+
+		public RechargeAdapter() {
+		}
+
+		public void setAmountArrays(ArrayList<RechargeBean.Amount> amountArrays) {
+			this.mAmountArrays = amountArrays;
+		}
+
+		@Override
+		public int getCount() {
+			int count = 0;
+			if (mAmountArrays != null) {
+				count = mAmountArrays.size();
+			}
+			return count;
+		}
+
+		@Override
+		public Object getItem(int position) {
+			if (position >= 0 && position < mAmountArrays.size()) {
+				return mAmountArrays.get(position);
+			} else {
+				return null;
+			}
+		}
+
+		@Override
+		public long getItemId(int position) {
+			return position;
+		}
+
+		@Override
+		public View getView(final int position, View convertView, ViewGroup parent) {
+			if (convertView == null || convertView.getTag() == null) {
+				convertView = createView();
+			}
+			mHolder = (ViewHolder) convertView.getTag();
+
+			RechargeBean.Amount item = (RechargeBean.Amount) getItem(position);
+			String amountText = mContext.getString(R.string.recharge_amount_text);
+
+			if (item != null) {
+				mHolder.amountTv.setText(String.format(amountText, item.money));
+
+				if (position == (mAmountArrays.size() - 1)) {
+					mHolder.amountLayout.setBackgroundDrawable(getResources().getDrawable(
+							R.drawable.selector_personal_bottom_bg));
+				} else {
+					mHolder.amountLayout.setBackgroundDrawable(getResources().getDrawable(
+							R.drawable.selector_personal_middle_bg));
+				}
+			}
+
+			return convertView;
+		}
+
+		protected View createView() {
+			View itemView = LayoutInflater.from(RechargeActivity.this).inflate(R.layout.vw_recharge_item, null);
+			ViewHolder holder = new ViewHolder();
+			holder.amountLayout = itemView.findViewById(R.id.recharge_item_layout);
+			holder.amountTv = (TextView) itemView.findViewById(R.id.recharge_item_text);
+			itemView.setTag(holder);
+			return itemView;
+		}
+
+		protected class ViewHolder {
+			public View amountLayout;
+			public TextView amountTv;
+		}
+	}
+
+}

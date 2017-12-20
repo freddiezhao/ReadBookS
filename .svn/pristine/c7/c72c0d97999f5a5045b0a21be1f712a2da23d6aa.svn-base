@@ -1,0 +1,149 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="fill_parent"
+    android:layout_height="wrap_content"
+    android:background="@drawable/book_home_item_bg_nochange"
+    android:descendantFocusability="blocksDescendants"
+    android:orientation="vertical">
+
+    <RelativeLayout
+        android:layout_width="fill_parent"
+        android:layout_height="@dimen/list_item_height">
+
+        <ImageView
+            android:id="@+id/item_menu_btn"
+            android:layout_width="@dimen/bookhome_item_rightbtn_width"
+            android:layout_height="match_parent"
+            android:layout_alignParentRight="true"
+            android:layout_centerVertical="true"
+            android:contentDescription="@null"
+            android:scaleType="center"
+            android:focusable="false" />
+
+        <ImageView
+            android:layout_width="wrap_content"
+            android:layout_height="@dimen/bookhome_item_divider_height"
+            android:layout_alignLeft="@id/item_menu_btn"
+            android:contentDescription="@null"
+            android:layout_centerVertical="true"
+            android:scaleType="fitXY"
+            android:src="@drawable/divider_line_v" />
+
+        <RelativeLayout
+            android:id="@+id/item_content_layout"
+            android:layout_width="fill_parent"
+            android:layout_height="@dimen/list_item_height"
+            android:layout_toLeftOf="@id/item_menu_btn"
+            android:background="@drawable/book_home_item_bg"
+            android:paddingBottom="10dp"
+            android:paddingLeft="10dp"
+            android:paddingTop="10dp">
+
+            <ImageView
+                android:id="@+id/header_img"
+                android:layout_width="@dimen/book_common_item_img_width"
+                android:layout_height="@dimen/book_common_item_img_height"
+                android:layout_centerVertical="true"
+                android:contentDescription="@null"
+                android:scaleType="fitXY"
+                android:src="@drawable/sinabook" />
+
+            <ImageView
+                android:id="@+id/cost_free"
+                android:layout_width="@dimen/book_common_item_img_width"
+                android:layout_height="@dimen/book_common_item_img_height"
+                android:layout_alignLeft="@id/header_img"
+                android:layout_alignTop="@id/header_img"
+                android:contentDescription="@null"
+                android:src="@drawable/free_icon" />
+
+            <TextView
+                android:id="@+id/title"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="9dp"
+                android:layout_marginLeft="10dp"
+                android:layout_marginRight="2dp"
+                android:layout_toRightOf="@id/header_img"
+                android:singleLine="true"
+                android:textColor="@color/book_store_color"
+                android:textSize="15sp" />
+
+            <LinearLayout
+                android:id="@+id/text_pl"
+                android:layout_width="wrap_content"
+                android:layout_height="fill_parent"
+                android:layout_below="@id/title"
+                android:layout_marginLeft="10dp"
+                android:layout_toRightOf="@id/header_img"
+                android:orientation="vertical">
+
+                <TextView
+                    android:id="@+id/author"
+                    android:layout_width="fill_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginBottom="6dp"
+                    android:singleLine="true"
+                    android:textColor="@color/detail_info_color"
+                    android:textSize="12sp" />
+
+                <TextView
+                    android:id="@+id/book_info"
+                    android:layout_width="fill_parent"
+                    android:layout_height="wrap_content"
+                    android:ellipsize="end"
+                    android:singleLine="true"
+                    android:textColor="@color/detail_info_color"
+                    android:textSize="12sp" />
+            </LinearLayout>
+        </RelativeLayout>
+    </RelativeLayout>
+
+    <com.sina.book.ui.widget.IgnorePressedRelativeLayout
+        android:id="@+id/item_menu_layout"
+        android:layout_width="fill_parent"
+        android:layout_height="@dimen/bookhome_item_menu_height"
+        android:background="@drawable/menu_layout_bg"
+        android:onClick="menuLayoutOnClick"
+        android:visibility="gone">
+
+        <TextView
+            android:id="@+id/item_menu_btn_delete"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentLeft="true"
+            android:layout_centerVertical="true"
+            android:layout_marginLeft="@dimen/bookhome_item_menubtn_margin"
+            android:layout_marginTop="14dp"
+            android:drawableTop="@drawable/menu_delete_btn_bg"
+            android:drawablePadding="4dp"
+            android:gravity="center"
+            android:text="@string/bookhome_delete"
+            android:textColor="@drawable/menu_btn_text_color"
+            android:textSize="12sp" />
+
+        <TextView
+            android:id="@+id/item_menu_btn_down"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentRight="true"
+            android:layout_centerVertical="true"
+            android:layout_marginRight="@dimen/bookhome_item_menubtn_margin"
+            android:drawableTop="@drawable/menu_down_btn_bg"
+            android:drawablePadding="4dp"
+            android:gravity="center"
+            android:text="@string/bookhome_down"
+            android:textColor="@drawable/menu_btn_text_color"
+            android:textSize="12sp" />
+    </com.sina.book.ui.widget.IgnorePressedRelativeLayout>
+
+    <ImageView
+        android:id="@+id/item_divider"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="13.33dp"
+        android:layout_marginRight="13.33dp"
+        android:contentDescription="@null"
+        android:scaleType="fitXY" />
+
+</LinearLayout>

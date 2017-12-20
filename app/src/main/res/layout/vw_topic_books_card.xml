@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_marginRight="8dp"
+    android:layout_marginLeft="8dp"
+    android:layout_marginBottom="8dp"
+    android:layout_gravity="center_horizontal"
+    android:background="@drawable/card_whole"
+    android:orientation="vertical">
+
+    <TextView
+        android:id="@+id/list_title"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="left|top"
+        android:layout_marginTop="8dp"
+        android:layout_marginLeft="15dp"
+        android:layout_marginRight="13dp"
+        android:layout_marginBottom="8dp"
+        android:textColor="#37212E"
+        android:textSize="15sp"
+        android:visibility="gone"/>
+
+    <com.sina.book.ui.widget.LinearLayoutListView
+        android:id="@+id/list_books"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:paddingLeft="1.33dp"
+        android:paddingRight="1.33dp"
+        android:paddingBottom="1.33dp" />
+
+</LinearLayout>

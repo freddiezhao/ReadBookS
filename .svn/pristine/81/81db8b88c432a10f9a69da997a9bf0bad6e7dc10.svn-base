@@ -1,0 +1,144 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:sinabook="http://schemas.android.com/apk/com.sina.book"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@drawable/splash_bitmap_bg"
+    android:orientation="vertical"
+    tools:context=".ui.SplashActivity" >
+
+    <!-- android:background="#F4E7CB" -->
+
+    <RelativeLayout
+        android:id="@+id/splash_pic"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent" >
+
+        <ImageView
+            android:id="@+id/title_splash"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerHorizontal="true"
+            android:layout_marginTop="131.33dp"
+            android:contentDescription="@null"
+            android:src="@drawable/splash_bg_logo" />
+
+        <ImageView
+            android:id="@+id/title_logo"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/title_splash"
+            android:layout_centerHorizontal="true"
+            android:layout_marginTop="14.67dp"
+            android:contentDescription="@null"
+            android:src="@drawable/logo"
+            android:visibility="gone" />
+
+        <ImageView
+            android:id="@+id/title_version"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignBottom="@id/title_splash"
+            android:layout_marginBottom="54dp"
+            android:layout_marginLeft="5dp"
+            android:layout_toRightOf="@id/title_splash"
+            android:contentDescription="@null"
+            android:src="@drawable/version_new" />
+
+        <TextView
+            android:id="@+id/sina_splash"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentBottom="true"
+            android:layout_centerHorizontal="true"
+            android:layout_marginBottom="8dp"
+            android:gravity="center"
+            android:lineSpacingExtra="2dp"
+            android:text="@string/splash_txt"
+            android:textColor="#c05423"
+            android:textSize="10.5sp" />
+
+        <ImageView
+            android:id="@+id/special_logo"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_above="@id/sina_splash"
+            android:layout_centerHorizontal="true"
+            android:layout_marginBottom="15dp"
+            android:contentDescription="@null"
+            android:src="@drawable/baidufamily_pic"
+            android:visibility="gone" />
+
+        <!-- <TextView -->
+        <!-- android:id="@+id/special_text" -->
+        <!-- android:layout_width="wrap_content" -->
+        <!-- android:layout_height="wrap_content" -->
+        <!-- android:layout_alignBottom="@+id/special_logo" -->
+        <!-- android:layout_toRightOf="@+id/special_logo" -->
+        <!-- android:text="特权版" -->
+        <!-- android:textColor="#000" -->
+        <!-- android:textSize="11dip" -->
+        <!-- android:textStyle="italic" -->
+        <!-- android:paddingBottom="5dip" -->
+        <!-- android:textAppearance="?android:attr/textAppearanceSmall" /> -->
+    </RelativeLayout>
+
+    <RelativeLayout
+        android:id="@+id/splash_pic_spring_festival"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:visibility="gone" >
+
+        <ImageView
+            android:id="@+id/spring_festival_logo_img"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerHorizontal="true"
+            android:layout_centerVertical="true"
+            android:contentDescription="@null" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentBottom="true"
+            android:layout_centerHorizontal="true"
+            android:layout_marginBottom="8dp"
+            android:gravity="center"
+            android:lineSpacingExtra="2dp"
+            android:text="@string/splash_txt"
+            android:textColor="#A49786"
+            android:textSize="10sp" />
+
+        <ImageView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_above="@+id/spring_festival_logo_img"
+            android:layout_alignParentTop="true"
+            android:layout_centerHorizontal="true"
+            android:contentDescription="@null" />
+    </RelativeLayout>
+
+    <android.support.v4.view.ViewPager
+        android:id="@+id/welcome_guide"
+        android:layout_width="fill_parent"
+        android:layout_height="fill_parent"
+        android:visibility="gone" />
+
+    <LinearLayout
+        android:id="@+id/welcome_guide_navigater"
+        android:layout_width="fill_parent"
+        android:layout_height="fill_parent"
+        android:layout_gravity="center"
+        android:visibility="gone" >
+
+        <com.sina.book.ui.widget.NavigaterPageIndex
+            android:id="@+id/mycontrolview"
+            android:layout_width="fill_parent"
+            android:layout_height="fill_parent"
+            android:layout_marginBottom="30dp"
+            android:gravity="bottom"
+            sinabook:indexPadding="11dp" />
+    </LinearLayout>
+
+</RelativeLayout>

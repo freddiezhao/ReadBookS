@@ -1,0 +1,66 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="fill_parent"
+    android:layout_height="@dimen/mark_pull_height"
+    android:background="#d0c8be"
+    android:gravity="center_horizontal" >
+
+    <RelativeLayout
+        android:id="@+id/pulldown_text_layout"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="16dp"
+        android:gravity="center_horizontal" >
+
+        <TextView
+            android:id="@+id/pulldown_text"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerVertical="true"
+            android:hint="@string/pulldown_tv_add_normal"
+            android:textColor="#9c8b76"
+            android:textSize="16sp" />
+
+        <ImageView
+            android:id="@+id/pulldown_image"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerVertical="true"
+            android:layout_marginLeft="9.33dp"
+            android:layout_toRightOf="@id/pulldown_text"
+            android:contentDescription="@null"
+            android:src="@drawable/book_mark_arrow" />
+    </RelativeLayout>
+
+    <ImageView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentRight="true"
+        android:layout_alignParentTop="true"
+        android:layout_centerVertical="true"
+        android:layout_marginRight="@dimen/reading_book_mark_margin_right"
+        android:contentDescription="@null"
+        android:src="@drawable/book_mark" />
+
+    <ImageView
+        android:id="@+id/sinabook_icon"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/pulldown_text_layout"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="16dp"
+        android:contentDescription="@null"
+        android:src="@drawable/bookmark_icon" />
+
+    <TextView
+        android:id="@+id/sinabook_tv"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/sinabook_icon"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="10.6dp"
+        android:text="@string/mark_text"
+        android:textColor="#7D756C"
+        android:textSize="15sp" />
+
+</RelativeLayout>

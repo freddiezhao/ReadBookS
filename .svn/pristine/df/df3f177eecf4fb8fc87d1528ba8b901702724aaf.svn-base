@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    style="@style/PublicBg"
+    android:layout_width="fill_parent"
+    android:layout_height="fill_parent">
+
+    <include
+        android:id="@+id/add_my_comment"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        layout="@layout/vw_add_my_comment" />
+
+    <com.sina.book.ui.widget.XListView
+        android:id="@+id/lv_comments"
+        android:layout_width="fill_parent"
+        android:layout_height="fill_parent"
+        android:cacheColorHint="#00000000"
+        android:divider="@null"
+        android:layout_below="@id/add_my_comment"
+        android:dividerHeight="0dp"
+        android:fadingEdge="none"
+        android:listSelector="@null"
+        android:scrollbars="none" />
+
+    <TextView
+        android:id="@+id/no_comments"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/no_comments"
+        android:textColor="@color/book_title_color"
+        android:layout_centerInParent="true"
+        android:textSize="18sp"
+        android:visibility="gone" />
+
+    <include
+        android:id="@+id/waitingLayout"
+        layout="@layout/vw_generic_progress_view"
+        android:visibility="gone" />
+
+    <include
+        android:id="@+id/error_layout"
+        layout="@layout/vw_error"
+        android:visibility="gone" />
+
+</RelativeLayout>

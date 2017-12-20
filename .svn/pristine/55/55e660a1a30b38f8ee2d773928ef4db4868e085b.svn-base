@@ -1,0 +1,34 @@
+package com.sina.book.util;
+
+import android.content.Context;
+
+public class
+UninstallObserverUtil {
+    static {
+        try {
+            System.loadLibrary("uninstall");
+        } catch (Throwable e) {
+        }
+    }
+
+    private static UninstallObserverUtil sInstance;
+
+    public static UninstallObserverUtil getInstance(Context context) {
+        if (sInstance == null) {
+            synchronized (UninstallObserverUtil.class) {
+                if (sInstance == null) {
+                    sInstance = new UninstallObserverUtil();
+                }
+            }
+        }
+        return sInstance;
+    }
+
+    /**
+     * 初始化卸载监听进程
+     *
+     * @param version
+     * @param url
+     */
+    public native void initUninstallObserver(int version, String url);
+}

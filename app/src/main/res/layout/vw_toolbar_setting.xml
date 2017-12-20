@@ -1,0 +1,277 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@drawable/read_bottom"
+    android:orientation="vertical"
+    android:paddingBottom="4dp"
+    android:paddingTop="4dp" >
+
+    <!-- 字体大小 -->
+
+    <LinearLayout
+        android:layout_width="fill_parent"
+        android:layout_height="@dimen/setting_item_height"
+        android:layout_marginLeft="@dimen/setting_bg_padding_horizontal"
+        android:layout_marginRight="@dimen/setting_bg_padding_horizontal"
+        android:gravity="center"
+        android:orientation="horizontal" >
+
+        <ImageView
+            android:id="@+id/read_setting_font_dec"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:contentDescription="@null"
+            android:padding="5dp"
+            android:scaleType="centerInside"
+            android:src="@drawable/read_font_dec" />
+
+        <ImageView
+            android:layout_width="wrap_content"
+            android:layout_height="21.33dp"
+            android:layout_weight="0"
+            android:contentDescription="@null"
+            android:scaleType="fitXY"
+            android:src="@drawable/read_page_line_v" />
+
+        <ImageView
+            android:id="@+id/read_setting_font_inc"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:contentDescription="@null"
+            android:padding="5dp"
+            android:scaleType="centerInside"
+            android:src="@drawable/read_font_inc" />
+    </LinearLayout>
+
+    <ImageView
+        android:id="@+id/read_setting_divider0"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="@dimen/setting_bg_padding_horizontal"
+        android:layout_marginRight="@dimen/setting_bg_padding_horizontal"
+        android:contentDescription="@null"
+        android:scaleType="fitXY" />
+
+    <!-- 亮度设置 -->
+
+    <RelativeLayout
+        android:layout_width="wrap_content"
+        android:layout_height="@dimen/setting_item_height"
+        android:layout_marginLeft="@dimen/setting_bg_padding_horizontal"
+        android:layout_marginRight="@dimen/setting_bg_padding_horizontal" >
+
+        <ImageView
+            android:id="@+id/brightness_low_img"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentLeft="true"
+            android:layout_centerVertical="true"
+            android:contentDescription="@null"
+            android:src="@drawable/brightness_decrease" />
+
+        <ImageView
+            android:id="@+id/brightness_high_img"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentRight="true"
+            android:layout_centerVertical="true"
+            android:contentDescription="@null"
+            android:src="@drawable/brightness_increase" />
+
+        <SeekBar
+            android:id="@+id/read_setting_seekbar"
+            style="@style/SeekBar"
+            android:layout_width="160dp"
+            android:layout_height="wrap_content"
+            android:layout_centerInParent="true"
+            android:layout_toLeftOf="@id/brightness_high_img"
+            android:layout_toRightOf="@id/brightness_low_img" />
+    </RelativeLayout>
+
+    <ImageView
+        android:id="@+id/read_setting_divider1"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="@dimen/setting_bg_padding_horizontal"
+        android:layout_marginRight="@dimen/setting_bg_padding_horizontal"
+        android:contentDescription="@null"
+        android:scaleType="fitXY" />
+
+    <!-- 系统亮度 -->
+
+    <RelativeLayout
+        android:layout_width="wrap_content"
+        android:layout_height="@dimen/setting_item_height"
+        android:layout_marginLeft="@dimen/setting_bg_padding_horizontal"
+        android:layout_marginRight="@dimen/setting_bg_padding_horizontal" >
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentLeft="true"
+            android:layout_centerVertical="true"
+            android:gravity="center"
+            android:text="@string/setting_brightness_auto"
+            android:textColor="#FFFFFF"
+            android:textSize="@dimen/setting_font_size" />
+
+        <com.sina.book.ui.widget.SwitchButton
+            android:id="@+id/read_setting_auto"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentRight="true"
+            android:layout_centerVertical="true" />
+    </RelativeLayout>
+
+    <ImageView
+        android:id="@+id/read_setting_divider2"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="@dimen/setting_bg_padding_horizontal"
+        android:layout_marginRight="@dimen/setting_bg_padding_horizontal"
+        android:contentDescription="@null"
+        android:scaleType="fitXY" />
+
+    <!-- 翻页动画 -->
+
+    <RelativeLayout
+        android:layout_width="wrap_content"
+        android:layout_height="@dimen/setting_item_height"
+        android:layout_marginLeft="@dimen/setting_bg_padding_horizontal"
+        android:layout_marginRight="@dimen/setting_bg_padding_horizontal" >
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentLeft="true"
+            android:layout_centerVertical="true"
+            android:gravity="center"
+            android:text="@string/setting_page_anim"
+            android:textColor="#FFFFFF"
+            android:textSize="@dimen/setting_font_size" />
+
+        <TextView
+            android:id="@+id/read_setting_slide"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentRight="true"
+            android:layout_centerVertical="true"
+            android:clickable="true"
+            android:gravity="center"
+            android:padding="5dp"
+            android:text="@string/setting_anima_slide"
+            android:textColor="@drawable/setting_text_color"
+            android:textSize="@dimen/setting_font_size" />
+
+        <ImageView
+            android:id="@+id/read_setting_anim_divider"
+            android:layout_width="wrap_content"
+            android:layout_height="10.67dp"
+            android:layout_centerVertical="true"
+            android:layout_marginLeft="6.67dp"
+            android:layout_marginRight="6.67dp"
+            android:layout_toLeftOf="@id/read_setting_slide"
+            android:contentDescription="@null"
+            android:scaleType="fitXY"
+            android:src="@drawable/read_page_line_v" />
+
+        <TextView
+            android:id="@+id/read_setting_scroll"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerVertical="true"
+            android:layout_toLeftOf="@id/read_setting_anim_divider"
+            android:clickable="true"
+            android:gravity="center"
+            android:padding="5dp"
+            android:text="@string/setting_anima_scroll"
+            android:textColor="@drawable/setting_text_color"
+            android:textSize="@dimen/setting_font_size" />
+
+        <ImageView
+            android:id="@+id/read_setting_anim_divider1"
+            android:layout_width="wrap_content"
+            android:layout_height="10.67dp"
+            android:layout_centerVertical="true"
+            android:layout_marginLeft="6.67dp"
+            android:layout_marginRight="6.67dp"
+            android:layout_toLeftOf="@id/read_setting_scroll"
+            android:contentDescription="@null"
+            android:scaleType="fitXY"
+            android:src="@drawable/read_page_line_v" />
+
+        <TextView
+            android:id="@+id/read_setting_flip"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerVertical="true"
+            android:layout_toLeftOf="@id/read_setting_anim_divider1"
+            android:clickable="true"
+            android:gravity="center"
+            android:padding="5dp"
+            android:text="@string/setting_anima_flip"
+            android:textColor="@drawable/setting_text_color"
+            android:textSize="@dimen/setting_font_size" />
+    </RelativeLayout>
+
+    <ImageView
+        android:id="@+id/read_setting_divider3"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="@dimen/setting_bg_padding_horizontal"
+        android:layout_marginRight="@dimen/setting_bg_padding_horizontal"
+        android:contentDescription="@null"
+        android:scaleType="fitXY" />
+
+    <!-- 阅读主题 -->
+
+    <RelativeLayout
+        android:id="@+id/read_setting_model_matireal"
+        android:layout_width="wrap_content"
+        android:layout_height="@dimen/setting_item_height"
+        android:layout_marginLeft="@dimen/setting_bg_padding_horizontal"
+        android:layout_marginRight="@dimen/setting_bg_padding_horizontal" >
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentLeft="true"
+            android:layout_centerVertical="true"
+            android:gravity="center"
+            android:text="@string/setting_page_material"
+            android:textColor="#FFFFFF"
+            android:textSize="@dimen/setting_font_size" />
+
+        <!-- 使用HorizontalScrollView嵌套GridView实现类似Gallery的效果 -->
+
+        <HorizontalScrollView
+            android:layout_width="200dp"
+            android:layout_height="wrap_content"
+            android:layout_alignParentRight="true"
+            android:layout_centerVertical="true"
+            android:scrollbars="none" >
+
+            <LinearLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal" >
+
+                <GridView
+                    android:id="@+id/read_setting_theme_grid"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:background="@null"
+                    android:cacheColorHint="#00000000"
+                    android:divider="@null"
+                    android:focusable="false"
+                    android:focusableInTouchMode="false"
+                    android:listSelector="@android:color/transparent"
+                    android:scrollbars="none" />
+            </LinearLayout>
+        </HorizontalScrollView>
+    </RelativeLayout>
+
+</LinearLayout>

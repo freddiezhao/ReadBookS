@@ -1,0 +1,84 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="@dimen/bookhome_item_img_width"
+    android:layout_height="@dimen/bookhome_item_height"
+    android:gravity="center">
+
+    <!-- 书的封皮 -->
+    <ImageView
+        android:id="@+id/book_img"
+        android:layout_width="@dimen/book_common_item_img_width"
+        android:layout_height="@dimen/book_common_item_img_height"
+        android:layout_centerInParent="true"
+        android:contentDescription="@null"
+        android:paddingBottom="@dimen/book_item_paddingBottom"
+        android:paddingLeft="@dimen/book_item_paddingLeft"
+        android:paddingRight="@dimen/book_item_paddingRight"
+        android:scaleType="fitXY"
+        android:background="@drawable/main_book_bg"
+        android:src="@drawable/sinabook" />
+
+    <!-- 右下new标签 -->
+    <ImageView
+        android:id="@+id/book_tip"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignBottom="@id/book_img"
+        android:layout_alignRight="@id/book_img"
+        android:layout_marginBottom="@dimen/book_item_paddingBottom"
+        android:layout_marginRight="@dimen/book_item_paddingRight"
+        android:contentDescription="@null"
+        android:src="@drawable/new_icon"
+        android:visibility="gone" >
+    </ImageView>
+
+    <!-- 右上书籍章节更新提示 -->
+    <TextView
+        android:id="@+id/book_new_chapter"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignRight="@id/book_img"
+        android:layout_alignTop="@id/book_img"
+        android:layout_marginTop="-7dp"
+        android:layout_marginRight="-3dp"
+        android:background="@drawable/update_chapters_num"
+        android:gravity="center"
+        android:textColor="@color/white"
+        android:textSize="12sp"
+        android:visibility="gone" />
+
+    <!-- 左上角云端书籍提示 -->
+    <ImageView
+        android:id="@+id/book_cloud"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignLeft="@id/book_img"
+        android:layout_alignTop="@id/book_img"
+        android:layout_marginLeft="@dimen/book_item_paddingLeft"
+        android:contentDescription="@null"
+        android:src="@drawable/icon_online"
+        android:visibility="gone" />
+
+    <!-- 下载进度条 -->
+    <ProgressBar
+        android:id="@+id/book_download_progressBar"
+        style="@style/HorizontalProgressBar"
+        android:layout_width="44.33dp"
+        android:layout_height="@dimen/bookhome_item_probar_height"
+        android:layout_centerHorizontal="true"
+        android:layout_alignBottom="@id/book_img"
+        android:layout_marginBottom="@dimen/book_item_paddingBottom"
+        android:visibility="gone" >
+    </ProgressBar>
+
+    <!-- 下载、暂停按钮 -->
+    <ImageView
+        android:id="@+id/book_down_pause"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_centerInParent="true"
+        android:contentDescription="@null"
+        android:src="@drawable/book_down"
+        android:visibility="gone" />
+
+</RelativeLayout>

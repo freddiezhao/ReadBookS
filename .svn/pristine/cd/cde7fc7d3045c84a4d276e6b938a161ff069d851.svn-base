@@ -1,0 +1,93 @@
+package com.sina.book.parser;
+
+import android.text.TextUtils;
+import com.sina.book.data.Book;
+import com.sina.book.data.RecommendCmsResult;
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
+
+import java.util.ArrayList;
+
+public class RecommendCmsParser extends BaseParser {
+
+    @Override
+    protected Object parse(String jsonString) throws JSONException {
+        parseDataContent(jsonString);
+
+        JSONObject obj = new JSONObject(jsonString);
+
+        JSONObject today = obj.optJSONObject("today_recommend");
+        JSONArray cates = obj.optJSONArray("cate");
+
+        RecommendCmsResult result = new RecommendCmsResult();
+        result = parseRecommendToday(result, today);
+        result = parseRecommendCate(result, cates);
+
+        return result;
+    }
+
+    private RecommendCmsResult parseRecommendToday(RecommendCmsResult result,
+                                                   JSONObject data) throws JSONException {
+        RecommendCmsResult.RecommendToday today = result.newRcommendTodayInstance();
+        today.name = data.optString("name");
+        today.total = data.optInt("total");
+        today.type = data.optString("index_type");
+
+        JSONArray books = data.optJSONArray("books");
+        today.books = parserBookArray(books);
+
+        result.setRecommendToday(today);
+
+        return result;
+    }
+
+    private RecommendCmsResult parseRecommendCate(RecommendCmsResult result,
+                                                  JSONArray datas) throws JSONException {
+        if (null != datas && datas.length() > 0) {
+            for (int i = 0; i != datas.length(); i++) {
+                JSONObject data = datas.getJSONObject(i);
+
+                RecommendCmsResult.RecommendCate cate = result.newRcommendCateInstance();
+
+                JSONObject object = data.optJSONObject("cate");
+                cate.id = object.optString("cateid");
+                cate.name = object.optString("catename");
+
+                JSONArray books = data.optJSONArray("books");
+                cate.books = parserBookArray(books);
+
+                result.addRecommendCate(cate);
+            }
+        }
+
+        return result;
+    }
+
+    private ArrayList<Book> parserBookArray(JSONArray bookArray) throws JSONException {
+        ArrayList<Book> books = new ArrayList<Book>();
+        if (null == bookArray) return books;
+
+        for (int i = 0; i < bookArray.length(); i++) {
+            Book book = new Book();
+            JSONObject item = bookArray.optJSONObject(i);
+
+            String bid = item.optString("bid");
+            String bookId = TextUtils.isEmpty(bid) ? item.optString("bookid") : bid;
+
+            book.setBookId(bookId);
+            book.setSid(item.optString("sid"));
+            book.setBookSrc(item.optString("src"));
+
+            String title = item.optString("recommend_name");
+            book.setTitle(TextUtils.isEmpty(title) ? item.optString("title") : title);
+
+            book.setAuthor(item.optString("author"));
+            book.getDownloadInfo().setImageUrl(item.optString("img"));
+            book.setIntroRealNeed(item.optString("intro"));
+
+            books.add(book);
+        }
+        return books;
+    }
+}

@@ -1,0 +1,125 @@
+<?xml version="1.0" encoding="utf-8"?>
+<com.sina.book.ui.widget.IgnorePressedLinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:paddingBottom="8dp"
+    android:paddingLeft="8dp"
+    android:paddingRight="8dp">
+
+    <LinearLayout
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:background="@drawable/card_main"
+        android:orientation="vertical">
+
+        <RelativeLayout
+            android:id="@+id/head_layout"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:paddingBottom="4dp"
+            android:paddingLeft="14.67dp"
+            android:paddingRight="14.67dp"
+            android:paddingTop="8.67dp">
+
+            <ImageView
+                android:id="@+id/head"
+                android:layout_width="34dp"
+                android:layout_height="34dp"
+                android:layout_alignParentLeft="true"
+                android:layout_alignParentTop="true"
+                android:layout_marginTop="6dp"
+                android:contentDescription="@null" />
+
+            <ImageView
+                android:id="@+id/head_tip"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignRight="@id/head"
+                android:layout_alignTop="@id/head"
+                android:layout_marginRight="-6dp"
+                android:layout_marginTop="-6dp"
+                android:contentDescription="@null"
+                android:src="@drawable/icon_hot" />
+
+            <TextView
+                android:id="@+id/title"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="10.67dp"
+                android:layout_toRightOf="@id/head"
+                android:textColor="#383838"
+                android:textSize="14.67sp" />
+        </RelativeLayout>
+
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="14.67dp"
+            android:layout_marginRight="14.67dp">
+
+            <ImageView
+                android:layout_width="match_parent"
+                android:layout_height="1px"
+                android:layout_marginTop="5dp"
+                android:background="#DFDFDF"
+                android:contentDescription="@null" />
+
+            <ImageView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="12dp"
+                android:contentDescription="@null"
+                android:src="@drawable/arrow_up" />
+        </RelativeLayout>
+
+        <TextView
+            android:id="@+id/intro"
+            android:layout_width="fill_parent"
+            android:layout_height="32dp"
+            android:layout_marginLeft="14.67dp"
+            android:layout_marginRight="14.67dp"
+            android:ellipsize="end"
+            android:gravity="center_vertical"
+            android:singleLine="true"
+            android:textColor="#B1B1B1"
+            android:textSize="12sp" />
+
+        <include
+            android:id="@+id/book_layout1"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            layout="@layout/vw_author_recommend_card_item" />
+
+        <include
+            android:id="@+id/book_layout2"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            layout="@layout/vw_author_recommend_card_item" />
+
+        <include
+            android:id="@+id/book_layout3"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            layout="@layout/vw_author_recommend_card_item" />
+    </LinearLayout>
+
+    <RelativeLayout
+        android:id="@+id/card_bottom"
+        android:layout_width="fill_parent"
+        android:layout_height="42.67dp"
+        android:background="@drawable/selector_card_button_bg">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="fill_parent"
+            android:layout_centerHorizontal="true"
+            android:drawablePadding="5dp"
+            android:drawableRight="@drawable/partition_icon_more"
+            android:gravity="center"
+            android:text="@string/look_more"
+            android:textColor="#808080"
+            android:textSize="14.67sp" />
+    </RelativeLayout>
+
+</com.sina.book.ui.widget.IgnorePressedLinearLayout>

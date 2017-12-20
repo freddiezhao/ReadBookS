@@ -1,0 +1,64 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <array name="reading_themes">
+        <item>@drawable/readbg_00</item><!-- 阅读背景 -->
+        <item>@drawable/readbg_00_thumbnail</item><!-- 阅读背景缩略图 -->
+        <item>#5B5957</item><!-- 阅读内容字体颜色 -->
+        <item>#909090</item><!-- 上下文字颜色 -->
+        <item>#F2F2F2</item><!-- 阅读页后背的颜色 -->
+        <item>0</item><!-- 0表示平铺；1表示拉伸 -->
+        
+        <item>@drawable/readbg_01</item>
+        <item>@drawable/readbg_01_thumbnail</item>
+        <item>#475C59</item>
+        <item>#749A95</item>
+        <item>#B8D7D2</item>
+        <item>0</item>
+        
+        <item>@drawable/readbg_02</item>
+        <item>@drawable/readbg_02_thumbnail</item>
+        <item>#AC5858</item>
+        <item>#D89B9B</item>
+        <item>#ECCBCB</item>
+        <item>0</item>
+        
+        <item>@drawable/readbg_03</item>
+        <item>@drawable/readbg_03_thumbnail</item>
+        <item>#8393B5</item>
+        <item>#45546B</item>
+        <item>#2C3D51</item>
+        <item>0</item>
+        
+        <item>@drawable/readbg_04</item>
+        <item>@drawable/readbg_04_thumbnail</item>
+        <item>#544435</item>
+        <item>#68563D</item>
+        <item>#D3BD9D</item>
+        <item>1</item>
+        
+        <item>@drawable/readbg_05</item>
+        <item>@drawable/readbg_05_thumbnail</item>
+        <item>#5D5A50</item>
+        <item>#B3A79A</item>
+        <item>#ECECE6</item>
+        <item>0</item>
+
+        <item>@drawable/readbg_06</item>
+        <item>@drawable/readbg_06_thumbnail</item>
+        <item>#7C9195</item>
+        <item>#495C60</item>
+        <item>#1E2D2E</item>
+        <item>0</item>
+        
+        <!-- 默认白天模式配置 -->
+        <item>@color/reading_bg</item>
+        <item>@color/reading_bg</item>
+        <item>#555555</item>
+        <item>#ADACAC</item>
+        <item>#F9F9F9</item>
+        <item>0</item>
+
+    </array>
+
+</resources>

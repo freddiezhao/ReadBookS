@@ -1,0 +1,85 @@
+<?xml version="1.0" encoding="utf-8"?>
+<merge xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/read"
+    style="@style/PublicBg"
+    android:layout_width="fill_parent"
+    android:layout_height="fill_parent">
+	
+    <FrameLayout
+        android:layout_width="fill_parent"
+        android:layout_height="fill_parent">
+		
+        <RelativeLayout
+            android:layout_width="fill_parent"
+            android:layout_height="fill_parent">
+
+            <include
+                android:id="@+id/reading_add_mark_view"
+                android:layout_width="fill_parent"
+                android:layout_height="@dimen/mark_pull_height"
+                layout="@layout/vw_pulldown_top_item"
+                android:visibility="gone" />
+
+            <com.sina.book.reader.PageWidget
+                android:id="@+id/reading_pagewidget"
+                android:layout_width="fill_parent"
+                android:layout_height="fill_parent"
+                android:focusable="false"
+                android:visibility="visible" />
+		
+            <ImageView
+                android:id="@+id/reading_bookmark_flag"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentRight="true"
+                android:layout_marginRight="@dimen/reading_book_mark_margin_right"
+                android:contentDescription="@null"
+                android:src="@drawable/book_mark"
+                android:visibility="gone" />
+
+            <AbsoluteLayout
+                android:layout_width="fill_parent"
+                android:layout_height="fill_parent">
+
+                <ImageView
+                    android:id="@+id/rollbox_down_view"
+                    android:layout_width="@dimen/reading_rollbox_width"
+                    android:layout_height="@dimen/reading_rollbox_height"
+                    android:contentDescription="@null"
+                    android:padding="@dimen/reading_rollbox_padding"
+                    android:src="@drawable/rollbox_down"
+                    android:visibility="gone" />
+
+                <ImageView
+                    android:id="@+id/rollbox_up_view"
+                    android:layout_width="@dimen/reading_rollbox_width"
+                    android:layout_height="@dimen/reading_rollbox_height"
+                    android:contentDescription="@null"
+                    android:padding="@dimen/reading_rollbox_padding"
+                    android:src="@drawable/rollbox_up"
+                    android:visibility="gone" />
+            </AbsoluteLayout>
+        </RelativeLayout>
+
+        <com.sina.book.ui.view.ReadToolbar
+            android:id="@+id/book_tool_bar"
+            android:layout_width="fill_parent"
+            android:layout_height="fill_parent"
+            android:focusable="true"
+            android:visibility="gone" />
+    </FrameLayout>
+
+    <include
+        android:id="@+id/reading_error_view"
+        layout="@layout/vw_error_without_btn"
+        android:visibility="gone" />
+
+    <com.sina.book.ui.view.ReadCompleteView
+        android:id="@+id/reading_complete_view"
+        android:layout_width="fill_parent"
+        android:layout_height="fill_parent"
+        android:animateLayoutChanges="true"
+        android:focusable="false"
+        android:visibility="gone" />
+
+</merge>

@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="fill_parent"
+    android:layout_height="@dimen/vdisk_item_dir_height"
+    android:background="@drawable/book_home_item_bg"
+    android:orientation="vertical">
+
+    <LinearLayout
+        android:layout_width="fill_parent"
+        android:layout_height="@dimen/vdisk_item_dir_height"
+        android:orientation="horizontal">
+
+        <ImageView
+            android:id="@+id/vdisk_dir_folder"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="13dp"
+            android:layout_gravity="left|center_vertical"
+            android:contentDescription="@null"
+            android:src="@drawable/folder"
+            android:scaleType="center"
+            android:layout_weight="0" />
+
+        <com.sina.book.ui.widget.EllipsizeTextView
+            android:id="@+id/vdisk_dir_name"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_vertical"
+            android:layout_marginLeft="24dp"
+            android:layout_marginRight="13dp"
+            android:lines="1"
+            android:maxLines="1"
+            android:ellipsize="end"
+            android:textColor="#717171"
+            android:textSize="16sp"
+            android:layout_weight="1" />
+
+        <ImageView
+            android:id="@+id/vdisk_dir_folder_arrow"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginRight="13dp"
+            android:layout_gravity="right|center_vertical"
+            android:contentDescription="@null"
+            android:scaleType="center"
+            android:src="@drawable/more_item_arrow"
+            android:layout_weight="0" />
+    </LinearLayout>
+
+    <ImageView
+        android:id="@+id/vdisk_dir_divider"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:contentDescription="@null"
+        android:src="@drawable/divider_line"
+        android:scaleType="fitXY" />
+
+</LinearLayout>

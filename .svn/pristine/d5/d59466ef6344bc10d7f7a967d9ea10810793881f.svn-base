@@ -1,0 +1,733 @@
+package com.sina.book.util;
+
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
+import java.util.LinkedList;
+import java.util.List;
+
+import org.htmlcleaner.Utils;
+
+import android.content.Context;
+import android.content.SharedPreferences;
+import android.content.SharedPreferences.Editor;
+import android.content.pm.PackageInfo;
+import android.content.pm.PackageManager;
+import android.os.Environment;
+import android.os.StatFs;
+import android.text.TextUtils;
+import android.widget.Toast;
+
+import com.sina.book.R;
+import com.sina.book.SinaBookApplication;
+import com.sina.book.data.Book;
+
+/**
+ * 存储卡管理类
+ * 
+ * @author MaXingliang
+ */
+public class StorageUtil {
+	// private static final String TAG = "StorageUtil";
+	/** 配置文件名称. */
+	private static final String PREF_SETTINGS = "book_settings";
+	public static final String EXTERNAL_STORAGE = Environment.getExternalStorageDirectory().toString();
+
+	public static final int DIR_TYPE_BOOK = 21;
+	public static final int DIR_TYPE_IMAGE = 23;
+	public static final int DIR_TYPE_APK = 25;
+	public static final int DIR_TYPE_MARK = 24;
+	public static final int DIR_TYPE_LOG = 26;
+	public static final int DIR_TYPE_TEMP = 27;
+
+	// private static final String OLD_ROOT_DIR = EXTERNAL_STORAGE +
+	// "/SinaReader/";
+	// private static final String OLD_BOOK_DIR = OLD_ROOT_DIR + "BOOK/";
+
+	/** SDCard主目录. */
+	public static String DIR_HOME = EXTERNAL_STORAGE + "/sina/reader";
+	private static final String DIR_APK = "/apk";
+	private static final String DIR_IMAGE = "/image";
+	private static final String DIR_BOOK = "/book";
+	private static final String DIR_MARK = "/mark";
+	private static final String DIR_LOG = "/log";
+	private static final String DIR_TEMP = "/temp";
+	private static final String DIR_DB = "/db";
+
+	/*
+	 * 保存一些数据的时候只需增加相应的关键字然后调用公用的存值方法即可
+	 */
+	// 公有关键字
+	public static final String KEY_UPDATE_TIME = "last_update_chapters";
+	public static final String KEY_READ_BOOK = "book_name";
+	public static final String KEY_READ_MODE = "readmode";
+	public static final String KEY_LANUCH_DATE = "launchdate";
+	public static final String KEY_UPDATE_VDISK = "last_update_vdisk";
+	public static final String KEY_UPDATE_COLLECTED = "last_update_collected";
+	public static final String KEY_UPDATE_PUURCHASED = "last_update_puchased";
+	public static final String KEY_UPDATE_PAYMENT = "last_update_payment";
+	public static final String KEY_UPDATE_EMPLOYEE = "last_update_employee";
+	public static final String KEY_UPDATE_PEOPLE = "last_update_people";
+	public static final String KEY_ANIMA_TYPE = "animatype";
+	public static final String KEY_FONT_SIZE = "fontsize";
+	public static final String KEY_CLEAR_DATE = "clear_date";
+	public static final String KEY_INSTALL_DATE = "install_date";
+	public static final String KEY_AUTO_WEIBO = "autoweibo";
+	public static final String KEY_AUTO_BRIGHTNESS = "autobrightness";
+	public static final String KEY_OPEN_NOTIFICATION = "notification";
+	public static final String KEY_MAIN_THEME_TYPE = "main_theme_type";
+	public static final String KEY_CACHE_REMIND_BOOK = "remind_book";
+	public static final String KEY_CACHE_BOOK_HISTORY = "book_history";
+	public static final String KEY_CHECK_APP_VERSION = "check_app_version";
+	public static final String KEY_READ_BG_RES_NAME = "read_bg_res_name";
+	public static final String KEY_SELECT_PARTITION = "select_partition";
+	public static final String KEY_SHELVES_MODE = "shelves_mode";
+	public static final String KEY_SHOW_GUIDE_SHELVES_LIST = "show_guide_shelves_list";
+	public static final String KEY_SHOW_GUIDE_SHELVES_GRID = "show_guide_shelves_grid";
+	public static final String KEY_NEED_SHOW_COMMENT_APP = "need_show_comment_app";
+	public static final String KEY_SHOW_COMMENT_APP_DATE = "show_comment_app_date";
+	public static final String KEY_GOOD_BOOK_PUSH_DATE = "good_book_push_date";
+	public static final String KEY_GOOD_BOOK_FIRST_DATE = "good_book_first_date";
+	public static final String KEY_FIRST_CHANGE_ALARM = "first_change_alarm";
+	public static final String KEY_LAST_GOOD_BOOK_PUSH_DATE = "last_good_book_push_date";
+
+	public static final String KEY_MAIN_GUIDE_SHOW = "main_guide_show";
+	public static final String KEY_SHOW_GUIDE_READ = "show_guide_read";
+	public static final String KEY_UNINSTALL_OBSERVER_INIT = "uninstall_observer_init";
+
+	// 私有关键字
+	private static final String KEY_CACHE_SEARCH_WORDS = "search_words";
+	private static final String KEY_BRIGHTNESS = "brightness";
+	private static final String KEY_SHOW_GUIDE_VERSION = "show_guide_version";
+
+	public static final String KEY_NEW_FUNC_ZENGSHUKA = "newfunc_zengshuka";
+
+	private StorageUtil() {
+	}
+
+	/**
+	 * 通过类型获取目录路径
+	 * 
+	 * @param type
+	 * @return
+	 */
+	public static String getDirByType(int type) {
+		String dir = "/";
+		String filePath = "";
+		switch (type) {
+		case DIR_TYPE_BOOK: {
+			filePath = DIR_HOME + DIR_BOOK;
+			break;
+		}
+		case DIR_TYPE_IMAGE: {
+			filePath = DIR_HOME + DIR_IMAGE;
+			break;
+		}
+		case DIR_TYPE_APK: {
+			filePath = DIR_HOME + DIR_APK;
+			break;
+		}
+		case DIR_TYPE_MARK: {
+			filePath = DIR_HOME + DIR_MARK;
+			break;
+		}
+		case DIR_TYPE_LOG: {
+			filePath = DIR_HOME + DIR_LOG;
+			break;
+		}
+		case DIR_TYPE_TEMP: {
+			filePath = DIR_HOME + DIR_TEMP;
+			break;
+		}
+		}
+
+		File file = new File(filePath);
+		if (!file.exists() || !file.isDirectory()) {
+			file.mkdirs();
+		}
+		if (file.exists()) {
+			if (file.isDirectory()) {
+				dir = file.getPath();
+			}
+		} else {
+			// 文件没创建成功，可能是sd卡不存在，但是还是把路径返回
+			dir = filePath;
+		}
+		return dir;
+	}
+
+	/**
+	 * 是否插入sdcard
+	 * 
+	 * @return
+	 */
+	public static boolean isSDCardExist() {
+		return Environment.getExternalStorageState().equals(Environment.MEDIA_MOUNTED);
+	}
+
+	public static boolean isDBFileExist() {
+		if (isSDCardExist()) {
+			String path = DIR_HOME + DIR_DB + "/sinareader.db";
+			File file = new File(path);
+			if (file.exists()) {
+				return true;
+			}
+		}
+		return false;
+	}
+
+	/**
+	 * 判断存储空间是否足够
+	 * 
+	 * @param needSize
+	 * @return
+	 */
+	public static boolean checkExternalSpace(float needSize) {
+		boolean flag = false;
+		if (Environment.getExternalStorageState().equals(Environment.MEDIA_MOUNTED)) {
+			File sdcardDir = Environment.getExternalStorageDirectory();
+			StatFs sf = new StatFs(sdcardDir.getPath());
+			long blockSize = sf.getBlockSize();
+			long availCount = sf.getAvailableBlocks();
+			long restSize = availCount * blockSize;
+			if (restSize > needSize) {
+				flag = true;
+			} else {
+				Toast.makeText(SinaBookApplication.gContext, R.string.sd_smallsize, Toast.LENGTH_SHORT).show();
+			}
+		} else {
+			Toast.makeText(SinaBookApplication.gContext, R.string.no_sdcard, Toast.LENGTH_SHORT).show();
+		}
+		return flag;
+	}
+
+	/*
+	 * public static void moveOldFiles() { LogUtil.d(TAG, "moveOldFiles()");
+	 * 
+	 * moveFolder(OLD_BOOK_DIR, DIR_BOOK); deleteFolder(OLD_ROOT_DIR); }
+	 * 
+	 * private static void moveFolder(String oldPath, String newPath) {
+	 * LogUtil.d(TAG, "moveFolder " + oldPath + " to " + newPath);
+	 * 
+	 * boolean flag = true;
+	 * 
+	 * File newFolder = new File(newPath); if (!newFolder.exists() ||
+	 * !newFolder.isDirectory()) { flag = newFolder.mkdirs(); LogUtil.d(TAG,
+	 * "mkdirs " + flag); }
+	 * 
+	 * if (!flag) { return; }
+	 * 
+	 * File oldFolder = new File(oldPath); if (oldFolder.exists() &&
+	 * oldFolder.isDirectory()) { String[] fileNames = oldFolder.list(); if
+	 * (fileNames != null && fileNames.length > 0) { for (String fileName :
+	 * fileNames) { File oldFile = new File(oldPath + fileName);
+	 * 
+	 * // 不拷贝下载未完成的 if (!fileName.endsWith(TEMP_SUFFIX)) { oldFile.renameTo(new
+	 * File(newPath + fileName)); }
+	 * 
+	 * oldFile.delete(); } } oldFolder.delete(); } }
+	 */
+
+	public static boolean deleteFolder(String oldCacheDir) {
+		if (!Utils.isEmptyString(oldCacheDir)) {
+			File file = new File(oldCacheDir);
+
+			if (file.isDirectory()) {// 处理目录
+				File files[] = file.listFiles();
+				if (null != files && files.length > 0) {
+					for (File f : files) {
+						deleteFolder(f.getAbsolutePath());
+					}
+					file.delete();
+					return true;
+				} else {
+					// 目录下没有文件或者目录，删除
+					return file.delete();
+				}
+			} else {// 如果是文件，删除
+				return file.delete();
+			}
+		}
+		return false;
+	}
+
+	public static boolean deleteFolder(File oldCacheFile) {
+		if (oldCacheFile != null) {
+			if (!oldCacheFile.exists()) {
+				return true;
+			}
+			if (oldCacheFile.isDirectory()) {// 处理目录
+				File[] files = oldCacheFile.listFiles();
+				if (null != files) {
+					for (File file : files) {
+						deleteFolder(file.getAbsolutePath());
+					}
+				}
+			}
+			if (!oldCacheFile.isDirectory()) {// 如果是文件，删除
+				return oldCacheFile.delete();
+			} else {
+				// 目录下没有文件或者目录，删除
+				File[] files = oldCacheFile.listFiles();
+				if (null != files && files.length == 0) {
+					return oldCacheFile.delete();
+				}
+			}
+		}
+		return false;
+	}
+
+	public static String copyFile(String fileName) throws IOException {
+		InputStream myInput = SinaBookApplication.gContext.getAssets().open("book" + fileName);
+		String outFileName = StorageUtil.getDirByType(StorageUtil.DIR_TYPE_BOOK) + fileName;
+		File file = new File(outFileName);
+		if (file.exists()) {
+			return outFileName;
+		}
+		OutputStream myOutput = new FileOutputStream(outFileName);
+		byte[] buffer = new byte[1024];
+		int length;
+		while ((length = myInput.read(buffer)) > 0) {
+			myOutput.write(buffer, 0, length);
+		}
+		myOutput.flush();
+		myOutput.close();
+		myInput.close();
+		return outFileName;
+	}
+
+	/**
+	 * 生成临时图片文件路径
+	 * 
+	 * @return
+	 */
+	public static String createPath(String fileName) {
+		if (TextUtils.isEmpty(fileName)) {
+			fileName = "temp";
+		}
+
+		fileName = fileName.replace('/', '_').replace(':', '_').replace("?", "_");
+
+		String filePath = getDirByType(DIR_TYPE_TEMP) + File.separator + fileName + ".png";
+
+		File file = new File(filePath);
+		// 如果文件存在则先删除
+		if (file.exists()) {
+			file.delete();
+		}
+
+		return filePath;
+	}
+
+	/**
+	 * 保存Long型值
+	 * 
+	 * @param key
+	 *            关键字
+	 * @param value
+	 *            值
+	 */
+	public static void saveLong(String key, long value) {
+		SharedPreferences preferences = SinaBookApplication.gContext.getSharedPreferences(PREF_SETTINGS,
+				Context.MODE_PRIVATE);
+		Editor editor = preferences.edit();
+		editor.putLong(key, value);
+		editor.commit();
+	}
+
+	/**
+	 * 获取指定关键字对应的Long型值
+	 * 
+	 * @param key
+	 *            关键字
+	 * @param defaultValue
+	 *            默认值
+	 * @return key对应的value
+	 */
+	public static long getLong(String key, long defaultValue) {
+		SharedPreferences preferences = SinaBookApplication.gContext.getSharedPreferences(PREF_SETTINGS,
+				Context.MODE_PRIVATE);
+		return preferences.getLong(key, defaultValue);
+	}
+
+	/**
+	 * 获取指定关键字对应的Long型值
+	 * 
+	 * @param key
+	 *            关键字
+	 * @return key对应的value，默认-1
+	 */
+	public static long getLong(String key) {
+		SharedPreferences preferences = SinaBookApplication.gContext.getSharedPreferences(PREF_SETTINGS,
+				Context.MODE_PRIVATE);
+		return preferences.getLong(key, -1);
+	}
+
+	/**
+	 * 保存Float型值
+	 * 
+	 * @param key
+	 *            关键字
+	 * @param value
+	 *            值
+	 */
+	public static void saveFloat(String key, float value) {
+		SharedPreferences preferences = SinaBookApplication.gContext.getSharedPreferences(PREF_SETTINGS,
+				Context.MODE_PRIVATE);
+		Editor editor = preferences.edit();
+		editor.putFloat(key, value);
+		editor.commit();
+	}
+
+	/**
+	 * 获取指定关键字对应的Float型值
+	 * 
+	 * @param key
+	 *            关键字
+	 * @param defaultValue
+	 *            默认值
+	 * @return key对应的value
+	 */
+	public static float getFloat(String key, float defaultValue) {
+		SharedPreferences preferences = SinaBookApplication.gContext.getSharedPreferences(PREF_SETTINGS,
+				Context.MODE_PRIVATE);
+		return preferences.getFloat(key, defaultValue);
+	}
+
+	/**
+	 * 获取指定关键字对应的Float型值
+	 * 
+	 * @param key
+	 *            关键字
+	 * @return key对应的value，默认-1
+	 */
+	public static float getFloat(String key) {
+		SharedPreferences preferences = SinaBookApplication.gContext.getSharedPreferences(PREF_SETTINGS,
+				Context.MODE_PRIVATE);
+		return preferences.getFloat(key, -1.0f);
+	}
+
+	/**
+	 * 保存Int型值
+	 * 
+	 * @param key
+	 *            关键字
+	 * @param value
+	 *            值
+	 */
+	public static void saveInt(String key, int value) {
+		SharedPreferences preferences = SinaBookApplication.gContext.getSharedPreferences(PREF_SETTINGS,
+				Context.MODE_PRIVATE);
+		Editor editor = preferences.edit();
+		editor.putInt(key, value);
+		editor.commit();
+	}
+
+	/**
+	 * 获取指定关键字对应的Int型值
+	 * 
+	 * @param key
+	 *            关键字
+	 * @param defaultValue
+	 *            默认值
+	 * @return key对应的value
+	 */
+	public static int getInt(String key, int defaultValue) {
+		SharedPreferences preferences = SinaBookApplication.gContext.getSharedPreferences(PREF_SETTINGS,
+				Context.MODE_PRIVATE);
+		return preferences.getInt(key, defaultValue);
+	}
+
+	/**
+	 * 获取指定关键字对应的Int型值
+	 * 
+	 * @param key
+	 *            关键字
+	 * @return key对应的value，默认-1
+	 */
+	public static int getInt(String key) {
+		SharedPreferences preferences = SinaBookApplication.gContext.getSharedPreferences(PREF_SETTINGS,
+				Context.MODE_PRIVATE);
+		return preferences.getInt(key, -1);
+	}
+
+	/**
+	 * 保存指定Key对应的String
+	 * 
+	 * @param key
+	 *            关键字
+	 * @param value
+	 *            值
+	 */
+	public static void saveString(String key, String value) {
+		SharedPreferences preferences = SinaBookApplication.gContext.getSharedPreferences(PREF_SETTINGS,
+				Context.MODE_PRIVATE);
+		Editor editor = preferences.edit();
+		editor.putString(key, value);
+		editor.commit();
+	}
+
+	/**
+	 * 获取指定Key对应的字符串值,有默认值
+	 * 
+	 * @param key
+	 *            关键字
+	 * @param defaultValue
+	 *            默认值
+	 * @return key对应的value
+	 */
+	public static String getString(String key, String defaultValue) {
+		SharedPreferences preferences = SinaBookApplication.gContext.getSharedPreferences(PREF_SETTINGS,
+				Context.MODE_PRIVATE);
+		return preferences.getString(key, defaultValue);
+	}
+
+	/**
+	 * 获取指定Key对应的String值
+	 * 
+	 * @param key
+	 *            关键字
+	 * @return key对应的value，默认为空字符串""
+	 */
+	public static String getString(String key) {
+		SharedPreferences preferences = SinaBookApplication.gContext.getSharedPreferences(PREF_SETTINGS,
+				Context.MODE_PRIVATE);
+		return preferences.getString(key, "");
+	}
+
+	/**
+	 * 保存指定Key对应的Boolean值
+	 * 
+	 * @param key
+	 *            关键字
+	 * @param value
+	 *            值
+	 */
+	public static void saveBoolean(String key, boolean value) {
+		SharedPreferences preferences = SinaBookApplication.gContext.getSharedPreferences(PREF_SETTINGS,
+				Context.MODE_PRIVATE);
+		Editor editor = preferences.edit();
+		editor.putBoolean(key, value);
+		editor.commit();
+	}
+
+	/**
+	 * 获取指定Key对应的boolean值
+	 * 
+	 * @param key
+	 *            关键字
+	 * @param defaultValue
+	 *            默认值
+	 * @return key对应的value
+	 */
+	public static boolean getBoolean(String key, boolean defaultValue) {
+		SharedPreferences preferences = SinaBookApplication.gContext.getSharedPreferences(PREF_SETTINGS,
+				Context.MODE_PRIVATE);
+		return preferences.getBoolean(key, defaultValue);
+	}
+
+	/**
+	 * 获取指定Key对应的boolean值
+	 * 
+	 * @param key
+	 *            关键字
+	 * @return key对应的value, 默认为false
+	 */
+	public static boolean getBoolean(String key) {
+		SharedPreferences preferences = SinaBookApplication.gContext.getSharedPreferences(PREF_SETTINGS,
+				Context.MODE_PRIVATE);
+		return preferences.getBoolean(key, false);
+	}
+
+	/**
+	 * 存储书籍列表
+	 * 
+	 * @param books
+	 *            书籍列表
+	 * @param key
+	 *            关键字
+	 */
+	public static void saveBooks(List<Book> books, String key) {
+		SharedPreferences preferences = SinaBookApplication.gContext.getSharedPreferences(PREF_SETTINGS,
+				Context.MODE_PRIVATE);
+		Editor editor = preferences.edit();
+		StringBuilder sb = new StringBuilder();
+		for (Book book : books) {
+			sb.append(Util.changeNullToEmpty(book.getBookId()));
+			sb.append(";");
+			sb.append(Util.changeNullToEmpty(book.getSid()));
+			sb.append(";");
+			sb.append(Util.changeNullToEmpty(book.getBookSrc()));
+			sb.append(";");
+			sb.append(Util.changeNullToEmpty(book.getDownloadInfo().getImageUrl()));
+			sb.append(";");
+			sb.append(Util.changeNullToEmpty(book.getTitle()));
+			sb.append(";|");
+		}
+		editor.putString(key, sb.toString());
+		editor.commit();
+	}
+
+	/**
+	 * 得到书籍列表
+	 * 
+	 * @param key
+	 *            关键字
+	 */
+	public static List<Book> getBooks(String key) {
+		List<Book> books = new LinkedList<Book>();
+		SharedPreferences preferences = SinaBookApplication.gContext.getSharedPreferences(PREF_SETTINGS,
+				Context.MODE_PRIVATE);
+		String booksContent = preferences.getString(key, "");
+		String[] booksArray = booksContent.split("\\|");
+		if (booksArray != null && booksArray.length > 0) {
+			for (String bookString : booksArray) {
+				if (!Util.isNullOrEmpty(bookString)) {
+					String[] bookAttributes = bookString.split(";");
+					if (bookAttributes != null && bookAttributes.length == 5) {
+						Book b = new Book();
+						b.setBookId(bookAttributes[0]);
+						b.setSid(bookAttributes[1]);
+						b.setBookSrc(bookAttributes[2]);
+						b.getDownloadInfo().setImageUrl(bookAttributes[3]);
+						b.setTitle(bookAttributes[4]);
+						books.add(b);
+					}
+				}
+			}
+		}
+		return books;
+	}
+
+	/**
+	 * 存储搜索历史词汇
+	 */
+	public static void setSearchHistory(List<String> words) {
+		SharedPreferences preferences = SinaBookApplication.gContext.getSharedPreferences(PREF_SETTINGS,
+				Context.MODE_PRIVATE);
+		Editor editor = preferences.edit();
+		StringBuilder sb = new StringBuilder();
+		for (String word : words) {
+			sb.append(word).append("|");
+		}
+		editor.putString(KEY_CACHE_SEARCH_WORDS, sb.toString());
+		editor.commit();
+	}
+
+	/**
+	 * 得到搜索历史词汇
+	 */
+	public static List<String> getSearchHistory() {
+		List<String> searchWords = new LinkedList<String>();
+		SharedPreferences preferences = SinaBookApplication.gContext.getSharedPreferences(PREF_SETTINGS,
+				Context.MODE_PRIVATE);
+		String searchWordsContent = preferences.getString(KEY_CACHE_SEARCH_WORDS, "");
+		String[] searchWordsArray = searchWordsContent.split("\\|");
+		if (searchWordsArray != null && searchWordsArray.length > 0) {
+			for (String searchWord : searchWordsArray) {
+				if (!Util.isNullOrEmpty(searchWord)) {
+					searchWords.add(searchWord);
+				}
+			}
+		}
+		return searchWords;
+	}
+
+	/**
+	 * 存储亮度值
+	 * 
+	 * @param brightness
+	 */
+	public static void putBrightness(int brightness) {
+		SharedPreferences preferences = SinaBookApplication.gContext.getSharedPreferences(PREF_SETTINGS,
+				Context.MODE_PRIVATE);
+		Editor editor = preferences.edit();
+		editor.putInt(KEY_BRIGHTNESS, brightness);
+		editor.commit();
+	}
+
+	/**
+	 * 获取亮度值
+	 * 
+	 * @return
+	 */
+	public static int getBrightness() {
+		SharedPreferences preferences = SinaBookApplication.gContext.getSharedPreferences(PREF_SETTINGS,
+				Context.MODE_PRIVATE);
+
+		// 当前系统设置的亮度
+		float sysBrightness = BrightnessUtil.getScreenBrightnewssValue(SinaBookApplication.gContext);
+		int brightness;
+
+		if (sysBrightness <= 20.0f) {
+			brightness = 0;
+		} else {
+			brightness = (int) (sysBrightness * 100 / 255.0f);
+		}
+
+		return preferences.getInt(KEY_BRIGHTNESS, brightness);
+	}
+
+	/**
+	 * 获取是否显示引导页<br>
+	 * 获取后更新标志
+	 */
+	public static boolean isShowGuide() {
+		int nowVersion;
+		try {
+			PackageManager manager = SinaBookApplication.gContext.getPackageManager();
+			if (null != manager) {
+				PackageInfo info = manager.getPackageInfo(SinaBookApplication.gContext.getPackageName(), 0);
+				nowVersion = info.versionCode;
+			} else {
+				nowVersion = -1;
+			}
+		} catch (Exception e) {
+			nowVersion = -1;
+		}
+
+		if (nowVersion < 0) {
+			return false;
+		}
+
+		SharedPreferences preferences = SinaBookApplication.gContext.getSharedPreferences(PREF_SETTINGS,
+				Context.MODE_PRIVATE);
+		int preVersion = preferences.getInt(KEY_SHOW_GUIDE_VERSION, 0);
+		LogUtil.d("isShowGuide() nowVersion：" + nowVersion + " preVersion：" + preVersion);
+		if (nowVersion > preVersion) {
+			// SharedPreferences.Editor editor = preferences.edit();
+			// editor.putInt(KEY_SHOW_GUIDE_VERSION, nowVersion);
+			// editor.commit();
+			// 修复：BugID=21700，版本升级了，需要把某些参数重置
+			StorageUtil.saveBoolean(StorageUtil.KEY_UNINSTALL_OBSERVER_INIT, false);
+			return true;
+		} else {
+			return false;
+		}
+	}
+
+	/**
+	 * 记录当前版本号
+	 */
+	public static void setShowGuide() {
+		int nowVersion;
+		try {
+			PackageManager manager = SinaBookApplication.gContext.getPackageManager();
+			if (null != manager) {
+				PackageInfo info = manager.getPackageInfo(SinaBookApplication.gContext.getPackageName(), 0);
+				nowVersion = info.versionCode;
+			} else {
+				nowVersion = -1;
+			}
+		} catch (Exception e) {
+			nowVersion = -1;
+		}
+		SharedPreferences preferences = SinaBookApplication.gContext.getSharedPreferences(PREF_SETTINGS,
+				Context.MODE_PRIVATE);
+		SharedPreferences.Editor editor = preferences.edit();
+		editor.putInt(KEY_SHOW_GUIDE_VERSION, nowVersion);
+		editor.commit();
+	}
+}

@@ -1,0 +1,192 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="295dp"
+    android:layout_height="wrap_content"
+    android:orientation="vertical"
+    android:paddingBottom="10dp"
+    android:paddingLeft="10dp"
+    android:paddingRight="10dp" >
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="20dp"
+        android:gravity="center_vertical"
+        android:orientation="horizontal"
+        android:visibility="visible" >
+
+        <ProgressBar
+            android:id="@+id/pay_progress_bar"
+            style="?@android:attr/progressBarStyleSmallInverse"
+            android:layout_width="18dp"
+            android:layout_height="18dp"
+            android:layout_marginRight="3dp"
+            android:visibility="gone" />
+
+        <TextView
+            android:id="@+id/pay_progress_text"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:ellipsize="end"
+            android:singleLine="true"
+            android:text="@string/pay_title"
+            android:textColor="@color/pay_dialog_text_color"
+            android:textSize="@dimen/pay_dialog_msg_fontsize" />
+    </LinearLayout>
+
+    <LinearLayout
+        android:id="@+id/pay_price_layout"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/pay_dialog_msg_space"
+        android:orientation="vertical"
+        android:visibility="visible" >
+
+        <TextView
+            android:id="@+id/pay_original_price"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="@string/pay_original_price"
+            android:textColor="@color/pay_dialog_text_color"
+            android:textSize="@dimen/pay_dialog_msg_fontsize" />
+
+        <TextView
+            android:id="@+id/pay_discount_price"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/pay_dialog_msg_space"
+            android:text="@string/pay_discount_price"
+            android:textColor="@color/pay_dialog_text_color"
+            android:textSize="@dimen/pay_dialog_msg_fontsize"
+            android:visibility="gone" />
+
+        <TextView
+            android:id="@+id/pay_read_ticket"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/pay_dialog_msg_space1"
+            android:textColor="@color/pay_dialog_pay_tip1_color"
+            android:textSize="@dimen/pay_dialog_msg_fontsize"
+            android:visibility="gone" />
+    </LinearLayout>
+
+    <RelativeLayout
+        android:id="@+id/pay_buy_by_bookcard_layout"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/pay_dialog_msg_space"
+        android:visibility="visible" >
+
+        <ImageView
+            android:id="@+id/pay_buy_by_bookcard_top_divider"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_alignParentTop="true"
+            android:layout_marginLeft="3dip"
+            android:layout_marginRight="3dip"
+            android:contentDescription="@string/pay_by_bookcard_tip" />
+
+        <ImageView
+            android:id="@+id/pay_buy_by_bookcard_icon"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerVertical="true"
+            android:contentDescription="@string/pay_by_bookcard_tip"
+            android:src="@drawable/icon_buycard" />
+
+        <TextView
+            android:id="@+id/pay_buy_by_bookcard_text"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_centerVertical="true"
+            android:layout_toRightOf="@+id/pay_buy_by_bookcard_icon"
+            android:gravity="center_vertical"
+            android:minHeight="40dip"
+            android:paddingLeft="10dip"
+            android:paddingRight="10dip"
+            android:textColor="@color/pay_dialog_checkbox_note1_color"
+            android:textSize="@dimen/pay_dialog_msg_fontsize2" />
+    </RelativeLayout>
+
+    <RelativeLayout
+        android:id="@+id/pay_checkbox_layout"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/pay_dialog_msg_space"
+        android:visibility="visible" >
+
+        <ImageView
+            android:id="@+id/pay_checkbox_divider"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:contentDescription="@null" />
+
+        <LinearLayout
+            android:id="@+id/pay_checkbox_sub_layout"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="10.67dp"
+            android:gravity="center_vertical"
+            android:orientation="horizontal" >
+
+            <CheckBox
+                android:id="@+id/pay_checkbox"
+                android:layout_width="21dp"
+                android:layout_height="21dp"
+                android:background="@null"
+                android:button="@drawable/pay_dialog_check_box"
+                android:checked="false" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="10dp"
+                android:text="@string/auto_pay"
+                android:textColor="@color/pay_dialog_checkbox_note_color"
+                android:textSize="@dimen/pay_dialog_msg_fontsize" />
+        </LinearLayout>
+
+        <TextView
+            android:id="@+id/pay_checkbox_note"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/pay_checkbox_sub_layout"
+            android:layout_marginTop="10.67dp"
+            android:gravity="center_vertical|left"
+            android:text="@string/pay_note"
+            android:textColor="@color/pay_dialog_checkbox_note1_color"
+            android:textSize="@dimen/pay_dialog_msg_fontsize1" />
+    </RelativeLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center_horizontal"
+        android:layout_marginTop="20dp"
+        android:orientation="horizontal" >
+
+        <TextView
+            android:id="@+id/pay_cancel_btn"
+            android:layout_width="fill_parent"
+            android:layout_height="@dimen/pay_dialog_btn_height"
+            android:layout_weight="1"
+            android:background="@drawable/selector_btn_bg_gray"
+            android:gravity="center"
+            android:text="@string/cancel"
+            android:textColor="@color/pay_dialog_text_color"
+            android:textSize="@dimen/pay_dialog_btn_fontsize" />
+
+        <TextView
+            android:id="@+id/pay_ok_btn"
+            android:layout_width="fill_parent"
+            android:layout_height="@dimen/pay_dialog_btn_height"
+            android:layout_marginLeft="6.67dp"
+            android:layout_weight="1"
+            android:background="@drawable/selector_btn_bg_red"
+            android:gravity="center"
+            android:text="@string/ok"
+            android:textColor="@color/white"
+            android:textSize="@dimen/pay_dialog_btn_fontsize" />
+    </LinearLayout>
+
+</LinearLayout>

@@ -1,0 +1,156 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:sothree="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical" >
+
+    <com.sina.book.ui.widget.SlidingUpPanelLayout
+        android:id="@+id/sliding_layout"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        sothree:collapsedHeight="30dp"
+        sothree:shadowHeight="4dp" >
+
+        <LinearLayout
+            android:id="@+id/main_top"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_above="@+id/main_bottom"
+            android:orientation="vertical"
+            android:paddingLeft="16.67dp"
+            android:paddingRight="16.67dp" >
+
+            <RelativeLayout
+                android:id="@+id/user_info"
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                android:clickable="true"
+                android:paddingBottom="3dp"
+                android:paddingTop="3dp" >
+
+                <ImageView
+                    android:id="@+id/main_bookstore"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_alignParentRight="true"
+                    android:layout_centerVertical="true"
+                    android:background="@drawable/new_main_shucheng"
+                    android:contentDescription="@null" />
+
+                <ImageView
+                    android:id="@+id/main_divider_top"
+                    android:layout_width="1px"
+                    android:layout_height="20dp"
+                    android:layout_centerVertical="true"
+                    android:layout_marginRight="10.67dp"
+                    android:layout_toLeftOf="@id/main_bookstore"
+                    android:background="#7FFFFFFF"
+                    android:contentDescription="@null" />
+
+                <ImageView
+                    android:id="@+id/main_search"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_centerVertical="true"
+                    android:layout_marginRight="10.67dp"
+                    android:layout_toLeftOf="@id/main_divider_top"
+                    android:background="@drawable/new_main_search"
+                    android:contentDescription="@null" />
+
+<!--                 <com.sina.book.ui.widget.DispatchPressedRelativeLayout -->
+                <RelativeLayout
+                    android:id="@+id/weibo_layout"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_alignParentLeft="true"
+                    android:layout_toLeftOf="@id/main_search" >
+
+                    <ImageView
+                        android:id="@+id/weibo_head"
+                        android:layout_width="44dp"
+                        android:layout_height="44dp"
+                        android:layout_alignParentLeft="true"
+                        android:layout_centerVertical="true"
+                        android:layout_marginLeft="4.65dp"
+                        android:background="@drawable/main_avatar_defaut"
+                        android:contentDescription="@null"
+                        android:scaleType="fitXY" />
+
+                    <ImageView
+                        android:id="@+id/weibo_head_background"
+                        android:layout_width="53.3dp"
+                        android:layout_height="53.3dp"
+                        android:layout_alignParentLeft="true"
+                        android:layout_centerVertical="true"
+                        android:background="@drawable/new_main_avatar_cover_new"
+                        android:contentDescription="@null" />
+
+                    <TextView
+                        android:id="@+id/weibo_name_balance"
+                        android:layout_width="wrap_content"
+                        android:layout_height="53.3dp"
+                        android:layout_centerVertical="true"
+                        android:layout_marginLeft="6.67dp"
+                        android:gravity="left|center_vertical"
+                        android:layout_toRightOf="@id/weibo_head_background"
+                        android:lineSpacingExtra="0dp"
+                        android:shadowColor="#99000000"
+                        android:shadowDx="0"
+                        android:shadowDy="1"
+                        android:shadowRadius="1"
+                        android:textColor="@drawable/main_btn_click"
+                        android:textSize="14sp" />
+
+                    <ImageView
+                        android:id="@+id/new_function"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_alignRight="@id/weibo_head"
+                        android:layout_alignTop="@id/weibo_head"
+                        android:layout_marginRight="-4dp"
+                        android:layout_marginTop="-1dp"
+                        android:background="@drawable/new_flag"
+                        android:visibility="gone"
+                        android:contentDescription="@null" />
+                </RelativeLayout>
+<!--                 </com.sina.book.ui.widget.DispatchPressedRelativeLayout> -->
+            </RelativeLayout>
+
+            <RadioGroup
+                android:id="@+id/indicator"
+                android:layout_width="fill_parent"
+                android:layout_height="28dp"
+                android:orientation="horizontal" >
+
+                <RadioButton
+                    style="@style/MainIndicatorTab"
+                    android:background="@drawable/new_main_indicator_left"
+                    android:tag="radio_button0"
+                    android:text="@string/my_shelves" />
+
+                <RadioButton
+                    style="@style/MainIndicatorTab"
+                    android:background="@drawable/new_main_indicator_right"
+                    android:tag="radio_button1"
+                    android:text="@string/import_book" />
+            </RadioGroup>
+
+            <android.support.v4.view.ViewPager
+                android:id="@+id/pager"
+                android:layout_width="fill_parent"
+                android:layout_height="fill_parent"
+                android:layout_gravity="center"
+                android:flipInterval="30"
+                android:persistentDrawingCache="animation" />
+        </LinearLayout>
+
+        <com.sina.book.ui.view.MainBottomView
+            android:id="@+id/main_bottom"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_alignParentBottom="true"
+            android:background="@drawable/main_pannel_bg4" />
+    </com.sina.book.ui.widget.SlidingUpPanelLayout>
+
+</RelativeLayout>

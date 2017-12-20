@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:layout_centerInParent="true"
+    android:background="@drawable/channel_activity_bg"
+    android:gravity="center"
+    android:orientation="vertical"
+    android:paddingBottom="30dp"
+    android:paddingLeft="27dp"
+    android:paddingRight="27dp"
+    android:paddingTop="110dp" >
+
+    <TextView
+        android:id="@+id/custom_tip_text"
+        android:layout_width="match_parent"
+        android:layout_height="0dip"
+        android:layout_weight="1"
+        android:gravity="left|center"
+        android:text="@string/test"
+        android:textColor="@color/book_tag_title_color"
+        android:textSize="14sp" />
+
+    <TextView
+        android:id="@+id/custom_tip_sub_text"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:gravity="left|center"
+        android:textColor="@color/book_tag_title_color"
+        android:textSize="12sp" />
+
+    <Button
+        android:id="@+id/custom_tip_button"
+        android:layout_width="match_parent"
+        android:layout_height="40dip"
+        android:layout_marginTop="10dip"
+        android:gravity="center"
+        android:background="@drawable/selector_btn_bg_red"
+        android:text="@string/knowed"
+        android:textColor="#fff"
+        android:textSize="18sp" />
+
+</LinearLayout>

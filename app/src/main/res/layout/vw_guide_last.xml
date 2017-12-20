@@ -1,0 +1,116 @@
+<com.sina.book.ui.widget.IgnorePressedRelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/start_layout"
+    android:layout_width="fill_parent"
+    android:layout_height="fill_parent"
+    android:background="@drawable/splashbg" >
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent" >
+
+        <ImageView
+            android:id="@+id/gui_title_splash"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerHorizontal="true"
+            android:layout_marginTop="131.33dp"
+            android:contentDescription="@null"
+             />
+<!--             android:src="@drawable/spash_pic" -->
+
+        <ImageView
+            android:id="@+id/gui_title_logo"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/gui_title_splash"
+            android:layout_centerHorizontal="true"
+            android:layout_marginTop="14.67dp"
+            android:contentDescription="@null"
+            android:src="@drawable/logo" />
+
+        <ImageView
+            android:id="@+id/gui_title_version"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/gui_title_splash"
+            android:layout_marginLeft="8dp"
+            android:layout_marginTop="10dp"
+            android:layout_toRightOf="@id/gui_title_logo"
+            android:contentDescription="@null"
+             />
+<!--             android:src="@drawable/version" -->
+
+        <TextView
+            android:id="@+id/gui_sina_splash"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentBottom="true"
+            android:layout_centerHorizontal="true"
+            android:layout_marginBottom="8dp"
+            android:gravity="center"
+            android:lineSpacingExtra="2dp"
+            android:text="@string/splash_txt"
+            android:textColor="#c05423"
+            android:textSize="10.5sp" />
+
+        <ImageView
+            android:id="@+id/gui_special_logo"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_above="@id/gui_sina_splash"
+            android:layout_centerHorizontal="true"
+            android:layout_marginBottom="15dp"
+            android:contentDescription="@null"
+            android:src="@drawable/spash_baiduappmarket_logo"
+            android:visibility="gone" />
+    </RelativeLayout>
+
+    <RelativeLayout
+        android:layout_width="fill_parent"
+        android:layout_height="fill_parent" >
+
+        <RelativeLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentBottom="true"
+            android:layout_centerHorizontal="true"
+            android:layout_marginBottom="99dp"
+            android:orientation="horizontal" >
+
+            <CheckBox
+                android:id="@+id/weibo_check"
+                android:layout_width="21dp"
+                android:layout_height="21dp"
+                android:layout_centerVertical="true"
+                android:background="@drawable/selector_sendweibo_checkbox"
+                android:button="@null"
+                android:checked="true" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_centerVertical="true"
+                android:layout_marginLeft="15dp"
+                android:layout_toRightOf="@id/weibo_check"
+                android:contentDescription="@null"
+                android:text="@string/guide_weibo"
+                android:textColor="#fff"
+                android:textSize="16sp" />
+        </RelativeLayout>
+
+        <Button
+            android:id="@+id/enter_weibo"
+            android:layout_width="205dp"
+            android:layout_height="40dp"
+            android:layout_alignParentBottom="true"
+            android:layout_centerHorizontal="true"
+            android:layout_marginBottom="53dp"
+            android:background="@drawable/selector_guide_btn"
+            android:button="@null"
+            android:gravity="center"
+            android:text="@string/guide_in"
+            android:textColor="#B6936E"
+            android:textSize="16sp" />
+    </RelativeLayout>
+
+</com.sina.book.ui.widget.IgnorePressedRelativeLayout>

@@ -1,0 +1,74 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="fill_parent"
+    android:layout_height="fill_parent" >
+
+    <com.sina.book.ui.widget.CustomTabHost
+        android:id="@android:id/tabhost"
+        android:layout_width="fill_parent"
+        android:layout_height="fill_parent" >
+
+        <LinearLayout
+            android:layout_width="fill_parent"
+            android:layout_height="fill_parent"
+            android:orientation="vertical" >
+
+            <RelativeLayout
+                android:layout_width="fill_parent"
+                android:layout_height="0dip"
+                android:layout_weight="1" >
+
+                <FrameLayout
+                    android:id="@android:id/tabcontent"
+                    android:layout_width="fill_parent"
+                    android:layout_height="fill_parent" />
+
+                <ImageView
+                    android:layout_width="fill_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_alignParentBottom="true"
+                    android:contentDescription="@null"
+                    android:scaleType="fitXY"
+                    android:src="@drawable/maintab_shadow" />
+            </RelativeLayout>
+
+            <TabWidget
+                android:id="@android:id/tabs"
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                android:layout_weight="0"
+                android:visibility="gone" />
+
+            <RadioGroup
+                android:id="@+id/main_radio"
+                android:layout_width="fill_parent"
+                android:layout_height="@dimen/bottom_tab_height"
+                android:layout_gravity="bottom"
+                android:background="@drawable/menu_bg"
+                android:gravity="center_vertical"
+                android:orientation="horizontal" >
+
+                <RadioButton
+                    style="@style/BottomTab"
+                    android:background="@drawable/selector_radio_maintab1"
+                    android:tag="radio_button0" />
+
+                <RadioButton
+                    style="@style/BottomTab"
+                    android:background="@drawable/selector_radio_maintab2"
+                    android:tag="radio_button1" />
+
+                <RadioButton
+                    style="@style/BottomTab"
+                    android:background="@drawable/selector_radio_maintab3"
+                    android:tag="radio_button2" />
+
+                <RadioButton
+                    style="@style/BottomTab"
+                    android:background="@drawable/selector_radio_maintab4"
+                    android:tag="radio_button3" />
+            </RadioGroup>
+        </LinearLayout>
+    </com.sina.book.ui.widget.CustomTabHost>
+
+</FrameLayout>

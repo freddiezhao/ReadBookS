@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    style="@style/PublicCardBg"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <com.sina.book.ui.widget.XScrollView
+        android:id="@+id/topic_scroll_view"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:fillViewport="true" />
+
+    <include
+        android:id="@+id/topic_progress"
+        layout="@layout/vw_generic_progress_view"
+        android:visibility="gone" />
+
+    <include
+        android:id="@+id/topic_error"
+        layout="@layout/vw_error"
+        android:visibility="gone" />
+
+</RelativeLayout>

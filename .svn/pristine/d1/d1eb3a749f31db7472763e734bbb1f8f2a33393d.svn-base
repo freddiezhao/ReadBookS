@@ -1,0 +1,449 @@
+package com.sina.book.ui;
+
+import android.app.AlertDialog;
+import android.content.Context;
+import android.content.DialogInterface;
+import android.content.Intent;
+import android.graphics.Bitmap;
+import android.net.Uri;
+import android.net.http.SslError;
+import android.os.Bundle;
+import android.text.TextUtils;
+import android.view.LayoutInflater;
+import android.view.View;
+import android.webkit.CookieManager;
+import android.webkit.CookieSyncManager;
+import android.webkit.JsResult;
+import android.webkit.SslErrorHandler;
+import android.webkit.WebChromeClient;
+import android.webkit.WebView;
+import android.webkit.WebViewClient;
+import android.widget.TextView;
+import android.widget.Toast;
+
+import com.sina.book.R;
+import com.sina.book.control.GenericTask;
+import com.sina.book.control.ITaskFinishListener;
+import com.sina.book.control.RequestTask;
+import com.sina.book.control.TaskParams;
+import com.sina.book.control.TaskResult;
+import com.sina.book.data.ConstantData;
+import com.sina.book.parser.RechargeParser;
+import com.sina.book.parser.RechargeSubParser;
+import com.sina.book.util.HttpUtil;
+import com.sina.book.util.LoginUtil;
+import com.sina.book.util.Util;
+
+import org.htmlcleaner.Utils;
+
+import java.util.Locale;
+import java.util.Map;
+
+/**
+ * @author Li Wen
+ * @ClassName: RechargeThirdActivity
+ * @Description: 充值中心
+ * @date 2012-12-3
+ */
+public class RechargeCenterActivity extends CustomTitleActivity implements
+        ITaskFinishListener {
+    // private static final String TAG = "RechargeThirdActivity";
+    /**
+     * 登录web页控件
+     */
+    private WebView mWebView;
+
+    private View mProgress;
+    private View mError;
+
+    private static final String INDEX_URL = "https://login.weibo.cn/login";
+
+    /**
+     * web页之间的返回
+     */
+    private boolean isBack;
+
+    /**
+     * 传递给充值wap页面的参数
+     */
+    private String mAmount = "200";
+    private String mPaytype;
+    private String mWebUrl;
+    public static final int LOAD_TYPE_NORMAL = 1;
+    public static final int LOAD_TYPE_URL = 2;
+    private int mLoadType = LOAD_TYPE_NORMAL;
+
+    public static void launch(final Context context, int amount, String payType) {
+        Intent intent = new Intent(context, RechargeCenterActivity.class);
+        intent.putExtra("amount", amount);
+        intent.putExtra("paytype", payType);
+        intent.addFlags(Intent.FLAG_ACTIVITY_NO_USER_ACTION);
+        context.startActivity(intent);
+    }
+
+    public static void launch(final Context context, int amount) {
+        Intent intent = new Intent(context, RechargeCenterActivity.class);
+        intent.putExtra("amount", amount);
+        intent.addFlags(Intent.FLAG_ACTIVITY_NO_USER_ACTION);
+        context.startActivity(intent);
+    }
+
+    public static void launch(final Context context, String url) {
+        Intent intent = new Intent(context, RechargeCenterActivity.class);
+        intent.putExtra("url", url);
+        intent.putExtra("loadType", LOAD_TYPE_URL);
+        intent.addFlags(Intent.FLAG_ACTIVITY_NO_USER_ACTION);
+        context.startActivity(intent);
+    }
+
+    protected void init(Bundle savedInstanceState) {
+        setContentView(R.layout.act_recharge_center);
+        initIntent();
+        initView();
+        initTitle();
+
+        if (mLoadType == LOAD_TYPE_NORMAL) {
+            reqRedirectUrl();
+            // reqRechargeUrl();
+        } else if (mLoadType == LOAD_TYPE_URL) {
+            if (TextUtils.isEmpty(mWebUrl)) {
+                // 网址错误
+                Toast.makeText(RechargeCenterActivity.this, "网址获取错误，请重试",
+                        Toast.LENGTH_SHORT).show();
+                finish();
+            } else {
+                mWebView.loadUrl(mWebUrl);
+            }
+        } else {
+            // 类型错误
+            Toast.makeText(RechargeCenterActivity.this, "类型获取错误，请重试",
+                    Toast.LENGTH_SHORT).show();
+            finish();
+        }
+    }
+
+    @Override
+    protected void onDestroy() {
+        LoginUtil.reqBalance(mContext);
+        super.onDestroy();
+    }
+
+    @Override
+    protected void retry() {
+        reqRedirectUrl();
+        // reqRechargeUrl();
+    }
+
+    @Override
+    public void onTaskFinished(TaskResult taskResult) {
+        if (taskResult.retObj != null) {
+            String url = (String) taskResult.retObj;
+            if (LoginUtil.isValidAccessToken(mContext) == LoginUtil.TOKEN_TYPE_LOGIN_SUCCESS) {
+                if (url.contains("gsid=&") || url.endsWith("gsid=")) {
+                    url = url.replace("gsid=", "gsid="
+                            + LoginUtil.getLoginInfo().getUserInfo().getGsid());
+                } else if (!url.contains("gsid")) {
+                    url = url + "&gsid="
+                            + LoginUtil.getLoginInfo().getUserInfo().getGsid();
+                }
+            }
+
+            url = HttpUtil.setURLParams(url, "gsid", LoginUtil.getLoginInfo()
+                    .getUserInfo().getGsid());
+
+            mWebView.loadUrl(url);
+            return;
+        } else {
+            // 请求失败才隐藏避免加载url闪烁
+            mProgress.setVisibility(View.GONE);
+        }
+
+        mError.setVisibility(View.VISIBLE);
+    }
+
+    private void initIntent() {
+        if (getIntent() != null) {
+            if (getIntent().hasExtra("loadType")) {
+                mLoadType = getIntent().getIntExtra("loadType",
+                        LOAD_TYPE_NORMAL);
+            }
+            if (mLoadType == LOAD_TYPE_NORMAL) {
+                mAmount = String
+                        .valueOf(getIntent().getIntExtra("amount", 200));
+                mPaytype = getIntent().getStringExtra("paytype");
+            } else {
+                mWebUrl = getIntent().getStringExtra("url");
+            }
+        }
+    }
+
+    private void initView() {
+        // 种cookie
+        syncCookie();
+
+//		String cookie = cookieManager.getCookie(url);
+//		ZLog.d(ZLog.Cookies, "RechargeCenterActivity >> 获取 cookie == " + cookie);
+
+        mWebView = (WebView) findViewById(R.id.webview);
+        mWebView.getSettings().setJavaScriptEnabled(true);
+        mWebView.getSettings().setSupportZoom(false);
+        mWebView.setWebViewClient(new MyWebViewClient());
+        mWebView.setWebChromeClient(new WebChromeClient() {
+            @Override
+            public boolean onJsAlert(WebView view, String url, String message,
+                                     final JsResult result) {
+                AlertDialog.Builder builder = new AlertDialog.Builder(
+                        RechargeCenterActivity.this)
+                        .setTitle("提示")
+                        .setMessage(message)
+                        .setPositiveButton("确认",
+                                new AlertDialog.OnClickListener() {
+                                    @Override
+                                    public void onClick(DialogInterface dialog,
+                                                        int which) {
+                                        result.confirm();
+                                    }
+                                });
+
+                builder.setCancelable(false);
+                builder.create();
+                builder.show();
+                return true;
+            }
+        });
+        mProgress = findViewById(R.id.waitingLayout);
+        mError = findViewById(R.id.error_layout);
+    }
+
+    private void syncCookie() {
+        // String url ="https://m.weibo.cn/login?backurl=book.sina.cn&ns=1&vt=4&access_token=2.00dHLLMCMHPhmC73e1a6b2d5ZIlmtD";
+        // 正确添加cookie的参考资料:
+        // 1）http://blog.csdn.net/jjj706/article/details/5906636
+        // 2）http://blog.sina.com.cn/s/blog_623868100101jlxz.html
+
+        String url = "http://weibo.com";
+        CookieSyncManager.createInstance(this);
+        CookieManager cookieManager = CookieManager.getInstance();
+        cookieManager.setAcceptCookie(true);
+        cookieManager.removeAllCookie();
+
+        // 需要添加domain信息
+        // String gsidStr = "gsid_CTandWM=" + LoginUtil.getLoginInfo().getUserInfo().getGsid() + "; domain=weibo.cn";
+
+        // 新浪登录系统带的Cookie信息
+        // pay=usrmdinst_0;
+        // _T_WM=a623cbca5f696312c5766be0e9479fa9;
+        // gsid_CTandWM=4uyfe7771bH3CvFEpqsWP8rtA0Z;
+        // SUB=_2AkMjMPzda8NlrAFRmfoXyG3iaoxH-jyQavwrAn7oJhMyCBgv7mkxqSeETSPjv2OYOsmDg4lhIIwGFRkmEA..
+
+        // 旧版本获取到gsid
+        // GSID=3_5bc65b3fd84c8e786d33eaac6e44d42adfb4e6d57de7672756
+        // 新gsid
+        // 4uyfe7771bH3CvFEpqsWP8rtA0Z
+        // 4uu6CpOz1aAY4hGcdKbLZgbVEdw
+        // 中下的cookie至少包含如下三个key
+        // cookieManager.setCookie(url, "_T_WM=a623cbca5f696312c5766be0e9479fa9; domain=weibo.cn");
+        // cookieManager.setCookie(url, " gsid_CTandWM=4uyfe7771bH3CvFEpqsWP8rtA0Z; domain=weibo.cn");
+        // cookieManager.setCookie(url, " SUB=_2AkMjMPzda8NlrAFRmfoXyG3iaoxH-jyQavwrAn7oJhMyCBgv7mkxqSeETSPjv2OYOsmDg4lhIIwGFRkmEA..; domain=weibo.cn");
+
+        Map<String, ?> cookieMap = LoginUtil.i.getAllCookies();
+        if (cookieMap != null && cookieMap.size() > 0) {
+            for (String key : cookieMap.keySet()) {
+                String cookie = key + "=" + cookieMap.get(key) + "; domain=weibo.com";
+                cookieManager.setCookie(url, cookie);
+            }
+            cookieManager.setCookie(url, " domain=weibo.com");
+        }
+        CookieSyncManager.getInstance().sync();
+    }
+
+    private void initTitle() {
+        View leftView = LayoutInflater.from(this).inflate(
+                R.layout.vw_generic_title_back, null);
+        setTitleLeft(leftView);
+
+        TextView middleView = (TextView) LayoutInflater.from(this).inflate(
+                R.layout.vw_title_textview, null);
+        middleView.setText(R.string.pay_center_title);
+        setTitleMiddle(middleView);
+    }
+
+    private void reqRedirectUrl() {
+        final String reqUrl;
+        if (Utils.isEmptyString(mPaytype)) {
+            reqUrl = ConstantData.addLoginInfoToUrl(String.format(Locale.CHINA,
+                    ConstantData.URL_RECHARGE_SUB2, mAmount));
+        } else {
+            reqUrl = ConstantData.addLoginInfoToUrl(String.format(Locale.CHINA,
+                    ConstantData.URL_RECHARGE_SUB, mAmount, mPaytype));
+        }
+        GenericTask reqTask = new GenericTask() {
+            protected TaskResult doInBackground(TaskParams... params) {
+                TaskResult taskResult = new TaskResult(-1, this, null);
+
+                // 1 如果无gsid再去取一次gsid
+                if (LoginUtil.isValidAccessToken(mContext) == LoginUtil.TOKEN_TYPE_LOGIN_SUCCESS
+                        && Util.isNullOrEmpty(LoginUtil.getLoginInfo()
+                        .getUserInfo().getGsid())) {
+                    String gsid = LoginUtil.i.syncRequestGsidHttpClient().getGsid();
+                    LoginUtil.getLoginInfo().getUserInfo().setGsid(gsid);
+                    LoginUtil.saveLoginGsid(gsid);
+
+                    // 植入cookie
+                    syncCookie();
+                }
+
+                // 2 取url
+                String finalReqUrl = reqUrl + "&gsid="
+                        + LoginUtil.getLoginInfo().getUserInfo().getGsid();
+                RequestTask task1 = new RequestTask(new RechargeSubParser());
+                TaskParams params1 = new TaskParams();
+                params1.put(RequestTask.PARAM_URL, finalReqUrl);
+                params1.put(RequestTask.PARAM_HTTP_METHOD, RequestTask.HTTP_GET);
+                TaskResult task1Result = task1.syncExecute(params1);
+                taskResult.stateCode = task1Result.stateCode;
+                taskResult.retObj = task1Result.retObj;
+                return taskResult;
+            }
+        };
+        reqTask.setTaskFinishListener(this);
+        reqTask.execute();
+    }
+
+    private void reqRechargeUrl() {
+        final String reqUrl;
+        reqUrl = ConstantData.addLoginInfoToUrl(ConstantData.RECHARGE_URL);
+        GenericTask reqTask = new GenericTask() {
+
+            @Override
+            protected TaskResult doInBackground(TaskParams... params) {
+                TaskResult taskResult = new TaskResult(-1, this, null);
+
+                // 1 如果无gsid再去取一次gsid
+                if (LoginUtil.isValidAccessToken(mContext) == LoginUtil.TOKEN_TYPE_LOGIN_SUCCESS
+                        && Util.isNullOrEmpty(LoginUtil.getLoginInfo()
+                        .getUserInfo().getGsid())) {
+                    String gsid = LoginUtil.i.syncRequestGsidHttpClient().getGsid();
+                    LoginUtil.getLoginInfo().getUserInfo().setGsid(gsid);
+                    LoginUtil.saveLoginGsid(gsid);
+                }
+
+                // 2 取url
+                String finalReqUrl = reqUrl + "&gsid="
+                        + LoginUtil.getLoginInfo().getUserInfo().getGsid();
+
+                finalReqUrl = HttpUtil.setURLParams(finalReqUrl, "amount",
+                        mAmount);
+
+                RequestTask task1 = new RequestTask(new RechargeParser());
+                TaskParams params1 = new TaskParams();
+                params1.put(RequestTask.PARAM_URL, finalReqUrl);
+                params1.put(RequestTask.PARAM_HTTP_METHOD, RequestTask.HTTP_GET);
+                TaskResult task1Result = task1.syncExecute(params1);
+                taskResult.stateCode = task1Result.stateCode;
+                taskResult.retObj = task1Result.retObj;
+                return taskResult;
+            }
+        };
+        reqTask.setTaskFinishListener(this);
+        reqTask.execute();
+
+        mProgress.setVisibility(View.VISIBLE);
+        mError.setVisibility(View.GONE);
+    }
+
+    // url中关闭页面的参数
+    private static final String CLOSE_PAGE = "app_close_win=1";
+
+    // 2个支付成功的链接
+    private static final String SUCCESSURL1 = "http://pay.weibo.cn/vb/h5/book/success";
+    private static final String SUCCESSURL2 = "http://book1.sina.cn/prog/wapsite/newbook/rdopay/paydone.php";
+
+    private class MyWebViewClient extends WebViewClient {
+        @Override
+        public boolean shouldOverrideUrlLoading(WebView view, String url) {
+            if (url.contains(INDEX_URL)) {
+                isBack = true;
+            } else {
+                isBack = false;
+            }
+
+            // 过滤关闭页面的特殊参数
+            if (url.contains(CLOSE_PAGE)) {
+                finish();
+            }
+
+            // 过滤充值页面的标题点击返回箭头操作
+            if (url.contains("http://book1.weibo.cn/prog/wapsite/books/vpay/vpay.php")) {
+                finish();
+            }
+
+
+            // 过滤到充值成功页面则请求并刷新余额
+            // if (url.contains(SUCCESSURL1) || url.contains(SUCCESSURL2)) {
+            // LoginUtil.reqBalance(RechargeCenterActivity.this);
+            // }
+
+            if (url.startsWith("sms") && url.split(":").length > 1) {
+                Intent intent = new Intent();
+                // 系统默认的action，用来打开默认的短信界面
+                intent.setAction(Intent.ACTION_SENDTO);
+                intent.setData(Uri.parse("smsto:" + url.split(":")[1]));
+                RechargeCenterActivity.this.startActivity(intent);
+                return true;
+            } else if (url
+                    .contains("http://book.sina.cn/prog/wapsite/books/vpay/vpay.php?vt=20&ftype=client")) {
+                // 以前的阻止返回支付列表页的(因为rdo以前的版本列表页是客户端来布局的，和h5重复，所以拦截)
+                finish();
+                return true;
+            } else {
+                return super.shouldOverrideUrlLoading(view, url);
+            }
+        }
+
+        @Override
+        public void onReceivedError(WebView view, int errorCode,
+                                    String description, String failingUrl) {
+            // TODO Auto-generated method stub
+            super.onReceivedError(view, errorCode, description, failingUrl);
+        }
+
+        @Override
+        public void onReceivedSslError(WebView view, SslErrorHandler handler,
+                                       SslError error) {
+            // TODO Auto-generated method stub
+            super.onReceivedSslError(view, handler, error);
+        }
+
+        @Override
+        public void onPageStarted(WebView view, String url, Bitmap favicon) {
+            mProgress.setVisibility(View.VISIBLE);
+            super.onPageStarted(view, url, favicon);
+        }
+
+        @Override
+        public void onPageFinished(WebView view, String url) {
+            mProgress.setVisibility(View.GONE);
+            super.onPageFinished(view, url);
+        }
+    }
+
+    @Override
+    public void onBackPressed() {
+        if (mWebView.canGoBack() && !isBack) {
+            mWebView.goBack();
+            String url = mWebView.getOriginalUrl();
+            if (url != null && url.contains(INDEX_URL)) {
+                isBack = true;
+            }
+        } else {
+            finish();
+        }
+    }
+
+    @Override
+    public void onClickLeft() {
+        this.finish();
+    }
+
+}

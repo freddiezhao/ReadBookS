@@ -1,0 +1,207 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    style="@style/PublicCardBg"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content">
+
+    <!-- 进度条 -->
+
+    <include
+        android:id="@+id/recommend_progress"
+        layout="@layout/vw_generic_progress_view"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_centerInParent="true"
+        android:visibility="gone" />
+
+    <!-- 错误View -->
+
+    <include
+        android:id="@+id/recommend_error_layout"
+        layout="@layout/vw_error"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_centerInParent="true"
+        android:visibility="gone" />
+
+    <com.sina.book.ui.widget.ListenableScrollView
+        android:id="@+id/recommend_scrollview"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_centerInParent="true"
+        android:fadingEdge="none"
+        android:fillViewport="true">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical">
+
+            <!-- 快速导航Tab -->
+
+            <include
+                android:id="@+id/recommend_quick_tab"
+                layout="@layout/vw_recommend_quick_tab"
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                android:visibility="gone" />
+
+            <!-- 推荐Banner广告 -->
+
+            <include
+                android:id="@+id/layout_recommend_header"
+                layout="@layout/vw_recommend_header"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="4dp"
+                android:visibility="gone" />
+
+            <!-- 好书推荐 -->
+
+            <include
+                android:id="@+id/layout_recommend_good_book"
+                layout="@layout/vw_good_book_layout"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="8dp"
+                android:layout_marginRight="8dp"
+                android:visibility="gone" />
+
+            <!-- 选你喜欢 -->
+            <!-- android:layout_marginTop="8dp" -->
+
+            <include
+                android:id="@+id/layout_recommend_new"
+                layout="@layout/vw_recommend_layout"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:visibility="gone" />
+
+            <!-- 编辑推荐 -->
+
+            <include
+                android:id="@+id/layout_recommend_hot"
+                layout="@layout/vw_recommend_layout"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:visibility="gone" />
+
+            <!-- 今日限免 -->
+
+            <include
+                android:id="@+id/layout_recommend_toady_free"
+                layout="@layout/recomment_today_layout"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:visibility="gone" />
+
+            <!-- 男生爱看 -->
+
+            <include
+                android:id="@+id/layout_recommend_toady_boy"
+                layout="@layout/recomment_today_boyandgirl_layout"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:visibility="gone" />
+
+            <!-- 女生爱看 -->
+
+            <include
+                android:id="@+id/layout_recommend_toady_girl"
+                layout="@layout/recomment_today_boyandgirl_layout"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:visibility="gone" />
+
+            <!-- 人气作者 -->
+
+            <include
+                android:id="@+id/layout_recommend_star_author"
+                layout="@layout/vw_recommend_layout"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:visibility="gone" />
+
+            <!-- 图文epub专区 -->
+            <include
+                android:id="@+id/layout_recommend_epub"
+                layout="@layout/vw_recommend_layout"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:visibility="gone" />
+
+            <!-- 热门分类 -->
+
+            <include
+                android:id="@+id/layout_recommend_classification"
+                layout="@layout/vw_recommend_layout"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:visibility="gone" />
+
+            <!-- 免费专区 -->
+
+            <include
+                android:id="@+id/layout_recommend_free"
+                layout="@layout/vw_recommend_layout"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:visibility="gone" />
+
+            <!-- 热门作家 -->
+
+            <include
+                android:id="@+id/layout_recommend_author"
+                layout="@layout/vw_recommend_layout"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:visibility="gone" />
+
+            <!-- 名人推荐 -->
+
+            <include
+                android:id="@+id/layout_recommend_famous"
+                layout="@layout/vw_recommend_layout"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:visibility="gone" />
+
+            <!-- 和阅读专区 -->
+
+            <include
+                android:id="@+id/layout_cmread_card"
+                layout="@layout/vw_recommend_layout"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:visibility="gone" />
+
+            <!-- 包月畅读 -->
+
+            <include
+                android:id="@+id/layout_recommend_mounth"
+                layout="@layout/vw_recommend_layout"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:visibility="gone" />
+
+            <!-- 和阅读专区 -->
+            <!-- <include -->
+            <!-- android:id="@+id/layout_cmread_card" -->
+            <!-- android:layout_width="match_parent" -->
+            <!-- android:layout_height="wrap_content" -->
+            <!-- layout="@layout/vm_cmread_card_layout" -->
+            <!-- android:layout_marginLeft="8dip" -->
+            <!-- android:layout_marginRight="8dip" -->
+            <!-- android:layout_marginBottom="8dip" -->
+            <!-- android:visibility="gone" /> -->
+        </LinearLayout>
+    </com.sina.book.ui.widget.ListenableScrollView>
+
+    <include
+        android:id="@+id/card_tip"
+        layout="@layout/vw_card_tip"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:visibility="gone" />
+
+</RelativeLayout>

@@ -1,0 +1,705 @@
+package com.sina.book.ui;
+
+import java.io.File;
+import java.util.ArrayList;
+
+import android.app.Activity;
+import android.content.BroadcastReceiver;
+import android.content.DialogInterface;
+import android.content.Intent;
+import android.content.IntentFilter;
+import android.net.Uri;
+import android.os.Bundle;
+import android.text.Spannable;
+import android.text.SpannableStringBuilder;
+import android.text.Spanned;
+import android.text.style.AbsoluteSizeSpan;
+import android.view.KeyEvent;
+import android.view.LayoutInflater;
+import android.view.View;
+import android.view.View.OnClickListener;
+import android.view.ViewGroup;
+import android.webkit.CookieManager;
+import android.webkit.CookieSyncManager;
+import android.widget.CompoundButton;
+import android.widget.CompoundButton.OnCheckedChangeListener;
+import android.widget.ImageView;
+import android.widget.TextView;
+import android.widget.Toast;
+
+import com.sina.book.R;
+import com.sina.book.SinaBookApplication;
+import com.sina.book.control.download.AutoDownBookManager;
+import com.sina.book.control.download.UpdateAppManager;
+import com.sina.book.data.LoginInfo;
+import com.sina.book.data.UserInfoUb.Activitys;
+import com.sina.book.image.ImageLoader;
+import com.sina.book.ui.view.CommonDialog;
+import com.sina.book.ui.view.LoginDialog;
+import com.sina.book.ui.widget.SwitchButton;
+import com.sina.book.useraction.BasicFuncUtil;
+import com.sina.book.useraction.Constants;
+import com.sina.book.useraction.UserActionManager;
+import com.sina.book.util.HttpUtil;
+import com.sina.book.util.LoginUtil;
+import com.sina.book.util.StorageUtil;
+import com.sina.book.util.Util;
+
+/**
+ * 个人中心
+ * 
+ * @author Li Wen
+ * @date 2012-11-5
+ */
+public class PersonalCenterActivity extends CustomTitleActivity implements OnClickListener, OnCheckedChangeListener {
+	// private static final String KEY_TAG = "PersonalCenterActivity";
+
+	/** 已登录，显示相关信息. */
+	private View mUserInfoView;
+	/** user头像 */
+	private ImageView mUserImageView;
+	/** user昵称 */
+	private TextView mUserLikeNameTxt;
+	/** user会员性质 */
+	private TextView mUserRoleNameTxt;
+
+	private View mAccountView;
+	private ViewGroup mActivitysView;
+	/** 充值 */
+	private View mRechargeView;
+	/** 余额 */
+	private TextView mBalanceTxt;
+	/** 消费记录 */
+	private View mConsumeView;
+
+	/** 活动 */
+	// private View mActivityView;
+	// private TextView mActivityTxt;
+
+	/** 登录. */
+	private View mLoginView;
+	private ViewGroup mLoginCardView;
+
+	/** 退出登录. */
+	private View mExitLoginView;
+
+	/** 自动转发微博设置 */
+	private SwitchButton mWeiboSwitch;
+	/** 更换主题 */
+	private View mChangeTheme;
+	/** new flag **/
+	private View mNewFlag;
+	/** 选你喜欢 **/
+	private View mChangeLike;
+	/** 设置连载更新 **/
+	// private View mSetRemind;
+
+	/** 意见反馈 */
+	private View mFeedbackView;
+	/** 检查更新 */
+	private View mChechUpdateLayout;
+	/** 关于我们 */
+	private View mAboutLayout;
+	/** 应用推荐 */
+	private View mAppRecommend;
+
+	/** 用户登录相关信息. */
+	private LoginInfo mLoginInfo;
+	private LoginInfo mOriginalLoginInfo;
+
+	/** 认证登录是否已经失效. */
+	private boolean isValidAccess;
+
+	/**
+	 * 监听主题变化的事件
+	 */
+	private BroadcastReceiver mReceiver = new BroadcastReceiver() {
+		public void onReceive(android.content.Context context, Intent intent) {
+			String action = intent.getAction();
+
+			if (LoginUtil.ACTION_INFO_UPDATE.equals(action)) {
+				if (LoginUtil.isValidAccessToken(mContext) == LoginUtil.TOKEN_TYPE_LOGIN_SUCCESS) {
+					String roleName = LoginUtil.getLoginInfo().getUserInfoRole().getRoleName();
+					mUserRoleNameTxt.setText(roleName);
+					String balance = LoginUtil.getLoginInfo().getBalance();
+					setBalanceUI(balance);
+
+					loadActivitysCard(mActivitysView, LoginUtil.getLoginInfo().getActivitys());
+				}
+			}
+		};
+	};
+
+	/*
+	 * 加载赠书卡、阅读券等附加项
+	 */
+	private void loadActivitysCard(ViewGroup activitysGroup, ArrayList<Activitys> activitys) {
+		activitysGroup.setVisibility(View.VISIBLE);
+		// 用户之前有阅读券，如果使用了，则不再在JSON中的activity标签内返回了
+		// 因此在加载数据之前，先移除掉mActivitysView内的所有Card。
+		activitysGroup.removeAllViews();
+
+		if (activitys != null && activitys.size() != 0) {
+			for (int i = 0; i < activitys.size(); i++) {
+				Activitys activity = activitys.get(i);
+				int type = activity.getActivityType();
+				if (type == Activitys.TYPE_CARD)
+					continue;
+				if (activity != null) {
+
+					View activityCardView = LayoutInflater.from(PersonalCenterActivity.this).inflate(
+							R.layout.vm_personal_activitys_card, null);
+					if (activitysGroup == mLoginCardView) {
+						activityCardView.setBackgroundResource(R.drawable.selector_single_item);
+					} else {
+						activityCardView.setBackgroundResource(R.drawable.selector_personal_middle_bg);
+					}
+
+					activitysGroup.addView(activityCardView);
+					String activityTip = activity.getActivityTip();
+					String activityName = activity.getActivityName();
+					String activityUrl = activity.getActivityUrl();
+					String activityEndTime = activity.getActivityEndTime();
+					int activityType = activity.getActivityType();
+					setActivityUI(activityCardView, activityTip, activityName, activityUrl, activityEndTime,
+							activityType);
+				}
+			}
+		} else {
+			activitysGroup.setVisibility(View.GONE);
+		}
+	}
+
+	/**
+	 * 设置扩展项子元素视图
+	 */
+	private void setActivityUI(View activityItem, final String activityTip, final String activityName,
+			final String activityUrl, final String activityEndTime, final int activityType) {
+		if (activityItem != null) {
+			activityItem.setOnClickListener(null);
+			if (!Util.isNullOrEmpty(activityTip)) {
+				activityItem.setVisibility(View.VISIBLE);
+				SpannableStringBuilder activityTipString = new SpannableStringBuilder();
+				activityTipString.append(activityTip);
+
+				if (!Util.isNullOrEmpty(activityEndTime)) {
+					activityTipString.append("\n");
+					activityTipString.append("截止");
+					activityTipString.append(activityEndTime);
+					activityTipString.append("有效");
+					activityTipString.setSpan(new AbsoluteSizeSpan(12, true), activityTip.length(),
+							activityTipString.length(), Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
+				}
+
+				// 设置 赠书卡 显示"new" 标签
+				boolean newfunc = StorageUtil.getBoolean(StorageUtil.KEY_NEW_FUNC_ZENGSHUKA, true);
+				final View newFlagView = activityItem.findViewById(R.id.activity_new_flag);
+				if (newfunc && activityType == Activitys.TYPE_CARD) {
+					newFlagView.setVisibility(View.VISIBLE);
+				} else {
+					newFlagView.setVisibility(View.GONE);
+				}
+
+				((TextView) activityItem.findViewById(R.id.activity_tip)).setText(activityTipString);
+				activityItem.setOnClickListener(new OnClickListener() {
+
+					public void onClick(View v) {
+						// 赠书卡
+						if (activityType == Activitys.TYPE_CARD && (activityUrl == null || activityUrl.length() == 0)) {
+							// 赠书卡 & 没有地址 (处于未登录状态的赠书卡显示)
+							atLogin(true);
+						} else {
+							// 拼接参数传递过去
+							if (activityType == Activitys.TYPE_CARD && newFlagView.getVisibility() == View.VISIBLE) {
+								StorageUtil.saveBoolean(StorageUtil.KEY_NEW_FUNC_ZENGSHUKA, false);
+							}
+							// 判断GSID并进入网页
+							LoginUtil.reqGsidAndEnterWebView(PersonalCenterActivity.this, activityUrl, activityTip);
+						}
+					}
+				});
+				// }
+
+			} else {
+				activityItem.setVisibility(View.GONE);
+			}
+		}
+	}
+
+	public static void launch(Activity context) {
+		Intent intent = new Intent();
+		intent.setClass(context, PersonalCenterActivity.class);
+		intent.setFlags(Intent.FLAG_ACTIVITY_NO_USER_ACTION);
+		context.startActivity(intent);
+		// 定制进入动画
+		context.overridePendingTransition(R.anim.push_left_in, R.anim.push_right_out);
+	}
+
+	@Override
+	protected void init(Bundle savedInstanceState) {
+		setContentView(R.layout.act_personal_center);
+		initTitle();
+		initView();
+		initUIData();
+		initListener();
+
+		IntentFilter myIntentFilter = new IntentFilter();
+		myIntentFilter.addAction(LoginUtil.ACTION_INFO_UPDATE);
+		registerReceiver(mReceiver, myIntentFilter);
+	}
+
+	public void finishDefined() {
+		// 定制返回动画
+		finish();
+		this.overridePendingTransition(R.anim.push_right_in, R.anim.push_left_out);
+	}
+
+	@Override
+	public void onResume() {
+		// 调用登录信息判断逻辑
+		// LoginUtil.isValidAccessToken(mContext);
+		initUIData();
+		updateFunctionNewView();
+		super.onResume();
+	}
+
+	@Override
+	protected void onDestroy() {
+		unregisterReceiver(mReceiver);
+		super.onDestroy();
+	}
+
+	/*
+	 * 登陆 isCardLogin: 是否赠书卡点击 登录
+	 */
+	private void atLogin(final boolean isCardLogin) {
+		if (Util.isFastDoubleClick()) {
+			return;
+		}
+
+		LoginDialog.launch(PersonalCenterActivity.this, new LoginDialog.LoginStatusListener() {
+			@Override
+			public void onSuccess() {
+				mLoginInfo = LoginUtil.getLoginInfo();
+				if (mWeiboSwitch != null) {
+					mWeiboSwitch.setCheckedWithOutListener(StorageUtil.getBoolean(StorageUtil.KEY_AUTO_WEIBO));
+				}
+				setHavedAccessUI();
+
+				if (isCardLogin) {
+					ArrayList<Activitys> list = mLoginInfo.getActivitys();
+					if (list != null && list.size() > 0) {
+						for (int i = 0; i < list.size(); ++i) {
+							Activitys activitys = list.get(i);
+							String activityTip = activitys.getActivityTip();
+							// String activityName =
+							// activitys.getActivityName();
+							String activityUrl = activitys.getActivityUrl();
+							// String activityEndTime =
+							// activitys.getActivityEndTime();
+							int activityType = activitys.getActivityType();
+
+							if (activityType == Activitys.TYPE_CARD && activityUrl != null && activityUrl.length() > 0) {
+								final View newFlagView = mLoginCardView.findViewById(R.id.activity_new_flag);
+								if (newFlagView != null && newFlagView.getVisibility() == View.VISIBLE) {
+									StorageUtil.saveBoolean(StorageUtil.KEY_NEW_FUNC_ZENGSHUKA, false);
+								}
+								LoginUtil.reqGsidAndEnterWebView(PersonalCenterActivity.this, activityUrl, activityTip);
+								return;
+							}
+						}
+					}
+
+					String text = "赠书卡加载异常, 请重试";
+					Toast.makeText(PersonalCenterActivity.this, text, Toast.LENGTH_SHORT).show();
+				}
+			}
+
+			public void onFail() {
+				setNotHavedAccessUI();
+			}
+		});
+	}
+
+	@Override
+	public void onClick(View v) {
+		int id = v.getId();
+		switch (id) {
+		case R.id.login_view: // 登陆
+			atLogin(false);
+			break;
+
+		case R.id.recharge_view: {
+			// 充值
+			Intent intent = new Intent(this, RechargeActivity.class);
+			intent.addFlags(Intent.FLAG_ACTIVITY_NO_USER_ACTION);
+			startActivity(intent);
+
+			// 更改前往充值的逻辑
+			// RechargeManager.getInstance(PersonalCenterActivity.this).reqRechargeURL(null);
+
+			UserActionManager.getInstance().recordEvent(Constants.KEY_CLICK_ACCOUNT);
+			break;
+		}
+
+		case R.id.consume_view: { // 消费记录
+			Intent intent = new Intent(this, ConsumeActivity.class);
+			intent.addFlags(Intent.FLAG_ACTIVITY_NO_USER_ACTION);
+			startActivity(intent);
+
+			UserActionManager.getInstance().recordEvent(Constants.KEY_CLICK_CONSUMER);
+			break;
+		}
+
+		case R.id.feed_back_view: // 意见反馈
+			// 内置书籍打包管理
+//			 AutoDownBookManager.getInstance(PersonalCenterActivity.this).start();
+			BasicFuncUtil.getInstance().sendSuggestion(this);
+			break;
+
+		case R.id.update_view: // 检查更新
+			checkVersion();
+			break;
+
+		case R.id.main_theme_view: {// 更换主题
+			Intent intent = new Intent(this, MainThemeSettingActivity.class);
+			intent.addFlags(Intent.FLAG_ACTIVITY_NO_USER_ACTION);
+			startActivity(intent);
+			break;
+		}
+
+		case R.id.like_view: // 选您喜欢
+			PartitionLikedActivity.launch(this, PartitionLikedActivity.KEY_FROM_PERSONAL_CENTER_ACTIVITY);
+
+			UserActionManager.getInstance().recordEvent(Constants.PAGE_SELECTED_LIKE);
+			break;
+
+		case R.id.about_view: // 关于我们
+			Intent intent = new Intent(this, AboutActivity.class);
+			intent.addFlags(Intent.FLAG_ACTIVITY_NO_USER_ACTION);
+			startActivity(intent);
+
+//			 AutoDownBookManager.getInstance(SinaBookApplication.gContext).start();
+			break;
+			
+		case R.id.app_recommend: // 应用推荐
+			String packetName = mContext.getPackageName();
+			Uri uri = Uri.parse("market://details?id=" + packetName);
+			Intent callIntent = new Intent(Intent.ACTION_VIEW, uri);
+			startActivity(Intent.createChooser(callIntent, "完成动作的方式"));
+			break;
+			
+		case R.id.exit_login: // 退出登录
+			exitLogin();
+
+			// 清除cookie
+//			File file = CacheManager.getCacheFileBaseDir();
+			File file = getCacheDir();
+
+			if (file != null && file.exists() && file.isDirectory()) {
+				for (File item : file.listFiles()) {
+					item.delete();
+				}
+				file.delete();
+			}
+			deleteDatabase("webview.db");
+			deleteDatabase("webviewCache.db");
+
+			CookieSyncManager.createInstance(this);
+			CookieSyncManager.getInstance().startSync();
+			CookieManager.getInstance().removeSessionCookie();
+
+			CookieManager cookieManager = CookieManager.getInstance();
+			cookieManager.setAcceptCookie(true);
+			cookieManager.removeSessionCookie();// 移除
+			CookieSyncManager.getInstance().sync();
+
+			UserActionManager.getInstance().recordEventValue(Constants.IS_LOGIN + "false");
+			break;
+
+		default:
+			break;
+		}
+	}
+
+	/**
+	 * 返回.
+	 */
+	@Override
+	public void onClickRight() {
+		if (isUpdateLoginInfo()) {
+			// 发送更新喜欢分类的广播
+			Intent intent = new Intent();
+			intent.setAction(PartitionLikedActivity.ACTION_UPDATE_LIKED_PARTITION);
+			sendBroadcast(intent);
+		}
+		finishDefined();
+	}
+
+	@Override
+	public boolean onKeyDown(int keyCode, KeyEvent event) {
+		if (keyCode == KeyEvent.KEYCODE_BACK) {
+			if (isUpdateLoginInfo()) {
+				// 发送更新喜欢分类的广播
+				Intent intent = new Intent();
+				intent.setAction(PartitionLikedActivity.ACTION_UPDATE_LIKED_PARTITION);
+				sendBroadcast(intent);
+			}
+			finishDefined();
+			return true;
+		}
+		return super.onKeyDown(keyCode, event);
+	}
+
+	/**
+	 * 初始化控件.
+	 */
+	private void initView() {
+		mUserInfoView = findViewById(R.id.user_info_view);
+		mUserImageView = (ImageView) findViewById(R.id.user_image);
+		mUserLikeNameTxt = (TextView) findViewById(R.id.user_nike_name);
+		mUserRoleNameTxt = (TextView) findViewById(R.id.user_role_name);
+
+		mLoginView = findViewById(R.id.login_view);
+		mLoginCardView = (ViewGroup) findViewById(R.id.nologin_activityview);
+
+		// 账户信息Card
+		mAccountView = findViewById(R.id.account_view);
+		mActivitysView = (ViewGroup) mAccountView.findViewById(R.id.activitys_view);
+		mRechargeView = findViewById(R.id.recharge_view);
+		mBalanceTxt = (TextView) findViewById(R.id.user_account);
+		mConsumeView = findViewById(R.id.consume_view);
+		// mActivityView = findViewById(R.id.activity_view);
+
+		mWeiboSwitch = (SwitchButton) findViewById(R.id.weibo_switch);
+		mWeiboSwitch.setCheckedWithOutListener(StorageUtil.getBoolean(StorageUtil.KEY_AUTO_WEIBO));
+		mChangeTheme = findViewById(R.id.main_theme_view);
+		mNewFlag = mChangeTheme.findViewById(R.id.new_flag_main_theme);
+		mChangeLike = findViewById(R.id.like_view);
+
+		mFeedbackView = findViewById(R.id.feed_back_view);
+		mChechUpdateLayout = findViewById(R.id.update_view);
+		mAboutLayout = findViewById(R.id.about_view);
+		mAppRecommend = findViewById(R.id.app_recommend);
+
+		mExitLoginView = findViewById(R.id.exit_login);
+	}
+
+	/**
+	 * 初始化Title.
+	 */
+	private void initTitle() {
+		/**
+		 * title中间文字部分
+		 */
+		TextView middleV = (TextView) LayoutInflater.from(this).inflate(R.layout.vw_title_textview, null);
+		middleV.setText(R.string.personal_center);
+		setTitleMiddle(middleV);
+
+		/**
+		 * title左边部分
+		 */
+		View rightV = LayoutInflater.from(this).inflate(R.layout.vw_generic_title_backmain_right, null);
+		setTitleRight(rightV);
+	}
+
+	/**
+	 * Inits the ui data.
+	 */
+	private void initUIData() {
+		// 是否失效
+		isValidAccess = LoginUtil.isValidAccessToken(this) == LoginUtil.TOKEN_TYPE_LOGIN_SUCCESS;
+		if (isValidAccess) {
+			mLoginInfo = LoginUtil.getLoginInfo();
+			mOriginalLoginInfo = LoginUtil.getLoginInfo();
+			setHavedAccessUI();
+			LoginUtil.reqBalance(mContext);
+		} else {
+			setNotHavedAccessUI();
+		}
+	}
+
+	/**
+	 * 初始Listener.
+	 */
+	private void initListener() {
+		mLoginView.setOnClickListener(this);
+		mExitLoginView.setOnClickListener(this);
+		mRechargeView.setOnClickListener(this);
+		mConsumeView.setOnClickListener(this);
+		mFeedbackView.setOnClickListener(this);
+		mChechUpdateLayout.setOnClickListener(this);
+		mAboutLayout.setOnClickListener(this);
+		mAppRecommend.setOnClickListener(this);
+		mWeiboSwitch.setOnCheckedChangeListener(this);
+
+		mChangeTheme.setOnClickListener(this);
+		mChangeLike.setOnClickListener(this);
+		// mSetRemind.setOnClickListener(this);
+	}
+
+	/**
+	 * Sets the not haved access ui.
+	 * 
+	 * @return 返回类型
+	 * @Description: 已经失效时setUIData
+	 */
+	private void setNotHavedAccessUI() {
+		// TODO:
+		mUserInfoView.setVisibility(View.GONE);
+		mAccountView.setVisibility(View.GONE);
+		mExitLoginView.setVisibility(View.GONE);
+
+		mLoginView.setVisibility(View.VISIBLE);
+		mLoginCardView.setVisibility(View.VISIBLE);
+
+		mWeiboSwitch.setCheckedWithOutListener(StorageUtil.getBoolean(StorageUtil.KEY_AUTO_WEIBO));
+
+		// 未登录也添加"赠书卡"
+		ArrayList<Activitys> list = new ArrayList<Activitys>();
+		Activitys activitys = new Activitys();
+		activitys.setActivityName("赠书卡");
+		activitys.setActivityTip("赠书卡");
+		activitys.setActivityType(Activitys.TYPE_CARD);
+		list.add(activitys);
+		loadActivitysCard(mLoginCardView, list);
+	}
+
+	/**
+	 * Sets the haved access ui.
+	 * 
+	 * @return 返回类型
+	 * @Description: 没有失效时setUIData
+	 */
+	private void setHavedAccessUI() {
+		mUserInfoView.setVisibility(View.VISIBLE);
+		mAccountView.setVisibility(View.VISIBLE);
+		mExitLoginView.setVisibility(View.VISIBLE);
+
+		mLoginView.setVisibility(View.GONE);
+		mLoginCardView.setVisibility(View.GONE);
+
+		/**
+		 * 加载头像
+		 */
+		ImageLoader.getInstance().load2(mLoginInfo.getUserInfo().getUserProfileUrl(), mUserImageView,
+				ImageLoader.getDefaultMainAvatar());
+		/**
+		 * 设置user名称
+		 */
+		mUserLikeNameTxt.setText(mLoginInfo.getUserInfo().getuName());
+
+		mUserRoleNameTxt.setText(mLoginInfo.getUserInfoRole().getRoleName());
+		/**
+		 * 设置用户余额
+		 */
+		setBalanceUI(mLoginInfo.getBalance());
+		// setActivityUI(mLoginInfo.getActivityTip(),
+		// mLoginInfo.getActivityName(), mLoginInfo.getActivityUrl(),
+		// mLoginInfo.getActivityEndTime());
+
+		// 加载扩展项
+		loadActivitysCard(mActivitysView, mLoginInfo.getActivitys());
+	}
+
+	/**
+	 * Sets the balance ui.
+	 * 
+	 * @param str
+	 *            the new balance ui
+	 * @return 返回类型
+	 * @Description: 设置余额
+	 */
+	private void setBalanceUI(String str) {
+		mBalanceTxt.setText(R.string.account_balance);
+
+		String netStr;
+		if (!Util.isNullOrEmpty(str)) {
+			netStr = str + getString(R.string.u_bi_name);
+		} else {
+			netStr = "0.00" + getString(R.string.u_bi_name);
+		}
+
+		int color = getResources().getColor(R.color.personal_account_balance_color);
+		Spanned spanned = Util.highLight(netStr, color, 0, netStr.length());
+		mBalanceTxt.append(spanned);
+	}
+
+	@Override
+	public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+		if (buttonView == mWeiboSwitch) {
+			// 设置自动转发微博
+			StorageUtil.saveBoolean(StorageUtil.KEY_AUTO_WEIBO, isChecked);
+			if (LoginUtil.isValidAccessToken(this) != LoginUtil.TOKEN_TYPE_LOGIN_SUCCESS && isChecked) {
+				shortToast(R.string.login_tips);
+			}
+
+			UserActionManager.getInstance().recordEventValue(Constants.IS_AUTO_SEND_WEIBO + isChecked);
+		}
+	}
+
+	/**
+	 * 退出.
+	 */
+	private void exitLogin() {
+		CommonDialog.show(this, R.string.exit_login_content, new CommonDialog.DefaultListener() {
+			@Override
+			public void onRightClick(DialogInterface dialog) {
+				// CloudSyncUtil.getInstance().setIsQuitAppOrLogoutAcount(true);
+				/**
+				 * 清除登录信息
+				 */
+				LoginUtil.i.clearLoginInfo(PersonalCenterActivity.this, "PersonalCenter->exitLogin");
+				// 自动转发微博更改为默认
+				StorageUtil.saveBoolean(StorageUtil.KEY_AUTO_WEIBO, false);
+				/**
+				 * 重新设置UI
+				 */
+				setNotHavedAccessUI();
+
+				// PushHelper.getInstance().updateRemindBooks();
+			}
+		});
+	}
+
+	/**
+	 * 检查版本.
+	 */
+	private void checkVersion() {
+		if (!HttpUtil.isConnected(SinaBookApplication.gContext)) {
+			Toast.makeText(this, R.string.network_error, Toast.LENGTH_SHORT).show();
+			return;
+		}
+
+		// 书城服务器检查更新
+		UpdateAppManager.getInstance(this).checkVersion(false);
+	}
+
+	private void updateFunctionNewView() {
+		// if (mNewFlag.getVisibility() == View.GONE) {
+		// return;
+		// }
+		// 1.9.0 更换主题右侧的new小标取消显示
+		// if (StorageUtil.getBoolean("newfunc", true)) {
+		// mNewFlag.setVisibility(View.VISIBLE);
+		// } else {
+		mNewFlag.setVisibility(View.GONE);
+		// }
+	}
+
+	private boolean isUpdateLoginInfo() {
+		if (mOriginalLoginInfo == null && mLoginInfo == null) {
+			return false;
+		} else if (mOriginalLoginInfo == null && mLoginInfo != null) {
+			return true;
+		} else if (mOriginalLoginInfo != null && mLoginInfo == null) {
+			return true;
+		} else if (mOriginalLoginInfo != null && mLoginInfo != null) {
+			if (!mOriginalLoginInfo.getUID().equals(mLoginInfo.getUID())) {
+				return true;
+			}
+		}
+		return false;
+	}
+
+}

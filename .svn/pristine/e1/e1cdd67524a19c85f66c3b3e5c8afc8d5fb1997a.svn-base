@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/layout_bottom_webview_title_rela"
+    android:layout_width="fill_parent"
+    android:layout_height="45dip"
+    android:background="@drawable/app_title_bg_night"
+    android:gravity="center_vertical" >
+
+    <ImageButton
+        android:id="@+id/layout_bottom_webview_goback"
+        android:layout_width="50dip"
+        android:layout_height="fill_parent"
+        android:layout_centerVertical="true"
+        android:layout_marginLeft="20dip"
+        android:background="@null"
+        android:clickable="true"
+        android:scaleType="centerInside"
+        android:src="@drawable/weibobrowser_goback" />
+
+    <ImageButton
+        android:id="@+id/layout_bottom_webview_goforward"
+        android:layout_width="50dip"
+        android:layout_height="fill_parent"
+        android:layout_centerVertical="true"
+        android:layout_marginLeft="20dip"
+        android:layout_toRightOf="@+id/layout_bottom_webview_goback"
+        android:background="@null"
+        android:clickable="true"
+        android:scaleType="centerInside"
+        android:src="@drawable/weibobrowser_goforward" />
+
+    <RelativeLayout
+        android:layout_width="wrap_content"
+        android:layout_height="fill_parent"
+        android:layout_alignParentRight="true"
+        android:layout_centerVertical="true"
+        android:layout_marginRight="20dip" >
+
+        <ProgressBar
+            android:id="@+id/layout_bottom_webview_progress"
+            android:layout_width="25dip"
+            android:layout_height="25dip"
+            android:layout_centerInParent="true"
+            android:visibility="invisible" />
+
+        <ImageButton
+            android:id="@+id/layout_bottom_webview_refresh"
+            android:layout_width="50dip"
+            android:layout_height="fill_parent"
+            android:layout_centerInParent="true"
+            android:background="@null"
+            android:clickable="true"
+            android:scaleType="centerInside"
+            android:src="@drawable/toolbar_refresh_icon_nor" />
+    </RelativeLayout>
+
+</RelativeLayout>

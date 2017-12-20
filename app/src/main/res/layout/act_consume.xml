@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical" >
+
+    <RadioGroup
+        android:id="@+id/pageIndicator"
+        android:layout_width="fill_parent"
+        android:layout_height="45.33dp"
+        android:background="#373B44"
+        android:gravity="center_vertical"
+        android:orientation="horizontal"
+        android:paddingLeft="66.67dp"
+        android:paddingRight="66.67dp" >
+
+        <RadioButton
+            android:id="@+id/indicator0"
+            android:layout_width="0dp"
+            android:layout_height="fill_parent"
+            android:layout_weight="1"
+            android:background="@drawable/consume_radio"
+            android:button="@null"
+            android:gravity="center"
+            android:tag="radio_button0"
+            android:text="@string/my_buy"
+            android:textColor="#D2D5DB"
+            android:textSize="13.33dp" />
+
+        <RadioButton
+            android:id="@+id/indicator1"
+            android:layout_width="0dp"
+            android:layout_height="fill_parent"
+            android:layout_weight="1"
+            android:background="@drawable/consume_radio"
+            android:button="@null"
+            android:gravity="center"
+            android:tag="radio_button1"
+            android:text="@string/my_recharge"
+            android:textColor="#D2D5DB"
+            android:textSize="13.33dp" />
+    </RadioGroup>
+
+    <android.support.v4.view.ViewPager
+        android:id="@+id/pager"
+        android:layout_width="fill_parent"
+        android:layout_height="fill_parent"
+        android:layout_gravity="center"
+        android:flipInterval="30"
+        android:persistentDrawingCache="animation" />
+
+</LinearLayout>

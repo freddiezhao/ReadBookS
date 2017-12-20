@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    style="@style/PublicBg"
+    android:layout_width="fill_parent"
+    android:layout_height="fill_parent" >
+
+    <include
+        android:id="@+id/partition_liked_note"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentTop="true"
+        layout="@layout/vw_partition_liked_note_text" />
+
+    <include
+        android:id="@+id/partition_liked_begin_read"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        layout="@layout/vw_partition_liked_begin_read" />
+
+    <ListView
+        android:id="@+id/partition_liked_listview"
+        android:layout_width="fill_parent"
+        android:layout_height="fill_parent"
+        android:layout_above="@id/partition_liked_begin_read"
+        android:layout_below="@id/partition_liked_note"
+        android:background="@color/public_bg"
+        android:cacheColorHint="#00000000"
+        android:divider="@null"
+        android:fadingEdge="none"
+        android:listSelector="@android:color/transparent"
+        android:visibility="visible" >
+    </ListView>
+
+    <include
+        android:id="@+id/progress_layout"
+        layout="@layout/vw_generic_progress_view"
+        android:visibility="gone" />
+
+    <include
+        android:id="@+id/error_layout"
+        layout="@layout/vw_error"
+        android:visibility="gone" />
+
+</RelativeLayout>

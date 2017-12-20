@@ -1,0 +1,146 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:orientation="vertical">
+
+    <RelativeLayout
+        android:id="@+id/book_cover_layout"
+        android:layout_width="90dp"
+        android:layout_height="118dp">
+
+        <!-- 图书封面 -->
+        <ImageView
+            android:id="@+id/book_cover"
+            android:layout_width="@dimen/book_recommend_item_img_width"
+            android:layout_height="@dimen/book_recommend_item_img_height"
+            android:contentDescription="@null"
+            android:layout_alignParentBottom="true"
+            android:layout_centerHorizontal="true"
+            android:paddingBottom="@dimen/book_item_paddingBottom"
+            android:paddingLeft="@dimen/book_item_paddingLeft"
+            android:paddingRight="@dimen/book_item_paddingRight"
+            android:scaleType="fitXY"
+            android:background="@drawable/main_book_bg"
+            android:src="@drawable/sinabook" />
+
+        <!-- 用于实现图书封面的点击效果 -->
+        <ImageView
+            android:id="@+id/book_cover_click"
+            android:layout_width="@dimen/book_recommend_item_img_width"
+            android:layout_height="@dimen/book_recommend_item_img_height"
+            android:src="@drawable/main_book_click"
+            android:layout_alignParentBottom="true"
+            android:layout_centerHorizontal="true"
+            android:paddingBottom="@dimen/book_item_paddingBottom"
+            android:paddingLeft="@dimen/book_item_paddingLeft"
+            android:paddingRight="@dimen/book_item_paddingRight"
+            android:contentDescription="@null"
+            android:scaleType="fitXY" />
+
+        <!-- 右下new标签 -->
+        <ImageView
+            android:id="@+id/book_tip"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignBottom="@id/book_cover"
+            android:layout_alignRight="@id/book_cover"
+            android:layout_marginBottom="@dimen/book_item_paddingBottom"
+            android:layout_marginRight="@dimen/book_item_paddingRight"
+            android:contentDescription="@null"
+            android:src="@drawable/new_icon"
+            android:visibility="gone" />
+
+        <!-- 右上书籍章节更新提示 -->
+        <TextView
+            android:id="@+id/book_new_chapter"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignRight="@id/book_cover"
+            android:layout_alignTop="@id/book_cover"
+            android:layout_marginTop="-7dp"
+            android:layout_marginRight="-3dp"
+            android:background="@drawable/update_chapters_num"
+            android:gravity="center"
+            android:textColor="@color/white"
+            android:textSize="12sp"
+            android:visibility="gone" />
+
+        <!-- 左上角云端书籍提示 -->
+        <ImageView
+            android:id="@+id/book_cloud"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignLeft="@id/book_cover"
+            android:layout_alignTop="@id/book_cover"
+            android:layout_marginLeft="@dimen/book_item_paddingLeft"
+            android:src="@drawable/icon_online"
+            android:visibility="gone"
+            android:contentDescription="@null" />
+
+        <!-- 下载进度条 -->
+        <ProgressBar
+            android:id="@+id/book_download_progressBar"
+            style="@style/HorizontalProgressBar"
+            android:layout_width="wrap_content"
+            android:layout_height="@dimen/bookhome_item_probar_height"
+            android:layout_alignBottom="@id/book_cover"
+            android:layout_alignLeft="@id/book_cover"
+            android:layout_alignRight="@id/book_cover"
+            android:paddingLeft="@dimen/book_item_paddingLeft"
+            android:paddingRight="@dimen/book_item_paddingRight"
+            android:layout_marginBottom="@dimen/book_item_paddingBottom"
+            android:visibility="gone" />
+
+        <!-- 下载、暂停按钮 -->
+        <ImageView
+            android:id="@+id/book_down_pause"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerInParent="true"
+            android:contentDescription="@null"
+            android:src="@drawable/book_down"
+            android:visibility="gone" />
+
+    </RelativeLayout>
+
+    <com.sina.book.ui.widget.EllipsizeTextView
+        android:id="@+id/book_title"
+        android:layout_width="@dimen/book_recommend_item_img_width"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="5dp"
+        android:paddingLeft="@dimen/book_item_paddingLeft"
+        android:paddingRight="@dimen/book_item_paddingRight"
+        android:layout_marginLeft="5dp"
+        android:ellipsize="end"
+        android:maxLines="2"
+        android:textColor="#37312E"
+        android:textSize="13sp" />
+
+    <com.sina.book.ui.widget.EllipsizeTextView
+        android:id="@+id/book_author"
+        android:layout_width="@dimen/book_recommend_item_img_width"
+        android:layout_height="wrap_content"
+        android:gravity="center_vertical"
+        android:paddingLeft="@dimen/book_item_paddingLeft"
+        android:paddingRight="@dimen/book_item_paddingRight"
+        android:layout_marginLeft="5dp"
+        android:ellipsize="end"
+        android:maxLines="1"
+        android:textColor="#A1A1A1"
+        android:textSize="11sp" />
+
+    <TextView
+        android:id="@+id/book_state"
+        android:layout_width="@dimen/book_recommend_item_img_width"
+        android:layout_height="wrap_content"
+        android:gravity="center_vertical"
+        android:paddingLeft="@dimen/book_item_paddingLeft"
+        android:paddingRight="@dimen/book_item_paddingRight"
+        android:layout_marginLeft="5dp"
+        android:ellipsize="end"
+        android:maxLines="1"
+        android:textColor="#A1A1A1"
+        android:textSize="11sp" />
+
+</LinearLayout>

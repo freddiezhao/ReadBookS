@@ -1,0 +1,115 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="fill_parent"
+    android:layout_height="wrap_content"
+    android:background="@drawable/list_item_bg"
+    android:orientation="vertical" >
+
+    <RelativeLayout
+        android:layout_width="fill_parent"
+        android:layout_height="105dp"
+        android:paddingBottom="8dp"
+        android:paddingLeft="13.33dp"
+        android:paddingRight="13.33dp"
+        android:paddingTop="8dp" >
+
+        <ImageView
+            android:id="@+id/header_img"
+            android:layout_width="63dp"
+            android:layout_height="87dp"
+            android:layout_centerVertical="true"
+            android:background="@drawable/main_book_bg"
+            android:contentDescription="@null"
+            android:scaleType="fitXY"
+            android:src="@drawable/sinabook" />
+
+        <TextView
+            android:id="@+id/cost_tv"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentRight="true"
+            android:layout_alignParentTop="true"
+            android:layout_marginTop="4dp"
+            android:contentDescription="@null"
+            android:gravity="center"
+            android:text="1"
+            android:textSize="13.33sp" />
+
+        <ImageView
+            android:id="@+id/trend"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/cost_tv"
+            android:layout_alignParentRight="true"
+            android:layout_marginTop="8dp"
+            android:contentDescription="@null"
+            android:scaleType="centerInside"
+            android:visibility="gone" />
+
+        <TextView
+            android:id="@+id/title"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="4dp"
+            android:layout_marginLeft="10dp"
+            android:layout_marginRight="2dp"
+            android:layout_marginTop="1dp"
+            android:layout_toLeftOf="@id/cost_tv"
+            android:layout_toRightOf="@id/header_img"
+            android:singleLine="true"
+             android:text="2"
+            android:textColor="#37312E"
+            android:textSize="16sp" />
+
+        <LinearLayout
+            android:id="@+id/text_pl"
+            android:layout_width="fill_parent"
+            android:layout_height="fill_parent"
+            android:layout_below="@id/title"
+            android:layout_marginLeft="10dp"
+            android:layout_toLeftOf="@id/trend"
+            android:layout_toRightOf="@id/header_img"
+            android:orientation="vertical" >
+
+            <TextView
+                android:id="@+id/author"
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="1dp"
+                android:singleLine="true"
+                 android:text="3"
+                android:textColor="#A1A1A1"
+                android:textSize="13.33sp" />
+
+            <TextView
+                android:id="@+id/chapter_info"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:contentDescription="@null"
+                android:gravity="left"
+                android:text="4"
+                android:singleLine="true"
+                android:textColor="#A1A1A1"
+                android:textSize="13.33sp" />
+
+            <TextView
+                android:id="@+id/update_info"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="1dp"
+                android:contentDescription="@null"
+                android:singleLine="true"
+                android:text="5"
+                android:textColor="#A1A1A1"
+                android:textSize="13.33sp" />
+        </LinearLayout>
+    </RelativeLayout>
+
+    <ImageView
+        android:id="@+id/list_divide"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:contentDescription="@null"
+        android:scaleType="fitXY" />
+
+</LinearLayout>

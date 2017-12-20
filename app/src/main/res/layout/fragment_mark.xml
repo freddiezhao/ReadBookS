@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/total_layout"
+    android:layout_width="fill_parent"
+    android:layout_height="fill_parent"
+    android:paddingLeft="26dp"
+    android:paddingRight="16dp" >
+
+    <ListView
+        android:id="@+id/lv_mark"
+        android:layout_width="fill_parent"
+        android:layout_height="fill_parent"
+        android:cacheColorHint="#00000000"
+        android:divider="@drawable/divider_line"
+        android:fadingEdge="none"
+        android:scrollbars="none"
+        android:focusable="true" >
+    </ListView>
+
+    <include
+        android:id="@+id/has_not_mark_view"
+        layout="@layout/vw_has_not_mark"
+        android:visibility="gone" />
+
+    <include
+        android:id="@+id/has_not_summary_view"
+        layout="@layout/vw_has_not_summary"
+        android:visibility="gone" />
+
+</RelativeLayout>

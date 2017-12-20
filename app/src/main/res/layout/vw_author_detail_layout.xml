@@ -1,0 +1,173 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:background="@color/transparent"
+    android:orientation="vertical">
+
+    <ImageView
+        android:id="@+id/background_img"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:contentDescription="@null"
+        android:scaleType="fitXY"
+        android:src="@drawable/author_title_bg1" />
+
+    <RelativeLayout
+        android:id="@+id/scroll_view_head"
+        android:layout_width="match_parent"
+        android:layout_height="112dp"
+        android:layout_marginTop="65dp"
+        android:background="@color/transparent"
+        android:orientation="vertical">
+
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="85dp"
+            android:layout_marginTop="27dp"
+            android:background="@drawable/card_avatar_bar">
+
+            <TextView
+                android:id="@+id/attention_user"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:background="@drawable/selector_btn_bg_gray"
+                android:layout_alignParentRight="true"
+                android:layout_marginRight="21dp"
+                android:layout_marginTop="6dp"
+                android:drawableLeft="@drawable/add"
+                android:drawablePadding="3dp"
+                android:paddingTop="5dp"
+                android:paddingBottom="5dp"
+                android:paddingLeft="8dp"
+                android:paddingRight="8dp"
+                android:gravity="center_vertical"
+                android:text="@string/add_attention"
+                android:textSize="13sp"
+                android:textColor="#57AF4E"
+                android:visibility="gone" />
+
+            <TextView
+                android:id="@+id/user_post"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="103dp"
+                android:layout_marginTop="4dp"
+                android:singleLine="true"
+                android:ellipsize="end"
+                android:textSize="12sp"
+                android:textColor="#A1A1A1" />
+
+            <TextView
+                android:id="@+id/user_book"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="103dp"
+                android:layout_below="@id/user_post"
+                android:layout_marginTop="4dp"
+                android:singleLine="true"
+                android:ellipsize="end"
+                android:textSize="12sp"
+                android:textColor="#A1A1A1" />
+        </RelativeLayout>
+
+        <ImageView
+            android:id="@+id/user_avatar"
+            android:layout_width="68dp"
+            android:layout_height="68dp"
+            android:padding="1px"
+            android:background="@android:color/white"
+            android:layout_marginLeft="21dp"
+            android:contentDescription="@null"
+            android:src="@drawable/avatar_default" />
+
+        <TextView
+            android:id="@+id/user_name"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_toRightOf="@id/user_avatar"
+            android:layout_marginLeft="13dp"
+            android:singleLine="true"
+            android:ellipsize="end"
+            android:shadowColor="@android:color/black"
+            android:shadowDx="3.0"
+            android:shadowDy="3.0"
+            android:shadowRadius="5.0"
+            android:textSize="20sp"
+            android:textColor="@android:color/white" />
+
+        <RelativeLayout
+            android:id="@+id/user_divider_layout"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/user_avatar"
+            android:layout_marginTop="4dp"
+            android:layout_marginLeft="21dp"
+            android:layout_marginRight="21dp">
+
+            <ImageView
+                android:layout_width="match_parent"
+                android:layout_height="1px"
+                android:layout_marginTop="5dp"
+                android:contentDescription="@null"
+                android:background="#DFDFDF" />
+
+            <ImageView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="29dp"
+                android:contentDescription="@null"
+                android:src="@drawable/arrow_up" />
+        </RelativeLayout>
+
+        <TextView
+            android:id="@+id/user_des"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/user_divider_layout"
+            android:layout_marginLeft="21dp"
+            android:layout_marginRight="21dp"
+            android:layout_marginTop="8dp"
+            android:singleLine="true"
+            android:ellipsize="end"
+            android:textSize="12sp"
+            android:textColor="#B1B1B1" />
+
+    </RelativeLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/scroll_view_head"
+        android:layout_marginTop="-1dp"
+        android:orientation="vertical"
+        android:background="@color/public_card_bg">
+
+        <TextView
+            android:id="@+id/user_books_title"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="13dp"
+            android:layout_marginTop="13dp"
+            android:singleLine="true"
+            android:ellipsize="end"
+            android:textSize="12sp"
+            android:text="@string/user_book_tip"
+            android:textColor="#A1A1A1" />
+
+        <ListView
+            android:id="@+id/user_books"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="5dp"
+            android:layout_marginLeft="8dp"
+            android:layout_marginRight="8dp"
+            android:layout_marginBottom="8dp"
+            android:padding="1dp"
+            android:background="@drawable/card_whole"
+            android:cacheColorHint="#00000000"
+            android:divider="@null"
+            android:fadingEdge="none"
+            android:listSelector="@android:color/transparent" />
+    </LinearLayout>
+</RelativeLayout>

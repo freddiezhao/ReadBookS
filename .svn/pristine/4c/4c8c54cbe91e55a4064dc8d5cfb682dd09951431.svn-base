@@ -1,0 +1,132 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- 阅读正文12号字体 -->
+    <string-array name="reading_fontsize_12_dimens">
+        <item name="reading_title_margin_top">10dp</item>
+        <item name="reading_book_mark_margin_right">9.33dp</item>
+        <item name="reading_time_margin_bottom">12dp</item>
+        <item name="reading_content_margin_bottom">3dp</item>
+
+        <item name="reading_content_margin_left_right">12dp</item>
+        <item name="reading_content_margin_top">8dp</item>
+        <item name="reading_content_line_space">6dp</item>
+        <item name="reading_title_size">7.33sp</item>
+    </string-array>
+
+    <!-- 阅读正文14号字体 -->
+    <string-array name="reading_fontsize_14_dimens">
+        <item name="reading_title_margin_top">10dp</item>
+        <item name="reading_book_mark_margin_right">9.33dp</item>
+        <item name="reading_time_margin_bottom">12dp</item>
+        <item name="reading_content_margin_bottom">3dp</item>
+
+        <item name="reading_content_margin_left_right">12dp</item>
+        <item name="reading_content_margin_top">8dp</item>
+        <item name="reading_content_line_space">6dp</item>
+        <item name="reading_title_size">8.33sp</item>
+    </string-array>
+
+    <!-- 阅读正文16号字体 -->
+    <string-array name="reading_fontsize_16_dimens">
+        <item name="reading_title_margin_top">10dp</item>
+        <item name="reading_book_mark_margin_right">9.33dp</item>
+        <item name="reading_time_margin_bottom">12dp</item>
+        <item name="reading_content_margin_bottom">3dp</item>
+
+        <item name="reading_content_margin_left_right">12dp</item>
+        <item name="reading_content_margin_top">8dp</item>
+        <item name="reading_content_line_space">6dp</item>
+        <item name="reading_title_size">9.33sp</item>
+    </string-array>
+    
+    <!-- 阅读正文18号字体 -->
+    <string-array name="reading_fontsize_18_dimens">
+        <item name="reading_title_margin_top">10dp</item>
+        <item name="reading_book_mark_margin_right">9.33dp</item>
+        <item name="reading_time_margin_bottom">12dp</item>
+        <item name="reading_content_margin_bottom">5dp</item>
+
+        <item name="reading_content_margin_left_right">12dp</item>
+        <item name="reading_content_margin_top">10dp</item>
+        <item name="reading_content_line_space">7dp</item>
+        <item name="reading_title_size">10.67sp</item>
+    </string-array>
+    
+    <!-- 阅读正文20号字体 -->
+    <string-array name="reading_fontsize_20_dimens">
+        <item name="reading_title_margin_top">10dp</item>
+        <item name="reading_book_mark_margin_right">9.33dp</item>
+        <item name="reading_time_margin_bottom">12dp</item>
+        <item name="reading_content_margin_bottom">7dp</item>
+
+        <item name="reading_content_margin_left_right">12dp</item>
+        <item name="reading_content_margin_top">12dp</item>
+        <item name="reading_content_line_space">8dp</item>
+        <item name="reading_title_size">12.00sp</item>
+    </string-array>
+    
+    <!-- 阅读正文22号字体 -->
+    <string-array name="reading_fontsize_22_dimens">
+        <item name="reading_title_margin_top">10dp</item>
+        <item name="reading_book_mark_margin_right">9.33dp</item>
+        <item name="reading_time_margin_bottom">12dp</item>
+        <item name="reading_content_margin_bottom">9dp</item>
+
+        <item name="reading_content_margin_left_right">12dp</item>
+        <item name="reading_content_margin_top">14dp</item>
+        <item name="reading_content_line_space">9dp</item>
+        <item name="reading_title_size">13.33sp</item>
+    </string-array>
+    
+    <!-- 阅读正文24号字体 -->
+    <string-array name="reading_fontsize_24_dimens">
+        <item name="reading_title_margin_top">10dp</item>
+        <item name="reading_book_mark_margin_right">9.33dp</item>
+        <item name="reading_time_margin_bottom">12dp</item>
+        <item name="reading_content_margin_bottom">11dp</item>
+
+        <item name="reading_content_margin_left_right">12dp</item>
+        <item name="reading_content_margin_top">16dp</item>
+        <item name="reading_content_line_space">10dp</item>
+        <item name="reading_title_size">14.67sp</item>
+    </string-array>
+
+    <!-- 阅读正文26号字体 -->
+    <string-array name="reading_fontsize_26_dimens">
+        <item name="reading_title_margin_top">10dp</item>
+        <item name="reading_book_mark_margin_right">9.33dp</item>
+        <item name="reading_time_margin_bottom">12dp</item>
+        <item name="reading_content_margin_bottom">11dp</item>
+
+        <item name="reading_content_margin_left_right">12dp</item>
+        <item name="reading_content_margin_top">16dp</item>
+        <item name="reading_content_line_space">10dp</item>
+        <item name="reading_title_size">15.67sp</item>
+    </string-array>
+
+    <!-- 阅读正文28号字体 -->
+    <string-array name="reading_fontsize_28_dimens">
+        <item name="reading_title_margin_top">10dp</item>
+        <item name="reading_book_mark_margin_right">9.33dp</item>
+        <item name="reading_time_margin_bottom">12dp</item>
+        <item name="reading_content_margin_bottom">11dp</item>
+
+        <item name="reading_content_margin_left_right">12dp</item>
+        <item name="reading_content_margin_top">16dp</item>
+        <item name="reading_content_line_space">10dp</item>
+        <item name="reading_title_size">16.67sp</item>
+    </string-array>
+
+    <!-- 阅读正文30号字体 -->
+    <string-array name="reading_fontsize_30_dimens">
+        <item name="reading_title_margin_top">10dp</item>
+        <item name="reading_book_mark_margin_right">9.33dp</item>
+        <item name="reading_time_margin_bottom">12dp</item>
+        <item name="reading_content_margin_bottom">11dp</item>
+
+        <item name="reading_content_margin_left_right">12dp</item>
+        <item name="reading_content_margin_top">16dp</item>
+        <item name="reading_content_line_space">10dp</item>
+        <item name="reading_title_size">17.67sp</item>
+    </string-array>
+</resources>

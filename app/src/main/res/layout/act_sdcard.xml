@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    style="@style/PublicBg"
+    android:layout_width="fill_parent"
+    android:layout_height="fill_parent" >
+
+    <RelativeLayout
+        android:id="@+id/path_layout"
+        android:layout_width="fill_parent"
+        android:layout_height="32dp" >
+
+        <TextView
+            android:id="@+id/scan_btn"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentRight="true"
+            android:layout_centerVertical="true"
+            android:layout_marginRight="9.33dp"
+            android:background="@drawable/selector_scan_btn"
+            android:gravity="center"
+            android:text="@string/scan"
+            android:textColor="#000000"
+            android:textSize="12sp" >
+        </TextView>
+
+        <TextView
+            android:id="@+id/path_text"
+            android:layout_width="wrap_content"
+            android:layout_height="32dp"
+            android:layout_alignParentLeft="true"
+            android:layout_centerVertical="true"
+            android:layout_marginLeft="9.33dp"
+            android:layout_toLeftOf="@id/scan_btn"
+            android:ellipsize="end"
+            android:gravity="left|center_vertical"
+            android:singleLine="true"
+            android:textColor="#ffb3b2b2"
+            android:textSize="14sp" >
+        </TextView>
+    </RelativeLayout>
+
+    <ListView
+        android:id="@+id/file_list"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/path_layout"
+        android:cacheColorHint="#00000000"
+        android:divider="@drawable/divider_line"
+        android:fadeScrollbars="true"
+        android:fadingEdgeLength="0dip"
+        android:scrollbars="none" >
+    </ListView>
+
+</RelativeLayout>

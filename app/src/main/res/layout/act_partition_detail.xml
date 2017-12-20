@@ -1,0 +1,82 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    style="@style/PublicCardBg"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent" >
+
+    <com.sina.book.ui.widget.ListenableScrollView
+        android:id="@+id/total_scroll"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_centerInParent="true"
+        android:fadingEdge="none"
+        android:fillViewport="true"
+        android:visibility="gone" >
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical" >
+
+            <!-- 快速导航Tab -->
+
+            <include
+                android:id="@+id/quick_tab"
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                layout="@layout/vw_partition_detail_quick_tab" />
+
+            <!-- 排行 -->
+
+            <include
+                android:id="@+id/layout_rank"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                layout="@layout/vw_partition_layout" />
+
+            <!-- 最新 -->
+
+            <include
+                android:id="@+id/layout_new"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                layout="@layout/vw_partition_layout" />
+
+            <!-- 免费 -->
+
+            <include
+                android:id="@+id/layout_free"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="8dp"
+                layout="@layout/vw_partition_layout" />
+        </LinearLayout>
+    </com.sina.book.ui.widget.ListenableScrollView>
+
+    <include
+        android:id="@+id/card_tip"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        layout="@layout/vw_card_tip"
+        android:visibility="gone" />
+    <!-- 进度条 -->
+
+    <include
+        android:id="@+id/rl_progress"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_centerInParent="true"
+        layout="@layout/vw_generic_progress_view"
+        android:visibility="gone" />
+
+    <!-- 错误View -->
+
+    <include
+        android:id="@+id/error_layout"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_centerInParent="true"
+        layout="@layout/vw_error"
+        android:visibility="gone" />
+
+</RelativeLayout>

@@ -1,0 +1,77 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    style="@style/PublicBg"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent" >
+
+    <RelativeLayout
+        android:id="@+id/img_text_tip"
+        android:layout_width="match_parent"
+        android:layout_height="60dp"
+        android:layout_alignParentBottom="true"
+        android:layout_marginBottom="5dp"
+        android:layout_marginLeft="14dp"
+        android:layout_marginRight="14dp"
+        android:layout_marginTop="5dp" >
+
+        <ImageView
+            android:id="@+id/share_weibo_img"
+            android:layout_width="43dp"
+            android:layout_height="60dp"
+            android:layout_alignParentLeft="true"
+            android:contentDescription="@null"
+            android:paddingBottom="@dimen/book_item_paddingBottom"
+            android:paddingLeft="@dimen/book_item_paddingLeft"
+            android:paddingRight="@dimen/book_item_paddingRight"
+            android:scaleType="fitXY"
+            android:src="@drawable/sinabook"
+            android:background="@drawable/main_book_bg"
+            android:visibility="visible" />
+
+        <RelativeLayout
+            android:id="@+id/share_weibo_del_btn"
+            android:layout_width="50dp"
+            android:layout_height="25dp"
+            android:layout_alignParentRight="true"
+            android:layout_centerVertical="true"
+            android:background="@drawable/share_weibo_del_btn"
+            android:clickable="true"
+            android:gravity="center" >
+
+            <TextView
+                android:id="@+id/share_weibo_text_num"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_centerInParent="true"
+                android:text="@string/reading_shareweibo_num"
+                android:textColor="#FF333333" />
+
+            <ImageView
+                android:layout_width="10dp"
+                android:layout_height="10dp"
+                android:layout_alignParentRight="true"
+                android:layout_centerVertical="true"
+                android:layout_marginRight="2.5dp"
+                android:background="@drawable/share_weibo_del_btn_icon"
+                android:contentDescription="@null" />
+        </RelativeLayout>
+    </RelativeLayout>
+
+    <EditText
+        android:id="@+id/share_weibo_edit"
+        android:layout_width="fill_parent"
+        android:layout_height="match_parent"
+        android:layout_above="@id/img_text_tip"
+        android:layout_marginLeft="13dip"
+        android:layout_marginRight="13dip"
+        android:layout_marginTop="10dip"
+        android:background="@drawable/comments_edit"
+        android:focusable="true"
+        android:focusableInTouchMode="true"
+        android:gravity="top|left"
+        android:textCursorDrawable="@null"
+        android:hint="@string/reading_shareweibo_hint_text"
+        android:textColor="@color/reading_content"
+        android:textSize="14sp" />
+
+</RelativeLayout>

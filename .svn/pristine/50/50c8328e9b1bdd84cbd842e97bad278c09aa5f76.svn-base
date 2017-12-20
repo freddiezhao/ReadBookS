@@ -1,0 +1,785 @@
+package com.sina.book.ui;
+
+import static com.nineoldandroids.view.ViewPropertyAnimator.animate;
+
+import java.util.ArrayList;
+import java.util.Date;
+
+import org.apache.http.HttpStatus;
+
+import android.content.BroadcastReceiver;
+import android.content.Context;
+import android.content.DialogInterface;
+import android.content.Intent;
+import android.content.IntentFilter;
+import android.os.Bundle;
+import android.os.Handler;
+import android.support.v4.view.ViewPager;
+import android.support.v4.view.ViewPager.OnPageChangeListener;
+import android.text.Spannable;
+import android.text.SpannableStringBuilder;
+import android.text.style.AbsoluteSizeSpan;
+import android.util.DisplayMetrics;
+import android.view.KeyEvent;
+import android.view.View;
+import android.view.View.OnClickListener;
+import android.view.ViewGroup;
+import android.widget.CompoundButton;
+import android.widget.CompoundButton.OnCheckedChangeListener;
+import android.widget.ImageView;
+import android.widget.RadioButton;
+import android.widget.RadioGroup;
+import android.widget.TextView;
+
+import com.nineoldandroids.animation.Animator;
+import com.sina.book.R;
+import com.sina.book.SinaBookApplication;
+import com.sina.book.control.ITaskCacheLoadedListener;
+import com.sina.book.control.ITaskFinishListener;
+import com.sina.book.control.RequestTask;
+import com.sina.book.control.TaskParams;
+import com.sina.book.control.TaskResult;
+import com.sina.book.control.download.CommentAppManager;
+import com.sina.book.control.download.DownBookManager;
+import com.sina.book.control.download.UpdateAppManager;
+import com.sina.book.control.download.UpdateChapterManager;
+import com.sina.book.data.Book;
+import com.sina.book.data.BookDetailData;
+import com.sina.book.data.ConstantData;
+import com.sina.book.data.MainBookResult;
+import com.sina.book.data.util.ChannelActivityUtil;
+import com.sina.book.data.util.CloudSyncUtil;
+import com.sina.book.data.util.StaticInfoKeeper;
+import com.sina.book.image.ImageLoader;
+import com.sina.book.parser.BookDetailParser;
+import com.sina.book.parser.MainInfoParser;
+import com.sina.book.ui.adapter.SimpleFragmentPagerAdapter;
+import com.sina.book.ui.view.BaseFragment;
+import com.sina.book.ui.view.CommonDialog;
+import com.sina.book.ui.view.LoginDialog;
+import com.sina.book.ui.view.LoginDialog.LoginStatusListener;
+import com.sina.book.ui.view.MainBottomView;
+import com.sina.book.ui.view.MainOtherFragment;
+import com.sina.book.ui.view.MainShelvesFragment;
+import com.sina.book.ui.widget.SlidingUpPanelLayout;
+import com.sina.book.useraction.Constants;
+import com.sina.book.useraction.UserActionManager;
+import com.sina.book.util.LoginUtil;
+import com.sina.book.util.MainThemeManager;
+import com.sina.book.util.StorageUtil;
+import com.sina.book.util.Util;
+
+/**
+ * 书架界面
+ * 
+ * @author chenjianli
+ * 
+ */
+public class MainActivity extends BaseFragmentActivity implements
+		OnCheckedChangeListener, OnClickListener, ITaskFinishListener,
+		ITaskCacheLoadedListener {
+
+	private static final int TAB_COUNT = 2;
+	/** 播放时间间隔 */
+	private final int UPDATE_TIME = 20000;
+
+	protected Handler mHandler;
+	protected Context mContext;
+
+	private SlidingUpPanelLayout mLayout;
+
+	private View mUserInfo;
+	private ImageView mWeiboHeadIv;
+	private View mWeiboInfo;
+	private TextView mWeiboNameBalanceTv;
+	private View mNewFunctionFlag;
+	private String mWeiboName;
+
+	private ViewPager mPager;
+	protected SimpleFragmentPagerAdapter mAdapter;
+	private RadioGroup mRadioGroup;
+	private RadioButton[] mRadioButtons;
+
+	/**
+	 * 位于书架底部的推荐区
+	 */
+	private MainBottomView mMainBottomView;
+	private View mSearch;
+	private View mBookStoreTop;
+
+	private RequestTask mReqDataTask;
+	private MainBookResult mMainBookInfo;
+
+	private Runnable mUpdateTipRunnable = new Runnable() {
+		@Override
+		public void run() {
+			if (mMainBookInfo != null) {
+				refreshMainBookInfo(mMainBookInfo);
+				mHandler.removeCallbacks(this);
+				mHandler.postDelayed(this, UPDATE_TIME);
+			}
+		}
+	};
+
+	private RequestTask mAutoDownBookTask;
+
+	public static final int MASK_GUIDE_ACTIVITY_CODE = 888;
+
+	/**
+	 * 监听主题变化的事件
+	 */
+	private BroadcastReceiver mReceiver = new BroadcastReceiver() {
+		public void onReceive(Context context, Intent intent) {
+			String action = intent.getAction();
+
+			if (MainThemeManager.ACTION_MAIN_THEME_CHANGED.equals(action)) {
+				updateMainThemeView();
+			} else if (PartitionLikedActivity.ACTION_UPDATE_LIKED_PARTITION
+					.equals(action)) {
+				reqData();
+			} else if (LoginUtil.ACTION_INFO_UPDATE.equals(action)) {
+				refreshWeiboInfo();
+				reqData();
+			}
+		};
+	};
+
+	public static boolean launch(Context context) {
+		Intent intent = new Intent();
+		intent.setClass(context, MainActivity.class);
+		intent.setFlags(Intent.FLAG_ACTIVITY_NO_USER_ACTION);
+		context.startActivity(intent);
+		return true;
+	}
+
+	public static boolean launchWithBookId(Context context, String bookId) {
+		Intent intent = new Intent();
+		intent.setClass(context, MainActivity.class);
+		intent.setFlags(Intent.FLAG_ACTIVITY_NO_USER_ACTION);
+		intent.putExtra("bookId", bookId);
+		context.startActivity(intent);
+		return true;
+	}
+
+	@Override
+	protected void onCreate(Bundle savedInstanceState) {
+		super.onCreate(savedInstanceState);
+		setContentView(R.layout.act_main);
+		mContext = this;
+		mHandler = new Handler();
+
+		DownBookManager.getInstance().init();
+		initView();
+
+		IntentFilter myIntentFilter = new IntentFilter();
+		myIntentFilter.addAction(MainThemeManager.ACTION_MAIN_THEME_CHANGED);
+		myIntentFilter
+				.addAction(PartitionLikedActivity.ACTION_UPDATE_LIKED_PARTITION);
+		myIntentFilter.addAction(LoginUtil.ACTION_INFO_UPDATE);
+		registerReceiver(mReceiver, myIntentFilter);
+
+		// 自动检测更新章节
+		UpdateChapterManager.getInstance().autoCheckNewChapter();
+
+		// 判断是否是第一次启动应用程序，先不检测升级，先显示“长按书籍封面可进行更多操作的蒙板”
+		// 蒙板消失了再检测升级
+		boolean isShelfGuideShowed = StorageUtil.getBoolean(
+				StorageUtil.KEY_MAIN_GUIDE_SHOW, true);
+		if (!isShelfGuideShowed) {
+			// 自动检查新版本
+			UpdateAppManager.getInstance(this).autoCheckVersion();
+			ChannelActivityUtil.generalActivityCheck(MainActivity.this);
+		}
+
+		// 1.9.0版本 去掉该功能(点评软件)
+		// showCommentDialog();
+		reqData();
+
+		// CloudSyncUtil.getInstance().startSyncService();
+		
+	}
+
+	@Override
+	protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+
+		if (requestCode == MASK_GUIDE_ACTIVITY_CODE && resultCode == RESULT_OK) {
+			// 第一次进入程序时显示“长按书籍封面可进行更多操作的蒙板”
+			// 这里是蒙板消失会进入，蒙板消失了再检测升级
+			UpdateAppManager.getInstance(this).autoCheckVersion();
+			ChannelActivityUtil.generalActivityCheck(MainActivity.this);
+		}
+		super.onActivityResult(requestCode, resultCode, data);
+	}
+
+	@Override
+	protected void onNewIntent(Intent intent) {
+		super.onNewIntent(intent);
+		setIntent(intent);
+		parseIntent();
+	}
+
+	@Override
+	protected void onPause() {
+		mHandler.postDelayed(new Runnable() {
+
+			@Override
+			public void run() {
+				// 如果底部运营位已经展开，则先收起
+				if (null != mLayout && mLayout.isSlideViewExpand()) {
+					mLayout.collapsePane();
+				}
+			}
+		}, 250);
+
+		mHandler.removeCallbacks(mUpdateTipRunnable);
+		super.onPause();
+	}
+
+	@Override
+	protected void onResume() {
+		super.onResume();
+
+		updateFunctionNewView();
+		refreshWeiboInfo();
+		refreshMainBookInfo(null);
+		mHandler.removeCallbacks(mUpdateTipRunnable);
+		mHandler.postDelayed(mUpdateTipRunnable, UPDATE_TIME);
+	}
+
+	@Override
+	protected void onDestroy() {
+		unregisterReceiver(mReceiver);
+		super.onDestroy();
+	}
+
+	@Override
+	public void onClick(View v) {
+		Intent intent = null;
+		switch (v.getId()) {
+		case R.id.main_bookstore:
+			MainTabActivity.launch(this, 0);
+			UserActionManager.getInstance().recordEvent(
+					Constants.CLICK_MAIN_STORE);
+			break;
+		case R.id.main_search:
+			intent = new Intent();
+			intent.setFlags(Intent.FLAG_ACTIVITY_NO_USER_ACTION);
+			intent.setClass(this, SearchActivity.class);
+			startActivity(intent);
+			break;
+		// case R.id.weibo_layout:
+		case R.id.weibo_head_background:
+			PersonalCenterActivity.launch(this);
+			break;
+		case R.id.weibo_name_balance:
+			if (Util.isFastDoubleClick()) {
+				break;
+			}
+
+			if (LoginUtil.isValidAccessToken(MainActivity.this) != LoginUtil.TOKEN_TYPE_LOGIN_SUCCESS) {
+				// 判断用户登录状态: 未登录时，弹出登陆框提示登录
+				LoginDialog.launch(MainActivity.this,
+						new LoginStatusListener() {
+
+							@Override
+							public void onSuccess() {
+								// 登录成功之后要执行一次对NewFlag标记的显示判断
+								updateFunctionNewView();
+								// TODO: 登陆完成后，提示刷新书架
+								BaseFragment fragment = mAdapter
+										.getCurFragment();
+								if (fragment instanceof MainShelvesFragment) {
+									((MainShelvesFragment) fragment)
+											.checkCardIsShow();
+								}
+
+								Intent intent = new Intent();
+								intent.setAction(CloudSyncUtil.ACTION_SHELF_SYNC);
+								SinaBookApplication.gContext
+										.sendBroadcast(intent);
+							}
+
+							@Override
+							public void onFail() {
+
+							}
+						});
+			} else {
+				PersonalCenterActivity.launch(this);
+			}
+			break;
+		default:
+			break;
+		}
+	}
+
+	@Override
+	public boolean onKeyDown(int keyCode, KeyEvent event) {
+		if (keyCode == KeyEvent.KEYCODE_BACK) {
+			// 如果底部运营位已经展开，则先收起
+			if (null != mLayout && mLayout.isSlideViewExpand()) {
+				mLayout.collapsePane();
+			} else {
+				showExitDialog();
+			}
+			return true;
+		}
+		return super.onKeyDown(keyCode, event);
+	}
+
+	/*
+	 * @Override public void onUserLeaveHint() { super.onUserLeaveHint();
+	 * 
+	 * // 显示返回阅读通知 RestartNotification.getInstance().showNotification(); }
+	 */
+
+	@Override
+	public void onTaskFinished(TaskResult taskResult) {
+		if (taskResult.retObj != null) {
+			MainBookResult mainBookInfo = (MainBookResult) taskResult.retObj;
+			refreshMainBookInfo(mainBookInfo);
+			mHandler.removeCallbacks(mUpdateTipRunnable);
+			mHandler.postDelayed(mUpdateTipRunnable, UPDATE_TIME);
+		}
+	}
+
+	@Override
+	public void onTaskCacheLoaded(Object result) {
+		if (result != null) {
+			MainBookResult mainBookInfo = (MainBookResult) result;
+			refreshMainBookInfo(mainBookInfo);
+			mHandler.removeCallbacks(mUpdateTipRunnable);
+			mHandler.postDelayed(mUpdateTipRunnable, UPDATE_TIME);
+		}
+	}
+
+	private void reqData() {
+		String url = ConstantData.URL_MAIN_INFO;
+		url = ConstantData.addLoginInfoToUrl(url);
+		mReqDataTask = new RequestTask(new MainInfoParser());
+		mReqDataTask.setTaskFinishListener(this);
+		TaskParams params = new TaskParams();
+		params.put(RequestTask.PARAM_URL, url);
+		params.put(RequestTask.PARAM_HTTP_METHOD, RequestTask.HTTP_GET);
+		mReqDataTask.executeWitchCache(params, this);
+	}
+
+	private void refreshMainBookInfo(MainBookResult result) {
+		mMainBookInfo = result;
+		if (null == mMainBookInfo) {
+			mMainBookInfo = StaticInfoKeeper.getMainBookInfo();
+		} else {
+			StaticInfoKeeper.setMainBookInfo(mMainBookInfo);
+		}
+
+		if (null != mMainBookInfo) {
+			mMainBottomView.updateData(mMainBookInfo);
+			mMainBottomView.setVisibility(View.VISIBLE);
+		} else {
+			mMainBottomView.setVisibility(View.GONE);
+		}
+	}
+
+	private void initView() {
+		mLayout = (SlidingUpPanelLayout) findViewById(R.id.sliding_layout);
+		mLayout.setShadowDrawable(getResources().getDrawable(
+				R.drawable.above_shadow));
+		mLayout.setAnchorPoint(1f);
+
+		mMainBottomView = (MainBottomView) findViewById(R.id.main_bottom);
+		mLayout.setDragView(mMainBottomView.getDragView());
+		mLayout.setPanelSlideListener(new PanelSlideListener());
+
+		mUserInfo = findViewById(R.id.user_info);
+		mWeiboInfo = mUserInfo.findViewById(R.id.weibo_layout);
+		mNewFunctionFlag = mWeiboInfo.findViewById(R.id.new_function);
+		mWeiboHeadIv = (ImageView) mWeiboInfo.findViewById(R.id.weibo_head);
+		ImageView mWeiboHeadCoverIv = (ImageView) mWeiboInfo
+				.findViewById(R.id.weibo_head_background);
+		mWeiboNameBalanceTv = (TextView) mWeiboInfo
+				.findViewById(R.id.weibo_name_balance);
+		mWeiboInfo.setOnClickListener(this);
+		mWeiboNameBalanceTv.setOnClickListener(this);
+		mWeiboHeadCoverIv.setOnClickListener(this);
+
+		mPager = (ViewPager) findViewById(R.id.pager);
+		mRadioGroup = (RadioGroup) findViewById(R.id.indicator);
+		mRadioButtons = new RadioButton[TAB_COUNT];
+		for (int i = 0; i < TAB_COUNT; i++) {
+			mRadioButtons[i] = (RadioButton) mRadioGroup
+					.findViewWithTag("radio_button" + i);
+			mRadioButtons[i].setOnCheckedChangeListener(this);
+		}
+		initPager(0);
+		mSearch = findViewById(R.id.main_search);
+		mSearch.setOnClickListener(this);
+		mBookStoreTop = findViewById(R.id.main_bookstore);
+		mBookStoreTop.setOnClickListener(this);
+
+		updateMainThemeView();
+	}
+
+	public void initPager(int initalPostion) {
+		ArrayList<BaseFragment> pageFragments = new ArrayList<BaseFragment>();
+		pageFragments.add(new MainShelvesFragment());
+		pageFragments.add(new MainOtherFragment());
+		mAdapter = new SimpleFragmentPagerAdapter(getSupportFragmentManager(),
+				pageFragments);
+		mAdapter.setDefaultFragment(initalPostion);
+
+		mPager.setAdapter(mAdapter);
+		mPager.setOnPageChangeListener(new PageViewChangeListener());
+
+		mRadioButtons[0].setChecked(true);
+	}
+
+	private void updateMainThemeView() {
+		// TODO
+//		 findViewById(R.id.main_top).setBackgroundDrawable(
+//		 MainThemeManager.getInstance().getDrawableFromIdentifier(this, R.drawable.new_main_bg_new));
+		
+//		 StorageUtil.saveInt(StorageUtil.KEY_MAIN_THEME_TYPE, curTheme.type);
+		
+		// Window背景
+		getWindow().setBackgroundDrawable(
+				MainThemeManager.getInstance().getDrawableFromIdentifier(this,
+						R.drawable.new_main_bg_new));
+		// 头像相框背景
+		findViewById(R.id.weibo_head_background).setBackgroundDrawable(
+				MainThemeManager.getInstance().getDrawableFromIdentifier(this,
+						R.drawable.new_main_avatar_cover_new));
+	}
+
+	private void refreshWeiboInfo() {
+		if (LoginUtil.isValidAccessToken(mContext) == LoginUtil.TOKEN_TYPE_LOGIN_SUCCESS) {
+			SpannableStringBuilder weiboString = new SpannableStringBuilder();
+			String name = LoginUtil.getLoginInfo().getUserInfo().getuName();
+			String imgUrl = LoginUtil.getLoginInfo().getUserInfo()
+					.getUserProfileUrl();
+			String balance = LoginUtil.getLoginInfo().getBalance();
+			if (mWeiboName == null || !mWeiboName.equals(name)) {
+				mWeiboName = name;
+
+				// 加载头像
+			}
+			ImageLoader.getInstance().load2(imgUrl, mWeiboHeadIv,
+					ImageLoader.TYPE_BIG_PIC,
+					ImageLoader.getDefaultMainAvatar());
+
+			String appendName = mWeiboName;
+			if (appendName == null) {
+				appendName = "";
+			}
+
+			// 小屏手机裁剪下文字
+			DisplayMetrics metrics = getResources().getDisplayMetrics();
+			int num = 9;
+			if (metrics.widthPixels <= 480) {
+				num = 6;
+			}
+
+			if (appendName.length() > num) {
+				appendName = appendName.substring(0, num) + "...";
+			}
+			weiboString.append(appendName);
+			weiboString.setSpan(new AbsoluteSizeSpan(16, true), 0,
+					appendName.length(), Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
+
+			weiboString.append("\n");
+
+			weiboString.append(getString(R.string.account_balance));
+			if (!Util.isNullOrEmpty(balance)) {
+				weiboString.append(balance);
+			} else {
+				weiboString.append("0.00");
+			}
+			weiboString.append(getResources().getString(R.string.u_bi_name));
+			mWeiboNameBalanceTv.setText(weiboString);
+		} else {
+			mWeiboName = "";
+			mWeiboNameBalanceTv.setText("登录");
+			ImageLoader.getInstance().load2(null, mWeiboHeadIv,
+					ImageLoader.TYPE_BIG_PIC,
+					ImageLoader.getDefaultMainAvatar());
+		}
+	}
+
+	private void updateFunctionNewView() {
+		// 增加一个显示判断条件：已登录情况下
+		// TODO:去掉头像上的"new"标识，因为个人中心没有新东西
+		// if (StorageUtil.getBoolean(StorageUtil.KEY_NEW_FUNC_ZENGSHUKA, true))
+		// {
+		// // && LoginUtil.isValidAccessToken(MainActivity.this) ==
+		// // LoginUtil.TOKEN_TYPE_LOGIN_SUCCESS
+		// mNewFunctionFlag.setVisibility(View.VISIBLE);
+		// } else {
+		// mNewFunctionFlag.setVisibility(View.GONE);
+		// }
+	}
+
+	/**
+	 * 显示评分对话框
+	 * 
+	 * 等待整个Activity初始化完毕后再调用，否则会出异常。 实现方式就是不停的检测Activity是否初始化完毕，一旦完毕才抛出任务。
+	 * 注：仅在Activity初始化时调用
+	 */
+	private void showCommentDialog() {
+		final Runnable showRunnable = new Runnable() {
+			@Override
+			public void run() {
+				mHandler.removeCallbacks(this);
+				CommentAppManager.getInstance(MainActivity.this)
+						.showCommentDialog();
+			}
+		};
+
+		Runnable checkRunnable = new Runnable() {
+			@Override
+			public void run() {
+				// 得到Activity中的根元素
+				View view = ((ViewGroup) findViewById(android.R.id.content))
+						.getChildAt(0);
+
+				// 如何根元素的width和height大于0说明activity已经初始化完毕
+				if (view != null && view.getWidth() > 0 && view.getHeight() > 0) {
+					// 停止检测
+					mHandler.removeCallbacks(this);
+
+					mHandler.postDelayed(showRunnable, 1000);
+
+				} else {
+					// 如果Activity没有初始化完毕则等待5毫秒再次检测
+					mHandler.postDelayed(this, 5);
+				}
+			}
+		};
+
+		// 开始检测
+		mHandler.post(checkRunnable);
+	}
+
+	/**
+	 * 显示退出对话框.
+	 */
+
+	private void showExitDialog() {
+		CommonDialog.show(this, R.string.exit_content,
+				new CommonDialog.DefaultListener() {
+					@Override
+					public void onRightClick(DialogInterface dialog) {
+						// 解决：
+						SinaBookApplication.quit();
+						MainActivity.this.finish();
+					}
+				});
+	}
+
+	/**
+	 * 点击改变页面监听
+	 */
+	@Override
+	public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+		if (isChecked) {
+			if (buttonView == mRadioButtons[0]) {
+				mPager.setCurrentItem(0);
+			} else if (buttonView == mRadioButtons[1]) {
+				mPager.setCurrentItem(1);
+			}
+		}
+	}
+
+	public void parseIntent() {
+		Intent intent = getIntent();
+		if (intent != null) {
+			setIntent(null);
+
+			String bid = intent.getStringExtra("bookId");
+			if (!Util.isNullOrEmpty(bid)) {
+				if (mAutoDownBookTask != null) {
+					mAutoDownBookTask.cancel(true);
+				}
+				Book autoDownBook = new Book();
+				autoDownBook.setBookId(bid);
+				Book localBook = DownBookManager.getInstance().getBook(
+						autoDownBook);
+				if (localBook != null) {
+					// 在线书籍，下载到本地
+					if (localBook.isOnlineBook()) {
+						localBook.setAutoDownBook(true);
+						DownBookManager.getInstance().downBook(localBook);
+					} else {
+						// 已经存在，更新阅读时间保证位于书架第一位
+						localBook.getReadInfo().setLastReadTime(
+								new Date().getTime());
+					}
+				} else {
+					String reqUrl = String.format(ConstantData.URL_BOOK_INFO,
+							bid, "", "");
+
+					reqUrl = ConstantData.addLoginInfoToUrl(reqUrl);
+					mAutoDownBookTask = new RequestTask(new BookDetailParser());
+
+					TaskParams params = new TaskParams();
+					params.put(RequestTask.PARAM_URL, reqUrl);
+					params.put(RequestTask.PARAM_HTTP_METHOD,
+							RequestTask.HTTP_GET);
+					mAutoDownBookTask
+							.setTaskFinishListener(new ITaskFinishListener() {
+								@Override
+								public void onTaskFinished(TaskResult taskResult) {
+									if (null != taskResult
+											&& taskResult.stateCode == HttpStatus.SC_OK) {
+										if (taskResult.retObj instanceof BookDetailData) {
+											BookDetailData data = (BookDetailData) taskResult.retObj;
+											Book retBook = data.getBook();
+											retBook.setAutoDownBook(true);
+											// 加入收藏
+											CloudSyncUtil.getInstance()
+													.add2Cloud(
+															MainActivity.this,
+															retBook);
+											// 存在一种情况：
+											// 用户通过微博“下载本书”跳转到客户端主界面进行下载书籍时，
+											// 书籍详情ConstantData.URL_BOOK_INFO，未请求回来
+											// 或者请求回来时用户已经退出登录了，这时再去执行下面的downBook方法
+											// 会造成未登录但是书架上有书籍的情况
+											// 因此这里做一个判定，如果用户已经退出登录了，则不进行下载，但是add2Cloud方法倒是可以继续进行
+											if (LoginUtil
+													.isValidAccessToken(MainActivity.this) == LoginUtil.TOKEN_TYPE_LOGIN_SUCCESS) {
+												DownBookManager.getInstance()
+														.downBook(retBook);
+											}
+										}
+									}
+								}
+							});
+					mAutoDownBookTask.execute(params);
+				}
+			}
+		}
+
+	}
+
+	/**
+	 * 滑动改变页面监听
+	 * 
+	 * @author Tsimle
+	 * 
+	 */
+	public class PageViewChangeListener implements OnPageChangeListener {
+
+		@Override
+		public void onPageSelected(int arg0) {
+			mAdapter.onSelected(arg0);
+			mRadioButtons[arg0].setChecked(true);
+		}
+
+		@Override
+		public void onPageScrolled(int arg0, float arg1, int arg2) {
+		}
+
+		@Override
+		public void onPageScrollStateChanged(int arg0) {
+		}
+	}
+
+	/**
+	 * 滑动事件监听器
+	 */
+	private class PanelSlideListener implements
+			SlidingUpPanelLayout.PanelSlideListener {
+		View dragTitle = mMainBottomView.getDragTitle();
+		boolean isAnimation = false;
+		boolean isAnimation1 = false;
+
+		@Override
+		public void onPanelSlide(View panel, float slideOffset) {
+			if (null != dragTitle) {
+				if (slideOffset >= 1.0f) {
+					if (!isAnimation) {
+						animate(dragTitle).cancel();
+						animate(dragTitle).alpha(1).setDuration(200)
+								.setListener(new AnimatorListener() {
+									@Override
+									public void onAnimationStart(
+											Animator animator) {
+										isAnimation = true;
+									}
+
+									@Override
+									public void onAnimationEnd(Animator animator) {
+										isAnimation = false;
+									}
+								});
+					}
+
+				} else {
+					if (!isAnimation1) {
+						animate(dragTitle).cancel();
+						animate(dragTitle).alpha(0).setDuration(300)
+								.setListener(new AnimatorListener() {
+									@Override
+									public void onAnimationStart(
+											Animator animator) {
+										isAnimation1 = true;
+									}
+
+									@Override
+									public void onAnimationEnd(Animator animator) {
+										isAnimation1 = false;
+									}
+								});
+					}
+				}
+			}
+		}
+
+		@Override
+		public void onPanelExpanded(View panel) {
+			if (null != mMainBottomView) {
+				mMainBottomView.onStart();
+			}
+		}
+
+		@Override
+		public void onPanelCollapsed(View panel) {
+			if (null != mMainBottomView) {
+				mMainBottomView.onStop();
+			}
+		}
+
+		@Override
+		public void onPanelAnchored(View panel) {
+			if (null != mMainBottomView) {
+				mMainBottomView.onStart();
+			}
+		}
+	}
+
+	/**
+	 * 动画监听器
+	 */
+	private abstract class AnimatorListener implements
+			Animator.AnimatorListener {
+
+		@Override
+		public void onAnimationStart(Animator animator) {
+
+		}
+
+		@Override
+		public void onAnimationEnd(Animator animator) {
+
+		}
+
+		@Override
+		public void onAnimationCancel(Animator animator) {
+
+		}
+
+		@Override
+		public void onAnimationRepeat(Animator animator) {
+
+		}
+	}
+}

@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    style="@style/PublicBg"
+    android:layout_width="fill_parent"
+    android:layout_height="fill_parent" >
+
+    <com.sina.book.ui.widget.SupportHorizontalScrollView
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:scrollbars="none" >
+		
+<!--         <LinearLayout -->
+<!--             android:layout_width="fill_parent" -->
+<!--             android:layout_height="wrap_content" -->
+<!-- 		    android:paddingLeft="13dp" -->
+<!-- 	   		android:paddingRight="13dp" -->
+<!-- 	   		android:background="@color/public_bg" -->
+<!--             android:orientation="vertical" > -->
+            <include
+                android:id="@+id/book_detail_header"
+                layout="@layout/vw_book_detail_header" />
+<!--         </LinearLayout> -->
+    </com.sina.book.ui.widget.SupportHorizontalScrollView>
+
+    <include
+        android:id="@+id/rl_progress"
+        layout="@layout/vw_generic_progress_view"
+        android:visibility="gone" />
+
+    <include
+        android:id="@+id/error_layout"
+        layout="@layout/vw_error"
+        android:visibility="gone" />
+
+</RelativeLayout>

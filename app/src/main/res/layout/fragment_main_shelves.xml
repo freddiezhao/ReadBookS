@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent" >
+
+    <com.sina.book.ui.widget.XListView
+        android:id="@+id/book_home_shelves_listview"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:cacheColorHint="#00000000"
+        android:divider="@null"
+        android:fadingEdge="none"
+        android:focusable="false"
+        android:focusableInTouchMode="false"
+        android:listSelector="@drawable/book_home_item_bg_nochange"
+        android:scrollbars="none" />
+
+    <LinearLayout
+        android:id="@+id/sync_loading_weak"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_centerInParent="true"
+        android:background="@color/bg_black"
+        android:gravity="center"
+        android:padding="@dimen/item_padding"
+        android:visibility="gone" >
+
+        <ProgressBar
+            style="?@android:attr/progressBarStyleSmallInverse"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginRight="5dp" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:singleLine="true"
+            android:text="@string/sync_loading"
+            android:textColor="@color/white" />
+    </LinearLayout>
+
+</RelativeLayout>

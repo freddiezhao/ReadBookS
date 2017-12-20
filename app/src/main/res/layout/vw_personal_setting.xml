@@ -1,0 +1,118 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:sinabook="http://schemas.android.com/apk/res-auto"
+    android:orientation="vertical"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:paddingTop="@dimen/card_space">
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/card_title_height"
+        android:background="@drawable/top"
+        android:gravity="center_vertical"
+        android:paddingLeft="@dimen/card_padding_horizontal"
+        android:text="@string/personal_setting_text"
+        android:textColor="@color/personal_title_font_color"
+        android:textSize="16sp" />
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/card_item_height"
+        android:background="@drawable/selector_personal_middle_bg"
+        android:paddingLeft="@dimen/card_padding_horizontal"
+        android:paddingRight="@dimen/card_padding_horizontal">
+
+        <com.sina.book.ui.widget.SwitchButton
+            android:id="@+id/weibo_switch"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:layout_alignParentRight="true"
+            android:layout_centerVertical="true"
+            sinabook:sheight="0dp"
+            sinabook:swidth="0dp" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:layout_alignParentLeft="true"
+            android:layout_toLeftOf="@id/weibo_switch"
+            android:gravity="center_vertical"
+            android:text="@string/weibo_auto_share"
+            android:textColor="@color/personal_item_font_color"
+            android:textSize="@dimen/title_person_item" />
+
+    </RelativeLayout>
+
+    <RelativeLayout
+        android:id="@+id/main_theme_view"
+        android:layout_width="fill_parent"
+        android:layout_height="@dimen/card_item_height"
+        android:background="@drawable/selector_personal_middle_bg"
+        android:paddingLeft="@dimen/card_padding_horizontal"
+        android:paddingRight="@dimen/card_padding_horizontal">
+
+        <ImageView
+            android:id="@+id/right"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:layout_alignParentRight="true"
+            android:contentDescription="@null"
+            android:src="@drawable/more_item_arrow" />
+
+        <RelativeLayout
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:layout_toLeftOf="@id/right"
+            android:layout_alignParentLeft="true">
+
+            <TextView
+                android:id="@+id/main_theme"
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:gravity="center_vertical"
+                android:text="@string/main_theme_txt"
+                android:textColor="@color/personal_item_font_color"
+                android:textSize="@dimen/title_person_item" />
+
+            <ImageView
+                android:id="@+id/new_flag_main_theme"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_centerVertical="true"
+                android:layout_toRightOf="@id/main_theme"
+                android:contentDescription="@null"
+                android:src="@drawable/new_flag" />
+        </RelativeLayout>
+
+    </RelativeLayout>
+
+    <RelativeLayout
+        android:visibility="gone"
+        android:id="@+id/like_view"
+        android:layout_width="fill_parent"
+        android:layout_height="@dimen/card_item_height"
+        android:background="@drawable/selector_personal_middle_bg"
+        android:paddingLeft="@dimen/card_padding_horizontal"
+        android:paddingRight="@dimen/card_padding_horizontal">
+
+        <ImageView
+            android:id="@+id/right1"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:layout_alignParentRight="true"
+            android:contentDescription="@null"
+            android:src="@drawable/more_item_arrow" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:layout_alignParentLeft="true"
+            android:layout_toLeftOf="@id/right1"
+            android:gravity="center_vertical"
+            android:text="@string/select_your_liked"
+            android:textColor="@color/personal_item_font_color"
+            android:textSize="@dimen/title_person_item" />
+    </RelativeLayout>
+
+</LinearLayout>

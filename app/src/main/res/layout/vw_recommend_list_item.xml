@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="utf-8"?>
+<com.sina.book.ui.widget.IgnorePressedLinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="fill_parent"
+    android:layout_height="wrap_content"
+    android:orientation="horizontal"
+    android:paddingLeft="13.33dp"
+    android:paddingRight="13.33dp"
+    android:paddingBottom="16dp" >
+
+    <!-- 图书封面1 -->
+    <LinearLayout
+        android:layout_width="0dip"
+        android:layout_height="wrap_content"
+        android:layout_weight="1"
+        android:gravity="left" >
+
+        <include
+            android:id="@+id/recommend_book1"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            layout="@layout/vw_recommend_book_item" />
+    </LinearLayout>
+
+    <!-- 图书封面2 -->
+    <LinearLayout
+        android:layout_width="0dip"
+        android:layout_height="wrap_content"
+        android:layout_weight="1"
+        android:gravity="center_horizontal" >
+
+        <include
+            android:id="@+id/recommend_book2"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            layout="@layout/vw_recommend_book_item" />
+    </LinearLayout>
+
+    <!-- 图书封面3 -->
+    <LinearLayout
+        android:layout_width="0dip"
+        android:layout_height="wrap_content"
+        android:layout_weight="1"
+        android:gravity="right" >
+
+        <include
+            android:id="@+id/recommend_book3"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            layout="@layout/vw_recommend_book_item" />
+    </LinearLayout>
+
+</com.sina.book.ui.widget.IgnorePressedLinearLayout>

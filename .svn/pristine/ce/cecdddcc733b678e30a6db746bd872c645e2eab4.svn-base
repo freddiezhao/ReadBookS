@@ -1,0 +1,86 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/catalog_tag_layout"
+    android:layout_width="fill_parent"
+    android:layout_height="fill_parent" >
+
+    <RelativeLayout
+        android:id="@+id/title"
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/catalog_tag_title_height"
+        android:layout_marginLeft="28dp"
+        android:layout_marginRight="16dp" >
+
+        <ImageView
+            android:id="@+id/go_btn"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentRight="true"
+            android:layout_marginTop="@dimen/catalog_go_btn_margin_top"
+            android:contentDescription="@null"
+            android:src="@drawable/go_btn_bg" />
+
+        <TextView
+            android:id="@+id/book_name"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentLeft="true"
+            android:layout_marginRight="13.33dp"
+            android:layout_marginTop="@dimen/catalog_tag_book_title_margin_top"
+            android:layout_toLeftOf="@id/go_btn"
+            android:ellipsize="end"
+            android:focusable="true"
+            android:focusableInTouchMode="true"
+            android:maxLines="2"
+            android:textSize="@dimen/catalog_tag_book_title_size" />
+
+        <TextView
+            android:id="@+id/book_author"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/book_name"
+            android:layout_marginTop="@dimen/catalog_tag_book_author_margin_top"
+            android:focusable="true"
+            android:focusableInTouchMode="true"
+            android:singleLine="true"
+            android:textSize="@dimen/catalog_tag_book_author_size" />
+    </RelativeLayout>
+
+    <RadioGroup
+        android:id="@+id/book_tag_radio"
+        android:layout_width="fill_parent"
+        android:layout_height="37.33dp"
+        android:layout_below="@id/title"
+        android:layout_marginBottom="13.33dp"
+        android:layout_marginLeft="28dp"
+        android:layout_marginRight="16dp"
+        android:orientation="horizontal" >
+
+        <RadioButton
+            style="@style/BookTagTab"
+            android:background="@drawable/selector_radio_book_tag_left_tab"
+            android:tag="radio_button0"
+            android:text="@string/book_dir" />
+
+        <RadioButton
+            style="@style/BookTagTab"
+            android:background="@drawable/selector_radio_book_tag_middle_tab"
+            android:tag="radio_button1"
+            android:text="@string/book_tag" />
+
+        <RadioButton
+            style="@style/BookTagTab"
+            android:background="@drawable/selector_radio_book_tag_right_tab"
+            android:tag="radio_button2"
+            android:text="@string/book_summary" />
+    </RadioGroup>
+
+    <LinearLayout
+        android:id="@+id/pager"
+        android:layout_width="fill_parent"
+        android:layout_height="fill_parent"
+        android:layout_below="@id/book_tag_radio"
+        android:orientation="vertical"
+        android:layout_gravity="center" />
+
+</RelativeLayout>

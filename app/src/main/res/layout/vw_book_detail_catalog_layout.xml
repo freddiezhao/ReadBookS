@@ -1,0 +1,100 @@
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    style="@style/PublicBg"
+    android:layout_width="fill_parent"
+    android:layout_height="50.67dp"
+    android:layout_marginTop="6dp" >
+
+    <ImageView
+        android:id="@+id/book_detail_catalog_divider"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:contentDescription="@null"
+        android:scaleType="fitXY" />
+
+    <RelativeLayout
+        android:id="@+id/book_detail_catalog_layout1"
+        android:layout_width="fill_parent"
+        android:layout_height="34.67dp"
+        android:layout_centerVertical="true"
+        android:background="@drawable/selector_btn_bg_gray"
+        android:gravity="center"
+        android:visibility="gone" >
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="34.67dp"
+            android:drawableLeft="@drawable/book_detail_catalog"
+            android:drawablePadding="5dp"
+            android:gravity="center"
+            android:text="@string/book_detail_catalog"
+            android:textColor="@color/book_detail_btn_font_color" />
+    </RelativeLayout>
+
+    <RelativeLayout
+        android:id="@+id/book_detail_catalog_layout2"
+        android:layout_width="fill_parent"
+        android:layout_height="34.67dp"
+        android:layout_centerVertical="true"
+        android:visibility="gone" >
+
+        <RelativeLayout
+            android:id="@+id/book_detail_catalog_btn"
+            android:layout_width="93.33dp"
+            android:layout_height="fill_parent"
+            android:layout_alignParentLeft="true"
+            android:background="@drawable/selector_btn_bg_gray"
+            android:gravity="center" >
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="34.67dp"
+                android:drawableLeft="@drawable/book_detail_catalog"
+                android:drawablePadding="5dp"
+                android:gravity="center"
+                android:text="@string/book_detail_catalog"
+                android:textColor="@color/book_detail_btn_font_color" />
+        </RelativeLayout>
+
+        <RelativeLayout
+            android:id="@+id/book_detail_catalog_update_layout"
+            android:layout_width="wrap_content"
+            android:layout_height="34.67dp"
+            android:layout_marginLeft="8dp"
+            android:layout_toRightOf="@id/book_detail_catalog_btn" >
+
+            <LinearLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentTop="true"
+                android:orientation="horizontal" >
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/book_detail_new_chapter"
+                    android:textColor="@color/book_detail_new_chapter_color"
+                    android:textSize="13.33sp" />
+
+                <TextView
+                    android:id="@+id/book_detail_new_chapter"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:ellipsize="end"
+                    android:singleLine="true"
+                    android:textColor="@color/book_detail_special_font_color"
+                    android:textSize="13.33sp" />
+            </LinearLayout>
+
+            <TextView
+                android:id="@+id/book_detail_update_time"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentBottom="true"
+                android:ellipsize="end"
+                android:singleLine="true"
+                android:textColor="@color/book_detail_update_time_color"
+                android:textSize="13.33sp" />
+        </RelativeLayout>
+    </RelativeLayout>
+
+</RelativeLayout>

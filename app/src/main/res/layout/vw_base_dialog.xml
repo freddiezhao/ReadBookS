@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    style="@style/BaseDialog"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:orientation="vertical" >
+
+    <TextView
+        android:id="@+id/dialog_title"
+        android:layout_width="fill_parent"
+        android:layout_height="36dp"
+        android:gravity="center"
+        android:textColor="#F1774C"
+        android:textSize="16sp" />
+
+    <ImageView
+        android:id="@+id/dialog_title_divider"
+        android:layout_width="fill_parent"
+        android:layout_height="1px"
+        android:background="#F1774C"
+        android:contentDescription="@null" />
+
+    <LinearLayout
+        android:id="@+id/dialog_content_layout"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:gravity="center"
+        android:orientation="vertical" />
+
+</LinearLayout>

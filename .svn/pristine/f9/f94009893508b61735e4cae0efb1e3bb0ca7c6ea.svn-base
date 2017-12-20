@@ -1,0 +1,82 @@
+apply plugin: 'com.android.application'
+
+android {
+    compileSdkVersion 23
+    buildToolsVersion "23.0.0"
+
+    defaultConfig {
+        applicationId "com.sina.book"
+        minSdkVersion 9
+        targetSdkVersion 23
+        versionCode 41187
+        versionName "2.1.2"
+//        multiDexEnabled true
+    }
+
+    signingConfigs {
+        release {
+            storeFile file("SinaAndroid.keystore")
+            storePassword "123456"
+            keyAlias "sina"
+            keyPassword "123456"
+        }
+    }
+
+    buildTypes {
+        release {
+            minifyEnabled true
+            proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
+            signingConfig signingConfigs.release
+            applicationVariants.all { variant ->
+                appendVersionName(variant, defaultConfig)
+            }
+        }
+        debug {
+            signingConfig signingConfigs.release
+        }
+    }
+
+//    sourceSets {
+//        main {
+//            jniLibs.srcDirs = ['libs']
+//        }
+//    }
+
+    useLibrary('org.apache.http.legacy')
+
+    compileOptions {
+        sourceCompatibility JavaVersion.VERSION_1_7
+        targetCompatibility JavaVersion.VERSION_1_7
+    }
+
+    lintOptions {
+        checkReleaseBuilds false
+        // Or, if you prefer, you can continue to check for errors in release builds,
+        // but continue the build even when errors are found:
+        abortOnError false
+    }
+}
+
+dependencies {
+    compile fileTree(dir: 'libs', include: ['*.jar'])
+    testCompile 'junit:junit:4.12'
+    compile 'com.android.support:support-v4:23.1.1'
+    compile 'com.android.support:appcompat-v7:23.1.1'
+    compile files('libs/weiboSDKCore_3.1.4.jar')
+    compile files('libs/weibosdkcore_release_v2.5.2_0410.jar')
+    compile 'com.google.code.gson:gson:2.6.1'
+}
+
+def appendVersionName(variant, defaultConfig) {
+    variant.outputs.each { output ->
+        if (output.zipAlign) {
+            def file = output.outputFile
+            def fileName = file.name.replace("-release.apk", "-" + defaultConfig.versionName + "-release.apk")
+            output.outputFile = new File(file.parent, fileName)
+        }
+
+        def file = output.packageApplication.outputFile
+        def fileName = file.name.replace("-release.apk", "-" + defaultConfig.versionName + "-release.apk")
+        output.packageApplication.outputFile = new File(file.parent, fileName)
+    }
+}

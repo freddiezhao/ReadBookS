@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <style name="ThemeActivity" mce_bogus="1">
+        <item name="android:windowAnimationStyle">@style/ActivityAnimation</item>
+        <item name="android:windowNoTitle">true</item>
+        <item name="android:windowContentOverlay">@null</item>
+        <item name="android:editTextColor">@color/bg_black</item>
+        <item name="android:textColorPrimary">@color/bg_black</item>
+        <item name="android:editTextBackground">@drawable/comments_edit</item>
+    </style>
+
+    <style name="PanelActivity" parent="ThemeActivity">
+        <!-- 下面这句话会影响android:windowAnimationStyle的正常发挥 -->
+        <!-- <item name="android:windowIsTranslucent">true</item> -->
+        <item name="android:windowBackground">@drawable/new_main_bg_new</item>
+    </style>
+
+</resources>

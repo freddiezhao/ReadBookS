@@ -1,0 +1,59 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="fill_parent"
+    android:layout_height="wrap_content"
+    android:orientation="vertical" >
+
+    <!-- @dimen/catalog_item_height -->
+
+    <RelativeLayout
+        android:id="@+id/chapter_group_layout"
+        android:layout_width="fill_parent"
+        android:layout_height="match_parent" >
+
+        <TextView
+            android:id="@+id/chapter_group"
+            android:layout_width="wrap_content"
+            android:layout_height="40dp"
+            android:layout_alignParentLeft="true"
+            android:layout_centerVertical="true"
+            android:layout_marginLeft="12dp"
+            android:drawablePadding="9dp"
+            android:ellipsize="end"
+            android:gravity="center_vertical"
+            android:singleLine="true"
+            android:textColor="@color/book_tag_radio_font_color"
+            android:textSize="@dimen/catalog_tag_mark_title_size" />
+
+        <ImageView
+            android:id="@+id/chapter_group_icon"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerVertical="true"
+            android:layout_marginLeft="@dimen/catalog_tag_group_space"
+            android:layout_toRightOf="@id/chapter_group"
+            android:contentDescription="@null"
+            android:scaleType="fitCenter"
+            android:src="@drawable/expand_n_normal" />
+
+        <ImageView
+            android:id="@+id/chapter_group_new"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentRight="true"
+            android:layout_centerVertical="true"
+            android:contentDescription="@null"
+            android:src="@drawable/update_flag"
+            android:visibility="gone" />
+    </RelativeLayout>
+
+    <ImageView
+        android:id="@+id/chapter_group_divider"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:contentDescription="@null"
+        android:scaleType="fitXY"
+        android:src="@drawable/divider_line"
+        android:visibility="gone" />
+
+</LinearLayout>

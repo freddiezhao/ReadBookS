@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="fill_parent"
+    android:layout_height="wrap_content"
+    android:background="@color/white" >
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_centerVertical="true"
+        android:paddingLeft="16dp"
+        android:text="@string/select_partition_text"
+        android:textColor="#706E6E"
+        android:textSize="14.67sp" 
+        android:paddingTop="17.33dp"
+        android:paddingBottom="17.33dp"/>
+
+</RelativeLayout>

@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/login_container"
+    android:layout_width="fill_parent"
+    android:layout_height="fill_parent"
+    android:layout_marginBottom="10dip"
+        android:layout_marginLeft="10dip"
+        android:layout_marginRight="10dip"
+        android:layout_marginTop="10dip"
+    android:gravity="center" >
+
+    <WebView
+        android:id="@+id/login_webview"
+        android:layout_width="fill_parent"
+        android:layout_height="fill_parent"
+        android:scrollbars="none" />
+
+    <include
+        android:id="@+id/login_waitingLayout"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_centerInParent="true"
+
+        layout="@layout/vw_generic_progress_dlg" />
+
+<!--     <ImageView -->
+<!--         android:layout_width="20dip" -->
+<!--         android:layout_height="20dip" -->
+<!--         android:src="@drawable/login_dialog_x" /> -->
+
+</RelativeLayout>

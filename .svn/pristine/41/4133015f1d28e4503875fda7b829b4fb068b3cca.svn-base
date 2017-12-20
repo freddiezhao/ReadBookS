@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="utf-8"?>
+<merge xmlns:android="http://schemas.android.com/apk/res/android" >
+
+    <LinearLayout
+        android:id="@+id/totalLayout"
+        android:layout_width="fill_parent"
+        android:layout_height="fill_parent"
+        android:background="@color/public_bg"
+        android:orientation="vertical" >
+
+        <LinearLayout
+            android:id="@+id/titleIndicator"
+            android:layout_width="fill_parent"
+            android:layout_height="32dp"
+            android:orientation="horizontal" >
+        </LinearLayout>
+
+        <LinearLayout
+            android:id="@+id/cursor_layout"
+            android:layout_width="fill_parent"
+            android:layout_height="2.67dp"
+            android:layout_gravity="bottom"
+            android:orientation="vertical" >
+        </LinearLayout>
+
+        <ImageView
+            android:id="@+id/layout_divider"
+            android:layout_width="fill_parent"
+            android:layout_height="0.67dp"
+            android:background="@color/title_indicator_light"
+            android:contentDescription="@null"
+            android:scaleType="fitXY" >
+        </ImageView>
+    </LinearLayout>
+
+</merge>

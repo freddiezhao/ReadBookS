@@ -1,0 +1,762 @@
+package com.sina.book.util;
+
+import android.app.Activity;
+import android.content.Context;
+import android.graphics.Bitmap;
+import android.graphics.Bitmap.CompressFormat;
+import android.text.Html;
+import android.text.Spannable;
+import android.text.SpannableStringBuilder;
+import android.text.style.ForegroundColorSpan;
+import android.util.DisplayMetrics;
+import android.view.View;
+import android.view.ViewGroup;
+import android.view.WindowManager;
+import android.view.inputmethod.InputMethodManager;
+import android.widget.GridView;
+import android.widget.ListAdapter;
+import android.widget.ListView;
+
+import com.sina.book.SinaBookApplication;
+import com.sina.book.data.ConstantData;
+import com.sina.book.useraction.DeviceInfo;
+
+import org.htmlcleaner.Utils;
+
+import java.io.ByteArrayOutputStream;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
+import java.io.OutputStream;
+import java.io.UnsupportedEncodingException;
+import java.math.BigDecimal;
+import java.security.MessageDigest;
+import java.security.NoSuchAlgorithmException;
+import java.text.DateFormat;
+import java.text.DecimalFormat;
+import java.text.SimpleDateFormat;
+import java.util.Date;
+import java.util.Locale;
+
+public class Util {
+	// private static final String TAG = "Util";
+
+	private static DisplayMetrics displayMetrics = null;
+
+	private static DecimalFormat mDecimalFormat = new DecimalFormat("0.00");
+
+	private static DateFormat mDateCompareFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.CHINA);
+
+	private static final int MAX_GENERATE_COUNT = 99999;
+	private static int sGenerateCount = 0;
+	private static long lastClickTime;
+
+	public static String formatFileSize(long fileLength) {
+		String resultString = "";
+		if (fileLength < 1024) {
+			resultString = mDecimalFormat.format(fileLength * 1.0 / 1024) + "K";
+		} else if (fileLength < 1024 * 1024) {
+			resultString = mDecimalFormat.format(fileLength * 1.0 / 1024) + "K";
+		} else if (fileLength < 1024 * 1024 * 1024) {
+			resultString = mDecimalFormat.format(fileLength * 1.0 / 1024 / 1024) + "M";
+		} else {
+			resultString = mDecimalFormat.format(fileLength * 1.0 / 1024 / 1024 / 1024) + "G";
+		}
+		return resultString;
+	}
+
+	/**
+	 * 显示软键盘
+	 * 
+	 * @param activity
+	 * @param view
+	 */
+	public static void showSoftInput(Activity activity, View view) {
+		activity.getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_VISIBLE);
+		InputMethodManager imm = (InputMethodManager) activity.getSystemService(Context.INPUT_METHOD_SERVICE);
+		// 显示软键盘
+		imm.toggleSoftInput(0, InputMethodManager.HIDE_NOT_ALWAYS);
+	}
+
+	public static boolean isSoftInputActive(View v) {
+		if (v == null)
+			return false;
+		InputMethodManager imm = (InputMethodManager) v.getContext().getSystemService(Context.INPUT_METHOD_SERVICE);
+		return imm.isActive();
+	}
+
+	/**
+	 * 隐藏软键盘
+	 */
+	public static void hideSoftInput(Activity activity, View view) {
+		if (view != null) {
+			InputMethodManager imm = (InputMethodManager) activity.getSystemService(Context.INPUT_METHOD_SERVICE);
+			imm.hideSoftInputFromWindow(view.getWindowToken(), 0);
+		}
+	}
+
+	/**
+	 * 得到屏幕信息
+	 * 
+	 * @param context
+	 * @return
+	 */
+	public static DisplayMetrics getDisplayMetrics(Context context) {
+		if (displayMetrics == null) {
+			displayMetrics = context.getResources().getDisplayMetrics();
+		}
+		return displayMetrics;
+	}
+
+	/**
+	 * @param str
+	 * @return boolean 返回类型
+	 * @throws
+	 * @Title: isNullOrEmpty
+	 * @Description: 判定字符串是否为null or ""
+	 */
+	public static boolean isNullOrEmpty(String str) {
+		if (str == null || str.trim().equalsIgnoreCase("")) {
+			return true;
+		}
+		return false;
+	}
+
+	/**
+	 * 将null的字符串替换为""
+	 * 
+	 * @param str
+	 * @return
+	 */
+	public static String changeNullToEmpty(String str) {
+		if (str == null || str.trim().equalsIgnoreCase("")) {
+			return "";
+		}
+		return str;
+	}
+
+	/**
+	 * 判断字符串是否是浮点数
+	 */
+	public static boolean isDoubleValue(String value) {
+		if (isNullOrEmpty(value)) {
+			return false;
+		}
+		try {
+			Double.parseDouble(value);
+			return true;
+		} catch (Exception e) {
+			return false;
+		}
+	}
+
+	/**
+	 * 保存Bitmap至文件
+	 * 
+	 * @param bmp
+	 * @param fileName
+	 * @param quality
+	 * @return the file path
+	 */
+	public static String saveBitmap2file(Bitmap bmp, String fileName, int quality) {
+		boolean flag = false;
+
+		CompressFormat format = Bitmap.CompressFormat.PNG;
+		OutputStream stream = null;
+		File image = new File(StorageUtil.createPath(fileName));
+
+		try {
+			stream = new FileOutputStream(image);
+			flag = bmp.compress(format, quality, stream);
+		} catch (FileNotFoundException e) {
+			e.printStackTrace();
+			flag = false;
+		} finally {
+			if (stream != null) {
+				try {
+					stream.close();
+				} catch (IOException e) {
+					e.printStackTrace();
+					flag = false;
+				}
+			}
+		}
+
+		// File file = new File(filepath);
+		// if (file.exists()) {
+		// LogUtil.d(TAG, "文件大小 : " + file.length());
+		// } else {
+		// LogUtil.d(TAG, "文件大小 : 0");
+		// }
+
+		return flag ? image.getPath() : "";
+	}
+
+	/**
+	 * 读取文件内容
+	 * 
+	 * @param filePath
+	 * @return
+	 * @throws IOException
+	 */
+	public static byte[] getContent(String filePath) throws IOException {
+		FileInputStream in = new FileInputStream(filePath);
+
+		ByteArrayOutputStream out = new ByteArrayOutputStream(1024);
+
+		byte[] temp = new byte[1024];
+
+		int size = 0;
+
+		while ((size = in.read(temp)) != -1) {
+			out.write(temp, 0, size);
+		}
+
+		in.close();
+
+		byte[] bytes = out.toByteArray();
+
+		return bytes;
+	}
+
+	/**
+	 * 通过子View的高度动态确定ListView的高度，主要用于解决ScrollView中嵌套的ListView无法正常显示的问题
+	 * 注：item布局只能为LinearLayout
+	 * 
+	 * @param listView
+	 *            指定ListView
+	 * @return ListView的高度
+	 */
+	public static int measureListViewHeight(ListView listView) {
+		// 获取ListView对应的Adapter
+		ListAdapter adapter = listView.getAdapter();
+		if (null == adapter) {
+			return 0;
+		}
+
+		int totalHeight = 0;
+
+		for (int i = 0, len = adapter.getCount(); i < len; i++) {
+			View item = adapter.getView(i, null, listView);
+			if (null == item)
+				continue;
+			// 计算子项View 的宽高
+			item.measure(0, 0);
+			// 统计所有子项的总高度
+			totalHeight += item.getMeasuredHeight();
+		}
+
+		ViewGroup.LayoutParams params = listView.getLayoutParams();
+
+		if (null == params) {
+			params = new ViewGroup.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT,
+					ViewGroup.LayoutParams.WRAP_CONTENT);
+		}
+
+		// 最后得到整个ListView完整显示需要的高度
+		params.height = totalHeight + (listView.getDividerHeight() * (adapter.getCount() - 1));
+
+		listView.setLayoutParams(params);
+
+		return params.height;
+	}
+
+	/**
+	 * 通过子View的高度动态确定GridView的高度，主要用于解决ScrollView中嵌套的GridView无法正常显示的问题
+	 * 注：item布局只能为LinearLayout
+	 * 
+	 * @param gridView
+	 *            指定GridView
+	 * @param numColumns
+	 *            列数
+	 * @return GridView
+	 */
+	public static int measureGridViewHeight(GridView gridView, int numColumns) {
+		// 获取GridView对应的Adapter
+		ListAdapter adapter = gridView.getAdapter();
+		if (null == adapter || numColumns <= 0) {
+			return 0;
+		}
+
+		int totalHeight = 0;
+
+		for (int i = 0; i < adapter.getCount(); i += numColumns) {
+			View item = adapter.getView(i, null, gridView);
+			if (null == item)
+				continue;
+			// 计算子项View 的宽高
+			item.measure(0, 0);
+			// 统计所有子项的总高度
+			totalHeight += item.getMeasuredHeight();
+		}
+
+		ViewGroup.LayoutParams params = gridView.getLayoutParams();
+		if (null == params) {
+			params = new ViewGroup.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT,
+					ViewGroup.LayoutParams.WRAP_CONTENT);
+		}
+
+		// int rows = (int) Math.ceil(adapter.getCount() / numColumns);
+		// 最后得到整个GridView完整显示需要的高度
+		params.height = totalHeight;
+
+		gridView.setLayoutParams(params);
+
+		return params.height;
+	}
+
+	/**
+	 * 得到一个路径的名字
+	 * 
+	 * @param path
+	 * @return
+	 */
+	public static String getPathName(String path) {
+		if (path != null) {
+			int dotIndex = path.lastIndexOf("/");
+			if (dotIndex >= 0) {
+				return path.substring(dotIndex + 1);
+			}
+		}
+		return path;
+	}
+
+	/**
+	 * time为今天内返回字符串"今天"<br>
+	 * 为昨天返回"昨天"<br>
+	 * 其它返回原时间<br>
+	 * 
+	 * @param time
+	 * @return
+	 */
+	public static String getTimeToDisplay(String time) {
+		return getTimeToDisplay(time, new Date());
+	}
+
+	public static String getTimeToDisplay(String time, Date now) {
+		if (Utils.isEmptyString(time)) {
+			return time;
+		}
+		try {
+			Date input = mDateCompareFormat.parse(time);
+
+			long diff = now.getTime() - input.getTime();
+			int diffday = (int) (diff / (24 * 60 * 60 * 1000));
+
+			if (diffday >= 30) {
+				return "一个月前";
+			} else if (diffday > 0) {
+				return diffday + "天前";
+			} else {
+				int diffhour = (int) (diff / (60 * 60 * 1000) - diffday * 24);
+				if (diffhour >= 0 && diffhour < 1) {
+					return "1小时前";
+				} else if (diffhour >= 1 && diffhour < 3) {
+					return diffhour + "小时前";
+				} else if (diffhour >= 3 && diffhour < 6) {
+					return "3小时前";
+				} else if (diffhour >= 6 && diffhour < 12) {
+					return "6小时前";
+				} else if (diffhour >= 12) {
+					return "12小时前";
+				}
+			}
+		} catch (Exception e) {
+		}
+
+		return time;
+	}
+
+	public static String getTimeToDisplay1(String time, Date now) {
+		if (Utils.isEmptyString(time)) {
+			return time;
+		}
+		try {
+			Date input = mDateCompareFormat.parse(time);
+
+			long diff = now.getTime() - input.getTime();
+			int diffday = (int) (diff / (24 * 60 * 60 * 1000));
+			int diffhour = (int) (diff / (60 * 60 * 1000) - diffday * 24);
+			int diffminute = (int) (diff / (60 * 1000) - diffhour * 60);
+
+			if (diffday > 0) {
+				if (diffday > 0 && diffday <= 1) {
+					return "昨天";
+				} else if (diffday > 1) {
+					return time;
+				}
+			} else if (diffhour > 0) {
+				if (diffhour > 0 && diffhour <= 12) {
+					return diffhour + "小时前";
+				} else if (diffhour > 12) {
+					return "12小时前";
+				}
+			} else if (diffminute > 0) {
+				if (diffminute > 0 && diffminute <= 59) {
+					return diffminute + "分钟前";
+				} else if (diffminute > 59) {
+					return "59分钟前";
+				}
+			} else {
+				int diffsecond = (int) (diff / 1000 - diffminute * 60);
+				if (diffsecond > 0 && diffsecond <= 59) {
+					return diffsecond + "秒前";
+				} else if (diffsecond > 59) {
+					return "59秒前";
+				}
+			}
+		} catch (Exception e) {
+		}
+
+		return time;
+	}
+
+	/**
+	 * 高亮文本
+	 * 
+	 * @param text
+	 *            文本内容
+	 * @param color
+	 *            高亮颜色
+	 * @param start
+	 *            高亮开始位置
+	 * @param end
+	 *            高亮结束位置
+	 * @return
+	 */
+	public static Spannable highLight(CharSequence text, int color, int start, int end) {
+		SpannableStringBuilder builder = new SpannableStringBuilder(text);
+		ForegroundColorSpan span = new ForegroundColorSpan(color);
+		builder.setSpan(span, start, end, Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
+		return builder;
+	}
+
+	/**
+	 * 序列化对象至文件
+	 * 
+	 * @param context
+	 *            上下文引用
+	 * @param fileName
+	 *            文件名称
+	 * @param o
+	 *            待序列化对象
+	 * @throws Exception
+	 */
+	public static void save(Context context, String fileName, Object o) throws Exception {
+		String path = context.getFilesDir() + "/";
+
+		File dir = new File(path);
+		if (!dir.exists() || !dir.isDirectory()) {
+			dir.mkdirs();
+		}
+
+		File f = new File(dir, fileName);
+
+		if (f.exists()) {
+			f.delete();
+		}
+
+		FileOutputStream os = new FileOutputStream(f);
+		ObjectOutputStream objectOutputStream = new ObjectOutputStream(os);
+		objectOutputStream.writeObject(o);
+		objectOutputStream.close();
+		os.close();
+	}
+
+	/**
+	 * 反序列化对象
+	 * 
+	 * @param context
+	 *            上下文引用
+	 * @param fileName
+	 *            文件名称
+	 * @return
+	 * @throws Exception
+	 */
+	@SuppressWarnings("resource")
+	public static Object read(Context context, String fileName) throws Exception {
+		String path = context.getFilesDir() + "/";
+
+		File dir = new File(path);
+		if (!dir.exists() || !dir.isDirectory()) {
+			dir.mkdirs();
+		}
+
+		File file = new File(dir, fileName);
+		InputStream is = new FileInputStream(file);
+
+		ObjectInputStream objectInputStream = new ObjectInputStream(is);
+
+		return objectInputStream.readObject();
+	}
+
+	/**
+	 * 生成唯一字符串
+	 * 
+	 * @return
+	 */
+	public static synchronized String getUniqueString() {
+		if (sGenerateCount > MAX_GENERATE_COUNT) {
+			sGenerateCount = 0;
+		}
+
+		String uniqueString = Long.toString(System.currentTimeMillis()) + Integer.toString(sGenerateCount);
+		sGenerateCount++;
+		return uniqueString;
+		//
+		// String result = UUID.randomUUID().toString();
+		// return result;
+	}
+
+	/**
+	 * 四舍五入格式化float
+	 * 
+	 * @param value
+	 *            待格式化的float值
+	 * @param scale
+	 *            小数点后保留位数
+	 * @return
+	 */
+	public static final float formatFloat(float value, int scale) {
+		BigDecimal bd = new BigDecimal((double) value);
+		// 表示四舍五入，可以选择其他舍值方式，例如去尾，等等.
+		bd = bd.setScale(scale, BigDecimal.ROUND_HALF_EVEN);
+		value = bd.floatValue();
+		return value;
+	}
+
+	// 全局数组
+	private final static String[] strDigits = { "0", "1", "2", "3", "4", "5", "6", "7", "8", "9", "a", "b", "c", "d",
+			"e", "f" };
+
+	// 返回形式为数字跟字符串
+	private static String byteToArrayString(byte bByte) {
+		int iRet = bByte;
+		if (iRet < 0) {
+			iRet += 256;
+		}
+		int iD1 = iRet / 16;
+		int iD2 = iRet % 16;
+		return strDigits[iD1] + strDigits[iD2];
+	}
+
+	// 转换字节数组为16进制字串
+	private static String byteToString(byte[] bByte) {
+		StringBuffer sBuffer = new StringBuffer();
+		for (int i = 0; i < bByte.length; i++) {
+			sBuffer.append(byteToArrayString(bByte[i]));
+		}
+		return sBuffer.toString();
+	}
+
+	public static String genMD5Code(String strObj) {
+		String resultString = null;
+		try {
+			resultString = new String(strObj);
+			MessageDigest md = MessageDigest.getInstance("MD5");
+			// md.digest() 该函数返回值为存放哈希值结果的byte数组
+			resultString = byteToString(md.digest(strObj.getBytes()));
+		} catch (NoSuchAlgorithmException ex) {
+			ex.printStackTrace();
+		}
+		return resultString;
+	}
+
+	public static boolean isFastDoubleClick() {
+		return isFastDoubleClick(500);
+	}
+
+	/**
+	 * 防止快速重复点击
+	 * 
+	 * @return
+	 */
+	public static boolean isFastDoubleClick(long delayTime) {
+		long time = System.currentTimeMillis();
+		long timeD = time - lastClickTime;
+		if (0 < timeD && timeD < delayTime) {
+			return true;
+		}
+		lastClickTime = time;
+		return false;
+	}
+
+	public static String formatNumber(int position) {
+		if (position <= 0) {
+			return "01";
+		} else {
+			if (position >= 10) {
+				return "" + position;
+			} else {
+				return "0" + position;
+			}
+		}
+	}
+
+	public static String getUncode(String str) {
+
+		if (str == null)
+			return "";
+		String hs = "";
+
+		try {
+			byte b[] = str.getBytes("UTF-16");
+			for (int n = 0; n < b.length; n++) {
+				str = (java.lang.Integer.toHexString(b[n] & 0XFF));
+				if (str.length() == 1)
+					hs = hs + "0" + str;
+				else
+					hs = hs + str;
+				if (n < b.length - 1)
+					hs = hs + "";
+			}
+			// 去除第一个标记字符
+			str = hs.toUpperCase().substring(4);
+			char[] chs = str.toCharArray();
+			str = "";
+			for (int i = 0; i < chs.length; i = i + 4) {
+				str += "\\u" + chs[i] + chs[i + 1] + chs[i + 2] + chs[i + 3];
+			}
+			return str;
+		} catch (Exception e) {
+			System.out.print(e.getMessage());
+		}
+		return str;
+	}
+
+    /** 将字符颜色变成红色
+     * start 前部字符串
+     * center 中间部分字符串
+     * end   后部分字符串
+     * */
+    public static CharSequence str2RedStr(String start,String center,String end){
+        return Html.fromHtml(start + "<font color=\"#ff0000\">" + center + "</font>" + end);
+    }
+
+	// ************ ************ 统计相关的工具方法 Start ************ ************ //
+	public static String checkNull(String str) {
+		String result = "NONE_NONE_01_0000";
+		if (str != null) {
+			String[] strs = str.split("_");
+			if (strs != null && strs.length == 4 && !str.contains("null")) {
+				return str;
+			}
+		}
+		return result;
+	}
+
+	public static String checkAndClip(String str) {
+		if (str != null) {
+			String[] strs = str.split("_");
+			if (strs != null && strs.length == 4) {
+				StringBuffer sb = new StringBuffer();
+				for (int i = 0; i < strs.length; i++) {
+					String temp = checkLengthAndClip(strs[i]);
+					sb.append(temp);
+					if (i != strs.length - 1) {
+						sb.append("_");
+					}
+				}
+				return checkNull(sb.toString());
+			}
+		}
+		return null;
+	}
+
+	public static String checkLengthAndClip(String str) {
+		if (str != null) {
+			if (str.length() > 20) {
+				return str.substring(0, 20);
+			} else {
+				return str;
+			}
+		}
+		return null;
+	}
+
+	// ************ ************ 统计相关的工具方法 End ************ ************ //
+
+	/**
+	 * 拼接卸载统计链接地址
+	 * 
+	 * @param url
+	 * @return
+	 */
+	public static String getUnInstallObserverUrl(String url) {
+		String carrier = DeviceInfo.getCarrier(SinaBookApplication.gContext);
+		String apn = HttpUtil.getNetworkType(SinaBookApplication.gContext);
+		String imei = ConstantData.getDeviceId();
+		String deviceId = DeviceInfo.getUDID();
+		String appChannel = String.valueOf(ConstantData.getChannelCode(SinaBookApplication.gContext));
+
+		String device = DeviceInfo.getDevice();
+		String os = DeviceInfo.getOS();
+		String os_version = DeviceInfo.getOSVersion();
+		String resolution = DeviceInfo.getResolution(SinaBookApplication.gContext);
+		String version = ApplicationUtils.getVersionName(SinaBookApplication.gContext);
+		String locale = DeviceInfo.getLocale();
+
+		url = HttpUtil.setURLParams(url, "device", device);
+		url = HttpUtil.setURLParams(url, ConstantData.OPERATORS_NAME_KEY, carrier);
+		url = HttpUtil.setURLParams(url, ConstantData.APN_ACCESS_KEY, apn);
+		url = HttpUtil.setURLParams(url, ConstantData.PHONE_IMEI_KEY, imei);
+		url = HttpUtil.setURLParams(url, ConstantData.DEVICE_ID_KEY, deviceId);
+		url = HttpUtil.setURLParams(url, ConstantData.APP_CHANNEL_KEY, appChannel);
+		url = HttpUtil.setURLParams(url, ConstantData.APP_VERSION_KEY, version);
+
+		url = HttpUtil.setURLParams(url, "os", os);
+		url = HttpUtil.setURLParams(url, "os_version", os_version);
+		url = HttpUtil.setURLParams(url, "resolution", resolution);
+		url = HttpUtil.setURLParams(url, "locale", locale);
+
+		url = HttpUtil.setURLParams(url, ConstantData.TIME_STAMP_KEY, new Date().getTime() + "");// 时间戳
+		return url;
+	}
+	
+	public static String md5(String string) {
+	    byte[] hash;
+	    try {
+	        hash = MessageDigest.getInstance("MD5").digest(string.getBytes("UTF-8"));
+
+	    } catch (NoSuchAlgorithmException e) {
+	        throw new RuntimeException("Huh, MD5 should be supported?", e);
+	    } catch (UnsupportedEncodingException e) {
+	        throw new RuntimeException("Huh, UTF-8 should be supported?", e);
+	    }
+
+	    StringBuilder hex = new StringBuilder(hash.length * 2);
+	    for (byte b : hash) {
+	        if ((b & 0xFF) < 0x10) hex.append("0");
+	        hex.append(Integer.toHexString(b & 0xFF));
+	    }
+	    return hex.toString();
+
+	}
+	
+	public static String base64Encode(String string){
+		try {
+			byte[] data = Base64.encode(string.getBytes("UTF-8"), Base64.DEFAULT);
+			return new String(data,"UTF-8");
+		} catch (UnsupportedEncodingException e) {
+			e.printStackTrace();
+		}
+		return null;
+	}
+	
+	public static String base64Decode(String string){
+		try {
+			byte[] data = Base64.decode(string.getBytes("UTF-8"), Base64.DEFAULT);
+			return new String(data,"UTF-8");
+		} catch (UnsupportedEncodingException e) {
+			e.printStackTrace();
+		}
+		return null;
+	}
+	
+	
+}

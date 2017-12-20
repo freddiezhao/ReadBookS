@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <dimen name="bookhome_item_height">88.0dp</dimen>
+
+    <dimen name="bookhome_item_img_width">62.0dp</dimen>
+    <dimen name="bookhome_item_img_magrin_v">6.0dp</dimen>
+    
+    <dimen name="bookhome_item_rightbtn_width">44.0dp</dimen>
+
+    <dimen name="bookhome_item_divider_height">71.33dp</dimen>
+
+    <dimen name="bookhome_item_menubtn_margin">90.0dp</dimen>
+    
+    <dimen name="bookhome_item_menubtn_margin1">60.0dp</dimen>
+
+    <dimen name="bookhome_item_menu_height">53.33dp</dimen>
+    
+    <dimen name="bookhome_item_probar_width">145.33dp</dimen>
+    <dimen name="bookhome_item_probar_height">3.0dp</dimen>
+    
+    
+    <!-- 字体颜色 -->
+    <color name="bookhome_item_bg_p">#eeeeee</color>
+    
+    <color name="bookhome_menu_btn_u">#D7C6A3</color>
+    <color name="bookhome_menu_btn_p">#E15118</color>
+    <color name="bookhome_menu_btn_n">#CD8A69</color>
+    
+    <color name="bookhome_book_title">#000000</color>
+    <color name="bookhome_book_author">#898989</color>
+</resources>
